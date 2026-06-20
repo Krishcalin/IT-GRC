@@ -9,6 +9,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..database import get_db
 from ..models.control import Control
 from ..models.clause_requirement import ClauseRequirement
+from ..models.documented_information import DocumentedInformation
+from ..models.interested_party import InterestedParty
 from ..models.risk import Risk
 from ..models.audit import Audit, AuditFinding
 from ..models.policy import Policy
@@ -55,6 +57,27 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
     )).all()
     clauses_by_section = {row[0]: row[1] for row in clause_section_rows}
     isms_conformity_score = round((conformant_clauses / total_clauses * 100) if total_clauses > 0 else 0, 1)
+
+    # Documented information (Clause 7.5)
+    total_documents = (await db.execute(select(func.count()).select_from(DocumentedInformation))).scalar() or 0
+    mandatory_documents = (await db.execute(
+        select(func.count()).select_from(DocumentedInformation).where(DocumentedInformation.mandatory == True)
+    )).scalar() or 0
+    approved_mandatory_documents = (await db.execute(
+        select(func.count()).select_from(DocumentedInformation).where(
+            DocumentedInformation.mandatory == True, DocumentedInformation.status == "Approved"
+        )
+    )).scalar() or 0
+    doc_status_rows = (await db.execute(
+        select(DocumentedInformation.status, func.count()).group_by(DocumentedInformation.status)
+    )).all()
+    documents_by_status = {row[0]: row[1] for row in doc_status_rows}
+    document_readiness_score = round(
+        (approved_mandatory_documents / mandatory_documents * 100) if mandatory_documents > 0 else 0, 1
+    )
+
+    # Interested parties (Clause 4.2)
+    total_interested_parties = (await db.execute(select(func.count()).select_from(InterestedParty))).scalar() or 0
 
     # Risks
     total_risks = (await db.execute(select(func.count()).select_from(Risk))).scalar() or 0
@@ -111,6 +134,12 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
         isms_conformity_score=isms_conformity_score,
         clauses_by_status=clauses_by_status,
         clauses_by_section=clauses_by_section,
+        total_documents=total_documents,
+        mandatory_documents=mandatory_documents,
+        approved_mandatory_documents=approved_mandatory_documents,
+        document_readiness_score=document_readiness_score,
+        documents_by_status=documents_by_status,
+        total_interested_parties=total_interested_parties,
     )
 
 

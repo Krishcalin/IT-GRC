@@ -18,14 +18,14 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 - `database.py` — Async SQLAlchemy engine + session factory + Base
 - `models/` — SQLAlchemy ORM models (all UUID PKs, timezone-aware timestamps)
 - `schemas/` — Pydantic v2 request/response schemas (Create/Update/Read per model)
-- `api/` — FastAPI route handlers, one file per module: `auth`, `controls`, `clauses`, `risks`, `soa`, `evidence`, `audits`, `policies`, `assets`, `dashboard`
+- `api/` — FastAPI route handlers, one file per module: `auth`, `controls`, `clauses`, `documents`, `interested_parties`, `risks`, `soa`, `evidence`, `audits`, `policies`, `assets`, `dashboard`
 - `api/deps.py` — Shared dependencies (get_db, get_current_user, require_superuser)
-- `seed/iso27001.py` — All 93 Annex A controls + 30 ISMS clauses (4–10) + 6 RBAC roles
+- `seed/iso27001.py` — 93 Annex A controls + 30 ISMS clauses (4–10) + 17 mandatory documents + sample interested parties + 6 RBAC roles
 
 ### Frontend (`frontend/src/`)
 - `App.tsx` — Root with AuthProvider + React Router
 - `components/` — `Layout` (sidebar shell) and `StatusBadge` (status/theme/conformity pill)
-- `pages/` — One page per module (Dashboard, Controls, ISMS Clauses, Risks, SoA, Evidence, Audits, Policies, Assets, Login) plus detail pages (`ControlDetailPage`, `ClauseDetailPage`, `AuditDetailPage`)
+- `pages/` — One page per module (Dashboard, Controls, ISMS Clauses, Interested Parties, Risks, SoA, Evidence, Documents, Audits, Policies, Assets, Login) plus detail pages (`ControlDetailPage`, `ClauseDetailPage`, `DocumentDetailPage`, `AuditDetailPage`)
 - `services/api.ts` — Axios client with JWT interceptor
 - `hooks/useAuth.ts` — Auth context (login, logout, current user)
 - `types/index.ts` — TypeScript interfaces matching backend schemas
@@ -37,6 +37,8 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 | Role | roles | name, description, permissions (JSON) |
 | Control | controls | clause (A.5.1), title, description, theme, status, owner_id |
 | ClauseRequirement | clause_requirements | clause (6.1.2), title, section, clause_number, requirement, documented_info, conformity_status, owner_id |
+| DocumentedInformation | documented_information | ref_id (DOC-001), title, doc_type, clause_ref, mandatory, version, status, classification, owner/approver, review dates |
+| InterestedParty | interested_parties | ref_id (PARTY-001), name, party_type, category, requirements, addressed_in_isms |
 | Risk | risks | ref_id (RISK-001), likelihood×impact scoring, treatment, status |
 | SoAEntry | soa_entries | control_id (unique), applicable, implementation_status |
 | Evidence | evidence | file_name, file_path, linked to control/risk/audit/policy |
@@ -62,6 +64,8 @@ All API routes under `/api/v1/`. Swagger at `/docs`, ReDoc at `/redoc`, health a
 | `/auth` | `login`, `me` |
 | `/controls` | list / get / create / update / delete (Annex A) |
 | `/clauses` | list / get / create / update / delete (ISMS Clauses 4–10) |
+| `/documents` | list / get / create / update / delete (Documented Information 7.5) |
+| `/interested-parties` | list / get / create / update / delete (Interested Parties 4.2) |
 | `/risks` | list / get / create / update / delete |
 | `/soa` | list / create / update |
 | `/evidence` | list / upload / download |
@@ -71,8 +75,9 @@ All API routes under `/api/v1/`. Swagger at `/docs`, ReDoc at `/redoc`, health a
 | `/dashboard` | `stats`, `activity` |
 
 `/dashboard/stats` returns control posture (by status/theme), risk posture, ISMS
-clause conformity (total, conformant, conformity score, by status/section), the
-compliance score, and module counts.
+clause conformity (total, conformant, conformity score, by status/section),
+documented-information readiness (mandatory vs approved, by status), interested-party
+count, the compliance score, and module counts.
 
 ## ISO 27001:2022 Annex A
 93 controls across 4 themes:
@@ -100,6 +105,30 @@ information it demands (where applicable), a `conformity_status` (Not Assessed /
 In Progress / Partially Conformant / Conformant / Nonconformant), owner, and
 review date. API at `/api/v1/clauses`; UI at `/clauses`. Requirement text is
 paraphrased — ISO/IEC 27001:2022 is the authoritative source.
+
+## Documented Information (Clause 7.5)
+A controlled-document register (`documented_information`) covering 7.5.2 (identity,
+version, approval) and 7.5.3 (status, review, retention). Seeded on first startup
+with the **17 mandatory documents/records** required across Clauses 4–10 (Scope,
+IS Policy, risk assessment/treatment processes, SoA, risk treatment plan, IS
+objectives, competence evidence, operational/risk-assessment/risk-treatment
+results, monitoring results, audit programme & results, management-review results,
+nonconformity & corrective-action records, plus the interested-parties and legal
+registers), each linked to its clause and flagged `mandatory`. Statuses: Draft /
+Under Review / Approved / Retired. Ref IDs `DOC-001…`. API `/api/v1/documents`;
+UI `/documents` (+ detail page). Dashboard surfaces a **document readiness** score
+(approved mandatory ÷ mandatory).
+
+## Interested Parties (Clause 4.2)
+A stakeholder register (`interested_parties`): name, `party_type` (Internal/External),
+`category` (Customer/Regulator/Employee/Supplier/Partner/Owner/Other), their
+`requirements`, and `addressed_in_isms` (Clause 4.2c). Seeded with a representative
+starter set; ref IDs `PARTY-001…`. API `/api/v1/interested-parties`; UI
+`/interested-parties`.
+
+> Identified next-tranche gaps from the ISACA Implementation Guide (not yet built):
+> IS Objectives + KPIs/KRIs/KCIs (6.2/9.1), Supplier register (5.19–5.23),
+> Incident management (5.24–5.28), Awareness/training (7.2/7.3).
 
 ## Key Patterns
 - All models use UUID primary keys

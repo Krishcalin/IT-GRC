@@ -25,6 +25,7 @@ const colors: Record<string, string> = {
   Open: 'bg-gray-100 text-gray-600',
   Draft: 'bg-gray-100 text-gray-600',
   Planned: 'bg-gray-100 text-gray-600',
+  Retired: 'bg-gray-100 text-gray-600',
   // red
   Critical: 'bg-red-100 text-red-800',
   Overdue: 'bg-red-100 text-red-800',

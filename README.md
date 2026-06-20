@@ -29,6 +29,17 @@ An **open-source IT Governance, Risk & Compliance (GRC) portal** purpose-built f
 - Each clause flags the **mandatory documented information** it requires (scope, policy, SoA, objectives, audit/management-review records, etc.)
 - Distinct from Annex A controls — per Clause 1 (Scope), these clauses cannot be excluded when claiming conformity
 
+### Documented Information Register (Clause 7.5)
+- The **17 mandatory documents and records** required across Clauses 4–10 pre-loaded as a checklist, each linked to its clause
+- Controlled-document lifecycle: identity, version, classification, approval, and review dates (7.5.2/7.5.3)
+- Status tracking (Draft → Under Review → Approved → Retired) and a dashboard **document-readiness** score
+- Add your own organization-specific documents alongside the mandatory set
+
+### Interested Parties Register (Clause 4.2)
+- Catalog the parties relevant to the ISMS (customers, regulators, employees, suppliers, owners…)
+- Record their relevant requirements/expectations (legal, regulatory, contractual)
+- Flag whether each party's requirements are **addressed by the ISMS** (Clause 4.2c)
+
 ### Risk Register
 - Create and manage information security risks with full lifecycle tracking
 - **5x5 risk matrix** — likelihood × impact scoring (Low / Medium / High / Critical)
@@ -142,6 +153,7 @@ On first startup, the system automatically:
 - Creates all database tables
 - Seeds 93 ISO 27001:2022 Annex A controls
 - Seeds 30 ISO 27001:2022 ISMS clause requirements (Clauses 4–10)
+- Seeds 17 mandatory documented-information records (Clause 7.5) + sample interested parties (Clause 4.2)
 - Creates 6 default RBAC roles
 - Creates the first superuser account
 
@@ -185,6 +197,8 @@ IT-GRC/
 │   │   │   ├── auth.py      #   Authentication & user management
 │   │   │   ├── controls.py  #   ISO 27001 Annex A controls CRUD
 │   │   │   ├── clauses.py   #   ISMS clauses 4–10 conformity CRUD
+│   │   │   ├── documents.py #   Documented information register (7.5)
+│   │   │   ├── interested_parties.py # Interested parties register (4.2)
 │   │   │   ├── risks.py     #   Risk register CRUD
 │   │   │   ├── soa.py       #   Statement of Applicability
 │   │   │   ├── evidence.py  #   Evidence upload/download
@@ -278,6 +292,8 @@ Key API endpoints:
 | POST | `/api/v1/auth/login` | Authenticate and get JWT token |
 | GET | `/api/v1/controls` | List ISO 27001 Annex A controls |
 | GET | `/api/v1/clauses` | List ISMS clause requirements (4–10) |
+| GET | `/api/v1/documents` | List documented information (7.5) |
+| GET | `/api/v1/interested-parties` | List interested parties (4.2) |
 | GET | `/api/v1/risks` | List risks |
 | POST | `/api/v1/risks` | Create a new risk |
 | GET | `/api/v1/soa` | List Statement of Applicability |

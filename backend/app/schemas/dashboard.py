@@ -25,3 +25,10 @@ class DashboardStats(BaseModel):
     isms_conformity_score: float = 0.0
     clauses_by_status: dict = {}
     clauses_by_section: dict = {}
+    # Documented information (Clause 7.5) and interested parties (Clause 4.2)
+    total_documents: int = 0
+    mandatory_documents: int = 0
+    approved_mandatory_documents: int = 0
+    document_readiness_score: float = 0.0
+    documents_by_status: dict = {}
+    total_interested_parties: int = 0

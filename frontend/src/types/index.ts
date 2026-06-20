@@ -186,6 +186,44 @@ export interface Asset {
   updated_at: string
 }
 
+export interface DocumentedInformation {
+  id: string
+  ref_id: string
+  title: string
+  description: string | null
+  doc_type: string
+  clause_ref: string | null
+  mandatory: boolean
+  version: string
+  status: string
+  classification: string
+  location: string | null
+  owner_id: string | null
+  owner: User | null
+  approver_id: string | null
+  approver: User | null
+  approved_at: string | null
+  review_date: string | null
+  next_review_date: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface InterestedParty {
+  id: string
+  ref_id: string
+  name: string
+  party_type: string
+  category: string
+  requirements: string | null
+  addressed_in_isms: boolean
+  notes: string | null
+  owner_id: string | null
+  owner: User | null
+  created_at: string
+  updated_at: string
+}
+
 export interface DashboardStats {
   total_controls: number
   implemented_controls: number
@@ -205,6 +243,12 @@ export interface DashboardStats {
   isms_conformity_score: number
   clauses_by_status: Record<string, number>
   clauses_by_section: Record<string, number>
+  total_documents: number
+  mandatory_documents: number
+  approved_mandatory_documents: number
+  document_readiness_score: number
+  documents_by_status: Record<string, number>
+  total_interested_parties: number
 }
 
 export interface ActivityEntry {

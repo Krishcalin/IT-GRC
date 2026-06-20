@@ -32,6 +32,7 @@ const DashboardPage: React.FC = () => {
   const clauseSectionData = Object.entries(stats.clauses_by_section || {}).map(([name, value]) => ({ name, value }))
   const scoreColor = stats.compliance_score >= 80 ? 'text-emerald-600' : stats.compliance_score >= 50 ? 'text-amber-600' : 'text-red-600'
   const ismsColor = stats.isms_conformity_score >= 80 ? 'text-emerald-600' : stats.isms_conformity_score >= 50 ? 'text-amber-600' : 'text-red-600'
+  const docColor = stats.document_readiness_score >= 80 ? 'text-emerald-600' : stats.document_readiness_score >= 50 ? 'text-amber-600' : 'text-red-600'
 
   return (
     <div className="p-8 space-y-8">
@@ -113,6 +114,17 @@ const DashboardPage: React.FC = () => {
               </ResponsiveContainer>
             ) : <p className="text-sm text-gray-400 py-12 text-center">No data</p>}
           </div>
+        </div>
+      </div>
+
+      {/* ISMS records: documented information (7.5) + interested parties (4.2) */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">ISMS Records</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard label="Document Readiness" value={`${stats.document_readiness_score}%`} color={docColor} />
+          <StatCard label="Mandatory Documents" value={stats.mandatory_documents} color="text-indigo-600" />
+          <StatCard label="Approved (Mandatory)" value={stats.approved_mandatory_documents} color="text-emerald-600" />
+          <StatCard label="Interested Parties" value={stats.total_interested_parties} color="text-gray-700" />
         </div>
       </div>
 

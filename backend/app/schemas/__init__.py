@@ -6,6 +6,10 @@ from .control import ControlCreate, ControlUpdate, ControlRead                  
 from .clause_requirement import (                                                # noqa: F401
     ClauseRequirementCreate, ClauseRequirementUpdate, ClauseRequirementRead,
 )
+from .documented_information import DocumentCreate, DocumentUpdate, DocumentRead  # noqa: F401
+from .interested_party import (                                                   # noqa: F401
+    InterestedPartyCreate, InterestedPartyUpdate, InterestedPartyRead,
+)
 from .risk import RiskCreate, RiskUpdate, RiskRead                               # noqa: F401
 from .soa import SoACreate, SoAUpdate, SoARead                                  # noqa: F401
 from .evidence import EvidenceCreate, EvidenceRead                               # noqa: F401

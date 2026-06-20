@@ -352,6 +352,68 @@ ISMS_CLAUSES: list[dict] = [
 assert len(ISMS_CLAUSES) == 30, f"Expected 30 ISMS clause requirements, got {len(ISMS_CLAUSES)}"
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+#  Mandatory documented information (Clause 7.5)
+#
+#  The documents and records an ISO/IEC 27001:2022 ISMS must maintain, drawn from
+#  the "Documentation requirements" of Clauses 4–10. Pre-loaded as a checklist so
+#  an organization can track each one's owner, version, approval, and review.
+# ─────────────────────────────────────────────────────────────────────────────
+MANDATORY_DOCUMENTS: list[dict] = [
+    {"title": "ISMS Scope", "doc_type": "Statement", "clause_ref": "4.3",
+     "description": "Boundaries and applicability of the ISMS — which assets, processes, units, and locations are in or out of scope."},
+    {"title": "Register of Interested Parties", "doc_type": "Register", "clause_ref": "4.2",
+     "description": "Interested parties relevant to the ISMS, their relevant requirements, and which are addressed by the ISMS."},
+    {"title": "Register of Legal, Regulatory and Contractual Requirements", "doc_type": "Register", "clause_ref": "A.5.31",
+     "description": "Applicable legal, statutory, regulatory, and contractual information security requirements, kept up to date."},
+    {"title": "Information Security Policy", "doc_type": "Policy", "clause_ref": "5.2",
+     "description": "Top-management information security policy, including the framework for objectives and commitments to satisfy requirements and continually improve."},
+    {"title": "Information Security Risk Assessment Process", "doc_type": "Process", "clause_ref": "6.1.2",
+     "description": "Defined process with risk-acceptance and assessment criteria producing consistent, valid, comparable results."},
+    {"title": "Information Security Risk Treatment Process", "doc_type": "Process", "clause_ref": "6.1.3",
+     "description": "Defined process for selecting treatment options and determining the necessary controls."},
+    {"title": "Statement of Applicability (SoA)", "doc_type": "Statement", "clause_ref": "6.1.3",
+     "description": "Necessary controls with justification for inclusion, implementation status, and justification for any Annex A exclusions."},
+    {"title": "Information Security Risk Treatment Plan", "doc_type": "Plan", "clause_ref": "6.1.3",
+     "description": "Risk treatment actions, owners, and risk-owner approval plus acceptance of residual risk."},
+    {"title": "Information Security Objectives", "doc_type": "Register", "clause_ref": "6.2",
+     "description": "Measurable information security objectives, plans to achieve them, and how results are evaluated."},
+    {"title": "Evidence of Competence", "doc_type": "Record", "clause_ref": "7.2",
+     "description": "Records demonstrating the competence of persons whose work affects information security performance."},
+    {"title": "Operational Planning & Control Evidence", "doc_type": "Record", "clause_ref": "8.1",
+     "description": "Evidence giving confidence that ISMS processes have been carried out as planned."},
+    {"title": "Risk Assessment Results", "doc_type": "Record", "clause_ref": "8.2",
+     "description": "Documented results of the information security risk assessments performed at planned intervals or on significant change."},
+    {"title": "Risk Treatment Results", "doc_type": "Record", "clause_ref": "8.3",
+     "description": "Documented results of implementing the information security risk treatment plan."},
+    {"title": "Monitoring & Measurement Results", "doc_type": "Record", "clause_ref": "9.1",
+     "description": "Evidence of monitoring/measurement results used to evaluate information security performance and ISMS effectiveness."},
+    {"title": "Internal Audit Programme & Results", "doc_type": "Record", "clause_ref": "9.2",
+     "description": "Evidence of the internal audit programme(s) and the results of the audits performed."},
+    {"title": "Management Review Results", "doc_type": "Record", "clause_ref": "9.3",
+     "description": "Documented results of top-management reviews, including decisions on improvement and ISMS changes."},
+    {"title": "Nonconformity & Corrective Action Records", "doc_type": "Record", "clause_ref": "10.2",
+     "description": "Records of the nature of nonconformities, actions taken, and the results of corrective action."},
+]
+
+assert len(MANDATORY_DOCUMENTS) == 17, f"Expected 17 mandatory documents, got {len(MANDATORY_DOCUMENTS)}"
+
+
+# Representative interested parties (Clause 4.2) — generic starting set; tailor per organization.
+SAMPLE_INTERESTED_PARTIES: list[dict] = [
+    {"name": "Customers", "party_type": "External", "category": "Customer", "addressed_in_isms": True,
+     "requirements": "Protection of their data, contractual security obligations, and timely breach notification."},
+    {"name": "Regulatory Authorities", "party_type": "External", "category": "Regulator", "addressed_in_isms": True,
+     "requirements": "Compliance with applicable laws and regulations (e.g. data protection, sector-specific rules)."},
+    {"name": "Employees", "party_type": "Internal", "category": "Employee", "addressed_in_isms": True,
+     "requirements": "Clear security policies, awareness and training, and workable, non-disruptive processes."},
+    {"name": "Suppliers & Service Providers", "party_type": "External", "category": "Supplier", "addressed_in_isms": True,
+     "requirements": "Agreed information security requirements in contracts, right-to-audit, and incident reporting channels."},
+    {"name": "Top Management & Owners", "party_type": "Internal", "category": "Owner", "addressed_in_isms": True,
+     "requirements": "Protection of business value, risk kept within appetite, and effective, efficient use of resources."},
+]
+
+
 DEFAULT_ROLES: list[dict] = [
     {"name": "CISO", "description": "Chief Information Security Officer — full access", "permissions": ["*"]},
     {"name": "GRC_Manager", "description": "GRC Manager — manage controls, risks, audits, policies", "permissions": ["controls:*", "risks:*", "audits:*", "policies:*", "soa:*", "assets:*", "evidence:*", "users:read"]},
@@ -390,6 +452,38 @@ async def seed_clauses(session) -> int:
         session.add(ClauseRequirement(**item))
     await session.flush()
     return len(ISMS_CLAUSES)
+
+
+async def seed_documents(session) -> int:
+    """Insert mandatory documented information (Clause 7.5) if the table is empty. Returns count inserted."""
+    from ..models.documented_information import DocumentedInformation
+    from sqlalchemy import select, func
+
+    count = (await session.execute(select(func.count()).select_from(DocumentedInformation))).scalar()
+    if count > 0:
+        return 0
+
+    for i, item in enumerate(MANDATORY_DOCUMENTS, start=1):
+        session.add(DocumentedInformation(
+            ref_id=f"DOC-{i:03d}", mandatory=True, version="1.0", status="Draft", classification="Internal", **item,
+        ))
+    await session.flush()
+    return len(MANDATORY_DOCUMENTS)
+
+
+async def seed_interested_parties(session) -> int:
+    """Insert sample interested parties (Clause 4.2) if the table is empty. Returns count inserted."""
+    from ..models.interested_party import InterestedParty
+    from sqlalchemy import select, func
+
+    count = (await session.execute(select(func.count()).select_from(InterestedParty))).scalar()
+    if count > 0:
+        return 0
+
+    for i, item in enumerate(SAMPLE_INTERESTED_PARTIES, start=1):
+        session.add(InterestedParty(ref_id=f"PARTY-{i:03d}", **item))
+    await session.flush()
+    return len(SAMPLE_INTERESTED_PARTIES)
 
 
 async def seed_roles(session) -> int:

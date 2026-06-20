@@ -8,6 +8,9 @@ import ControlsPage from './pages/ControlsPage'
 import ControlDetailPage from './pages/ControlDetailPage'
 import ClausesPage from './pages/ClausesPage'
 import ClauseDetailPage from './pages/ClauseDetailPage'
+import DocumentsPage from './pages/DocumentsPage'
+import DocumentDetailPage from './pages/DocumentDetailPage'
+import InterestedPartiesPage from './pages/InterestedPartiesPage'
 import RisksPage from './pages/RisksPage'
 import SoAPage from './pages/SoAPage'
 import EvidencePage from './pages/EvidencePage'
@@ -36,6 +39,9 @@ const App: React.FC = () => {
           <Route path="controls/:id" element={<ControlDetailPage />} />
           <Route path="clauses" element={<ClausesPage />} />
           <Route path="clauses/:id" element={<ClauseDetailPage />} />
+          <Route path="documents" element={<DocumentsPage />} />
+          <Route path="documents/:id" element={<DocumentDetailPage />} />
+          <Route path="interested-parties" element={<InterestedPartiesPage />} />
           <Route path="risks" element={<RisksPage />} />
           <Route path="soa" element={<SoAPage />} />
           <Route path="evidence" element={<EvidencePage />} />
