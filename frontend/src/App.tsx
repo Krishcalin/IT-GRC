@@ -6,6 +6,8 @@ import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import ControlsPage from './pages/ControlsPage'
 import ControlDetailPage from './pages/ControlDetailPage'
+import ClausesPage from './pages/ClausesPage'
+import ClauseDetailPage from './pages/ClauseDetailPage'
 import RisksPage from './pages/RisksPage'
 import SoAPage from './pages/SoAPage'
 import EvidencePage from './pages/EvidencePage'
@@ -32,6 +34,8 @@ const App: React.FC = () => {
           <Route index element={<DashboardPage />} />
           <Route path="controls" element={<ControlsPage />} />
           <Route path="controls/:id" element={<ControlDetailPage />} />
+          <Route path="clauses" element={<ClausesPage />} />
+          <Route path="clauses/:id" element={<ClauseDetailPage />} />
           <Route path="risks" element={<RisksPage />} />
           <Route path="soa" element={<SoAPage />} />
           <Route path="evidence" element={<EvidencePage />} />

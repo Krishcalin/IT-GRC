@@ -19,3 +19,9 @@ class DashboardStats(BaseModel):
     risk_posture: dict = {}
     controls_by_status: dict = {}
     controls_by_theme: dict = {}
+    # ISMS management-system clauses (4–10)
+    total_clauses: int = 0
+    conformant_clauses: int = 0
+    isms_conformity_score: float = 0.0
+    clauses_by_status: dict = {}
+    clauses_by_section: dict = {}

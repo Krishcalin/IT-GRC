@@ -3,6 +3,9 @@
 from .auth import Token, TokenPayload, LoginRequest                              # noqa: F401
 from .user import UserCreate, UserUpdate, UserRead, RoleRead                     # noqa: F401
 from .control import ControlCreate, ControlUpdate, ControlRead                   # noqa: F401
+from .clause_requirement import (                                                # noqa: F401
+    ClauseRequirementCreate, ClauseRequirementUpdate, ClauseRequirementRead,
+)
 from .risk import RiskCreate, RiskUpdate, RiskRead                               # noqa: F401
 from .soa import SoACreate, SoAUpdate, SoARead                                  # noqa: F401
 from .evidence import EvidenceCreate, EvidenceRead                               # noqa: F401

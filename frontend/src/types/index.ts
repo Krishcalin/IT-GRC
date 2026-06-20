@@ -33,6 +33,23 @@ export interface Control {
   updated_at: string
 }
 
+export interface ClauseRequirement {
+  id: string
+  clause: string
+  title: string
+  section: string
+  clause_number: number
+  requirement: string
+  documented_info: string | null
+  conformity_status: string
+  implementation_notes: string | null
+  owner_id: string | null
+  owner: User | null
+  review_date: string | null
+  created_at: string
+  updated_at: string
+}
+
 export interface Risk {
   id: string
   ref_id: string
@@ -183,6 +200,11 @@ export interface DashboardStats {
   risk_posture: Record<string, number>
   controls_by_status: Record<string, number>
   controls_by_theme: Record<string, number>
+  total_clauses: number
+  conformant_clauses: number
+  isms_conformity_score: number
+  clauses_by_status: Record<string, number>
+  clauses_by_section: Record<string, number>
 }
 
 export interface ActivityEntry {

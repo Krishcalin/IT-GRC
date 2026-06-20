@@ -7,6 +7,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![ISO 27001](https://img.shields.io/badge/ISO_27001-2022-blue)](https://www.iso.org/standard/27001)
 [![Controls](https://img.shields.io/badge/Annex_A_Controls-93-orange)](#controls-library)
+[![ISMS Clauses](https://img.shields.io/badge/ISMS_Clauses_4--10-30-9cf)](#isms-clause-conformity-clauses-410)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](#quick-start)
 
 An **open-source IT Governance, Risk & Compliance (GRC) portal** purpose-built for **ISO 27001:2022** certification management. Clone it, deploy internally with Docker Compose, integrate with your corporate IdP (SAML/OIDC), and start managing your ISMS.
@@ -20,6 +21,13 @@ An **open-source IT Governance, Risk & Compliance (GRC) portal** purpose-built f
 - 4 themes: Organizational (37), People (8), Physical (14), Technological (34)
 - Track implementation status, assign owners, set review dates
 - Link controls to risks, evidence, and audit findings
+
+### ISMS Clause Conformity (Clauses 4–10)
+- All **30 mandatory management-system requirements** from ISO 27001:2022 Clauses 4–10 pre-loaded
+- Organized by section: Context, Leadership, Planning, Support, Operation, Performance evaluation, Improvement
+- Track conformity status (Not Assessed → In Progress → Partially Conformant → Conformant / Nonconformant), assign owners, set review dates
+- Each clause flags the **mandatory documented information** it requires (scope, policy, SoA, objectives, audit/management-review records, etc.)
+- Distinct from Annex A controls — per Clause 1 (Scope), these clauses cannot be excluded when claiming conformity
 
 ### Risk Register
 - Create and manage information security risks with full lifecycle tracking
@@ -61,6 +69,7 @@ An **open-source IT Governance, Risk & Compliance (GRC) portal** purpose-built f
 ### Dashboard
 - Real-time compliance posture score
 - Controls by status and theme (charts)
+- ISMS clause conformity score + clauses by conformity and section (charts)
 - Open risks and critical findings at a glance
 - Recent activity feed
 
@@ -132,6 +141,7 @@ Use the credentials from your `.env` file:
 On first startup, the system automatically:
 - Creates all database tables
 - Seeds 93 ISO 27001:2022 Annex A controls
+- Seeds 30 ISO 27001:2022 ISMS clause requirements (Clauses 4–10)
 - Creates 6 default RBAC roles
 - Creates the first superuser account
 
@@ -173,7 +183,8 @@ IT-GRC/
 │   ├── app/
 │   │   ├── api/             # FastAPI route handlers
 │   │   │   ├── auth.py      #   Authentication & user management
-│   │   │   ├── controls.py  #   ISO 27001 controls CRUD
+│   │   │   ├── controls.py  #   ISO 27001 Annex A controls CRUD
+│   │   │   ├── clauses.py   #   ISMS clauses 4–10 conformity CRUD
 │   │   │   ├── risks.py     #   Risk register CRUD
 │   │   │   ├── soa.py       #   Statement of Applicability
 │   │   │   ├── evidence.py  #   Evidence upload/download
@@ -221,6 +232,26 @@ IT-GRC/
 
 ---
 
+## ISO 27001:2022 Clauses 4–10 Coverage
+
+The mandatory management-system requirements an organization is certified against
+(distinct from the Annex A controls). All 30 are pre-loaded and tracked for conformity.
+
+| Section | Requirements | Clauses |
+|---------|-------------|---------|
+| **4 Context of the organization** | 4 | 4.1 – 4.4 |
+| **5 Leadership** | 3 | 5.1 – 5.3 |
+| **6 Planning** | 5 | 6.1.1, 6.1.2, 6.1.3, 6.2, 6.3 |
+| **7 Support** | 7 | 7.1 – 7.4, 7.5.1 – 7.5.3 |
+| **8 Operation** | 3 | 8.1 – 8.3 |
+| **9 Performance evaluation** | 6 | 9.1, 9.2.1, 9.2.2, 9.3.1 – 9.3.3 |
+| **10 Improvement** | 2 | 10.1, 10.2 |
+| **Total** | **30** | |
+
+> Requirement text in the app is paraphrased for tracking purposes. ISO/IEC 27001:2022 is the authoritative source for the normative wording.
+
+---
+
 ## RBAC Roles
 
 | Role | Permissions |
@@ -245,7 +276,8 @@ Key API endpoints:
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | `/api/v1/auth/login` | Authenticate and get JWT token |
-| GET | `/api/v1/controls` | List ISO 27001 controls |
+| GET | `/api/v1/controls` | List ISO 27001 Annex A controls |
+| GET | `/api/v1/clauses` | List ISMS clause requirements (4–10) |
 | GET | `/api/v1/risks` | List risks |
 | POST | `/api/v1/risks` | Create a new risk |
 | GET | `/api/v1/soa` | List Statement of Applicability |

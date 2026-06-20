@@ -28,7 +28,10 @@ const DashboardPage: React.FC = () => {
 
   const statusData = Object.entries(stats.controls_by_status).map(([name, value]) => ({ name, value }))
   const themeData = Object.entries(stats.controls_by_theme).map(([name, value]) => ({ name, value }))
+  const clauseStatusData = Object.entries(stats.clauses_by_status || {}).map(([name, value]) => ({ name, value }))
+  const clauseSectionData = Object.entries(stats.clauses_by_section || {}).map(([name, value]) => ({ name, value }))
   const scoreColor = stats.compliance_score >= 80 ? 'text-emerald-600' : stats.compliance_score >= 50 ? 'text-amber-600' : 'text-red-600'
+  const ismsColor = stats.isms_conformity_score >= 80 ? 'text-emerald-600' : stats.isms_conformity_score >= 50 ? 'text-amber-600' : 'text-red-600'
 
   return (
     <div className="p-8 space-y-8">
@@ -69,6 +72,47 @@ const DashboardPage: React.FC = () => {
               </BarChart>
             </ResponsiveContainer>
           ) : <p className="text-sm text-gray-400 py-12 text-center">No data</p>}
+        </div>
+      </div>
+
+      {/* ISMS management-system clauses (4–10) */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">ISMS Management-System Clauses (4–10)</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard label="Mandatory Clauses" value={stats.total_clauses} color="text-indigo-600" />
+          <StatCard label="Conformant" value={stats.conformant_clauses} color="text-emerald-600" />
+          <StatCard label="ISMS Conformity" value={`${stats.isms_conformity_score}%`} color={ismsColor} />
+          <div className="card flex items-center">
+            <p className="text-sm text-gray-500">Per Clause 1 (Scope), none of Clauses 4–10 may be excluded when claiming conformity.</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          <div className="card">
+            <h3 className="text-sm font-semibold text-gray-700 mb-4">Clause Conformity</h3>
+            {clauseStatusData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={260}>
+                <PieChart>
+                  <Pie data={clauseStatusData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
+                    {clauseStatusData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : <p className="text-sm text-gray-400 py-12 text-center">No data</p>}
+          </div>
+          <div className="card">
+            <h3 className="text-sm font-semibold text-gray-700 mb-4">Clauses by Section</h3>
+            {clauseSectionData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={clauseSectionData} layout="vertical" margin={{ left: 40 }}>
+                  <XAxis type="number" allowDecimals={false} />
+                  <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={140} />
+                  <Tooltip />
+                  <Bar dataKey="value" fill="#10b981" radius={[0, 6, 6, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : <p className="text-sm text-gray-400 py-12 text-center">No data</p>}
+          </div>
         </div>
       </div>
 

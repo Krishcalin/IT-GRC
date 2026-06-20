@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 async def _run_seeds() -> None:
     """Seed the database with ISO 27001 controls, default roles, and first superuser."""
-    from .seed.iso27001 import seed_controls, seed_roles
+    from .seed.iso27001 import seed_controls, seed_clauses, seed_roles
     from .models.user import User
     from passlib.context import CryptContext
     from sqlalchemy import select, func
@@ -32,6 +32,10 @@ async def _run_seeds() -> None:
         n_controls = await seed_controls(session)
         if n_controls:
             logger.info("Seeded %d ISO 27001:2022 Annex A controls", n_controls)
+
+        n_clauses = await seed_clauses(session)
+        if n_clauses:
+            logger.info("Seeded %d ISO 27001:2022 management-system clauses (4-10)", n_clauses)
 
         # Create first superuser if no users exist
         count = (await session.execute(select(func.count()).select_from(User))).scalar()
@@ -85,6 +89,7 @@ app.add_middleware(
 # ── Register API routers ──────────────────────────────────
 from .api.auth import router as auth_router        # noqa: E402
 from .api.controls import router as controls_router  # noqa: E402
+from .api.clauses import router as clauses_router     # noqa: E402
 from .api.risks import router as risks_router        # noqa: E402
 from .api.soa import router as soa_router            # noqa: E402
 from .api.evidence import router as evidence_router  # noqa: E402
@@ -95,6 +100,7 @@ from .api.dashboard import router as dashboard_router  # noqa: E402
 
 app.include_router(auth_router, prefix=f"{settings.API_V1_PREFIX}/auth", tags=["Auth"])
 app.include_router(controls_router, prefix=f"{settings.API_V1_PREFIX}/controls", tags=["Controls"])
+app.include_router(clauses_router, prefix=f"{settings.API_V1_PREFIX}/clauses", tags=["ISMS Clauses"])
 app.include_router(risks_router, prefix=f"{settings.API_V1_PREFIX}/risks", tags=["Risks"])
 app.include_router(soa_router, prefix=f"{settings.API_V1_PREFIX}/soa", tags=["Statement of Applicability"])
 app.include_router(evidence_router, prefix=f"{settings.API_V1_PREFIX}/evidence", tags=["Evidence"])

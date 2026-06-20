@@ -20,12 +20,12 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 - `schemas/` — Pydantic v2 request/response schemas (Create/Update/Read per model)
 - `api/` — FastAPI route handlers (one file per module)
 - `api/deps.py` — Shared dependencies (get_db, get_current_user, require_superuser)
-- `seed/iso27001.py` — All 93 Annex A controls + 6 RBAC roles
+- `seed/iso27001.py` — All 93 Annex A controls + 30 ISMS clauses (4–10) + 6 RBAC roles
 
 ### Frontend (`frontend/src/`)
 - `App.tsx` — Root with AuthProvider + React Router
 - `components/` — Layout, StatusBadge, DataTable (reusable)
-- `pages/` — One page per module (Dashboard, Controls, Risks, SoA, Evidence, Audits, Policies, Assets, Login)
+- `pages/` — One page per module (Dashboard, Controls, ISMS Clauses, Risks, SoA, Evidence, Audits, Policies, Assets, Login)
 - `services/api.ts` — Axios client with JWT interceptor
 - `hooks/useAuth.ts` — Auth context (login, logout, current user)
 - `types/index.ts` — TypeScript interfaces matching backend schemas
@@ -36,6 +36,7 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 | User | users | email, full_name, hashed_password, is_superuser, auth_provider |
 | Role | roles | name, description, permissions (JSON) |
 | Control | controls | clause (A.5.1), title, description, theme, status, owner_id |
+| ClauseRequirement | clause_requirements | clause (6.1.2), title, section, clause_number, requirement, documented_info, conformity_status, owner_id |
 | Risk | risks | ref_id (RISK-001), likelihood×impact scoring, treatment, status |
 | SoAEntry | soa_entries | control_id (unique), applicable, implementation_status |
 | Evidence | evidence | file_name, file_path, linked to control/risk/audit/policy |
@@ -64,6 +65,24 @@ All API routes under `/api/v1/`. Swagger at `/docs`.
 - A.8 Technological (34): A.8.1 – A.8.34
 
 Auto-seeded on first startup. Controls are read-only by default (update status/owner via PUT).
+
+## ISO 27001:2022 Clauses 4–10 (mandatory ISMS requirements)
+30 management-system requirements seeded into `clause_requirements`, tracked for
+conformity separately from Annex A controls. Per Clause 1 (Scope), none may be
+excluded when claiming conformity, so there is no "Not Applicable" status.
+- 4 Context of the organization (4): 4.1–4.4
+- 5 Leadership (3): 5.1–5.3
+- 6 Planning (5): 6.1.1, 6.1.2, 6.1.3, 6.2, 6.3
+- 7 Support (7): 7.1–7.4, 7.5.1–7.5.3
+- 8 Operation (3): 8.1–8.3
+- 9 Performance evaluation (6): 9.1, 9.2.1, 9.2.2, 9.3.1–9.3.3
+- 10 Improvement (2): 10.1, 10.2
+
+Each clause carries the (paraphrased) requirement text, the mandatory documented
+information it demands (where applicable), a `conformity_status` (Not Assessed /
+In Progress / Partially Conformant / Conformant / Nonconformant), owner, and
+review date. API at `/api/v1/clauses`; UI at `/clauses`. Requirement text is
+paraphrased — ISO/IEC 27001:2022 is the authoritative source.
 
 ## Key Patterns
 - All models use UUID primary keys

@@ -201,6 +201,157 @@ ANNEX_A_CONTROLS: list[dict] = [
 assert len(ANNEX_A_CONTROLS) == 93, f"Expected 93 controls, got {len(ANNEX_A_CONTROLS)}"
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+#  ISO/IEC 27001:2022 mandatory management-system requirements (Clauses 4–10)
+#
+#  These are the normative ISMS "shall" requirements an organization is audited
+#  against — distinct from the Annex A controls above. Per Clause 1 (Scope),
+#  excluding any of Clauses 4–10 is NOT acceptable when claiming conformity, so
+#  these requirements have no "Not Applicable" status.
+#
+#  Requirement text below is paraphrased for the application; it is not a
+#  reproduction of the copyrighted standard. Refer to ISO/IEC 27001:2022 for the
+#  authoritative normative wording.
+# ─────────────────────────────────────────────────────────────────────────────
+ISMS_CLAUSES: list[dict] = [
+    # ── 4 Context of the organization ─────────────────────────
+    {"clause": "4.1", "clause_number": 4, "section": "Context of the organization",
+     "title": "Understanding the organization and its context",
+     "requirement": "Determine the external and internal issues relevant to the organization's purpose that affect its ability to achieve the intended outcomes of the ISMS.",
+     "documented_info": None},
+    {"clause": "4.2", "clause_number": 4, "section": "Context of the organization",
+     "title": "Understanding the needs and expectations of interested parties",
+     "requirement": "Identify the interested parties relevant to the ISMS, their relevant requirements (including legal, regulatory, and contractual obligations), and which of those requirements will be addressed through the ISMS.",
+     "documented_info": None},
+    {"clause": "4.3", "clause_number": 4, "section": "Context of the organization",
+     "title": "Determining the scope of the ISMS",
+     "requirement": "Determine the boundaries and applicability of the ISMS, taking account of internal/external issues, interested-party requirements, and interfaces and dependencies with other organizations.",
+     "documented_info": "ISMS scope (maintained as documented information)."},
+    {"clause": "4.4", "clause_number": 4, "section": "Context of the organization",
+     "title": "Information security management system",
+     "requirement": "Establish, implement, maintain, and continually improve the ISMS, including the processes needed and their interactions, in accordance with the standard.",
+     "documented_info": None},
+
+    # ── 5 Leadership ──────────────────────────────────────────
+    {"clause": "5.1", "clause_number": 5, "section": "Leadership",
+     "title": "Leadership and commitment",
+     "requirement": "Top management demonstrates leadership and commitment by aligning the policy and objectives with strategy, integrating ISMS requirements into business processes, providing resources, communicating the importance of information security, ensuring intended outcomes, directing and supporting personnel, promoting continual improvement, and supporting other management roles.",
+     "documented_info": None},
+    {"clause": "5.2", "clause_number": 5, "section": "Leadership",
+     "title": "Policy",
+     "requirement": "Top management establishes an information security policy that is appropriate to the organization, provides a framework for objectives, and commits to satisfying applicable requirements and to continual improvement; the policy is documented, communicated internally, and available to interested parties as appropriate.",
+     "documented_info": "Information security policy."},
+    {"clause": "5.3", "clause_number": 5, "section": "Leadership",
+     "title": "Organizational roles, responsibilities and authorities",
+     "requirement": "Assign and communicate responsibilities and authorities for ensuring the ISMS conforms to the standard and for reporting on ISMS performance to top management.",
+     "documented_info": None},
+
+    # ── 6 Planning ────────────────────────────────────────────
+    {"clause": "6.1.1", "clause_number": 6, "section": "Planning",
+     "title": "Actions to address risks and opportunities — General",
+     "requirement": "Considering the issues (4.1) and requirements (4.2), determine the risks and opportunities to be addressed to ensure the ISMS achieves its outcomes, to prevent or reduce undesired effects, and to achieve continual improvement; plan the actions and how to integrate, implement, and evaluate their effectiveness.",
+     "documented_info": None},
+    {"clause": "6.1.2", "clause_number": 6, "section": "Planning",
+     "title": "Information security risk assessment",
+     "requirement": "Define and apply a risk assessment process with risk-acceptance and assessment criteria that yields consistent, valid, comparable results; identify risks to confidentiality, integrity, and availability and their owners; analyze consequences and likelihood to determine risk levels; and evaluate and prioritize risks for treatment.",
+     "documented_info": "Information security risk assessment process."},
+    {"clause": "6.1.3", "clause_number": 6, "section": "Planning",
+     "title": "Information security risk treatment",
+     "requirement": "Define and apply a risk treatment process: select treatment options, determine the necessary controls, compare them against Annex A to verify none are omitted, produce a Statement of Applicability (with justifications and implementation status), formulate a risk treatment plan, and obtain risk-owner approval and acceptance of residual risk.",
+     "documented_info": "Statement of Applicability; risk treatment plan; risk treatment process."},
+    {"clause": "6.2", "clause_number": 6, "section": "Planning",
+     "title": "Information security objectives and planning to achieve them",
+     "requirement": "Establish measurable, communicated information security objectives consistent with the policy, monitored and updated as appropriate; plan what will be done, the resources, who is responsible, when it will be completed, and how results are evaluated.",
+     "documented_info": "Information security objectives."},
+    {"clause": "6.3", "clause_number": 6, "section": "Planning",
+     "title": "Planning of changes",
+     "requirement": "When the organization determines a need for changes to the ISMS, carry out those changes in a planned manner.",
+     "documented_info": None},
+
+    # ── 7 Support ─────────────────────────────────────────────
+    {"clause": "7.1", "clause_number": 7, "section": "Support",
+     "title": "Resources",
+     "requirement": "Determine and provide the resources needed to establish, implement, maintain, and continually improve the ISMS.",
+     "documented_info": None},
+    {"clause": "7.2", "clause_number": 7, "section": "Support",
+     "title": "Competence",
+     "requirement": "Determine the necessary competence of persons whose work affects information security performance, ensure their competence through education, training, or experience, take action to close gaps and evaluate its effectiveness.",
+     "documented_info": "Evidence of competence."},
+    {"clause": "7.3", "clause_number": 7, "section": "Support",
+     "title": "Awareness",
+     "requirement": "Ensure persons doing work under the organization's control are aware of the information security policy, their contribution to ISMS effectiveness, and the implications of not conforming to ISMS requirements.",
+     "documented_info": None},
+    {"clause": "7.4", "clause_number": 7, "section": "Support",
+     "title": "Communication",
+     "requirement": "Determine the internal and external communications relevant to the ISMS — on what, when, with whom, and how to communicate.",
+     "documented_info": None},
+    {"clause": "7.5.1", "clause_number": 7, "section": "Support",
+     "title": "Documented information — General",
+     "requirement": "Include in the ISMS the documented information required by the standard and that determined by the organization to be necessary for ISMS effectiveness.",
+     "documented_info": "Documented information required by the standard and by the organization."},
+    {"clause": "7.5.2", "clause_number": 7, "section": "Support",
+     "title": "Creating and updating",
+     "requirement": "When creating and updating documented information, ensure appropriate identification and description, format and media, and review and approval for suitability and adequacy.",
+     "documented_info": None},
+    {"clause": "7.5.3", "clause_number": 7, "section": "Support",
+     "title": "Control of documented information",
+     "requirement": "Control documented information so it is available and adequately protected; address distribution, access, retrieval, storage, version control, retention and disposition, and control of documents of external origin.",
+     "documented_info": None},
+
+    # ── 8 Operation ───────────────────────────────────────────
+    {"clause": "8.1", "clause_number": 8, "section": "Operation",
+     "title": "Operational planning and control",
+     "requirement": "Plan, implement, and control the processes needed to meet requirements and the Clause 6 actions by establishing process criteria and controlling the processes accordingly; control planned changes, review unintended changes, and ensure externally provided processes are controlled.",
+     "documented_info": "Evidence that processes have been carried out as planned."},
+    {"clause": "8.2", "clause_number": 8, "section": "Operation",
+     "title": "Information security risk assessment",
+     "requirement": "Perform information security risk assessments at planned intervals or when significant changes are proposed or occur, applying the criteria established in 6.1.2.",
+     "documented_info": "Results of the information security risk assessments."},
+    {"clause": "8.3", "clause_number": 8, "section": "Operation",
+     "title": "Information security risk treatment",
+     "requirement": "Implement the information security risk treatment plan.",
+     "documented_info": "Results of the information security risk treatment."},
+
+    # ── 9 Performance evaluation ──────────────────────────────
+    {"clause": "9.1", "clause_number": 9, "section": "Performance evaluation",
+     "title": "Monitoring, measurement, analysis and evaluation",
+     "requirement": "Determine what to monitor and measure, the methods, and when and by whom monitoring/measurement and analysis/evaluation are performed; evaluate information security performance and the effectiveness of the ISMS.",
+     "documented_info": "Evidence of the monitoring and measurement results."},
+    {"clause": "9.2.1", "clause_number": 9, "section": "Performance evaluation",
+     "title": "Internal audit — General",
+     "requirement": "Conduct internal audits at planned intervals to determine whether the ISMS conforms to the organization's own requirements and to the standard, and whether it is effectively implemented and maintained.",
+     "documented_info": None},
+    {"clause": "9.2.2", "clause_number": 9, "section": "Performance evaluation",
+     "title": "Internal audit programme",
+     "requirement": "Plan, establish, implement, and maintain audit programme(s) covering frequency, methods, responsibilities, planning, and reporting; define audit criteria and scope, select objective and impartial auditors, and report results to relevant management.",
+     "documented_info": "Evidence of the audit programme(s) and audit results."},
+    {"clause": "9.3.1", "clause_number": 9, "section": "Performance evaluation",
+     "title": "Management review — General",
+     "requirement": "Top management reviews the ISMS at planned intervals to ensure its continuing suitability, adequacy, and effectiveness.",
+     "documented_info": None},
+    {"clause": "9.3.2", "clause_number": 9, "section": "Performance evaluation",
+     "title": "Management review inputs",
+     "requirement": "The management review considers the status of prior actions, changes in internal/external issues and interested-party needs, performance feedback (nonconformities and corrective actions, monitoring and measurement results, audit results, fulfilment of objectives), feedback from interested parties, risk assessment results and risk-treatment-plan status, and opportunities for continual improvement.",
+     "documented_info": None},
+    {"clause": "9.3.3", "clause_number": 9, "section": "Performance evaluation",
+     "title": "Management review results",
+     "requirement": "The results of the management review include decisions on continual improvement opportunities and any needs for changes to the ISMS.",
+     "documented_info": "Evidence of the results of management reviews."},
+
+    # ── 10 Improvement ────────────────────────────────────────
+    {"clause": "10.1", "clause_number": 10, "section": "Improvement",
+     "title": "Continual improvement",
+     "requirement": "Continually improve the suitability, adequacy, and effectiveness of the ISMS.",
+     "documented_info": None},
+    {"clause": "10.2", "clause_number": 10, "section": "Improvement",
+     "title": "Nonconformity and corrective action",
+     "requirement": "When a nonconformity occurs, react to it and correct it, deal with the consequences, evaluate the need to eliminate its causes, implement any action needed, review the effectiveness of corrective action, and make changes to the ISMS if necessary; corrective actions are appropriate to the effects encountered.",
+     "documented_info": "Evidence of the nature of nonconformities, actions taken, and results of corrective action."},
+]
+
+assert len(ISMS_CLAUSES) == 30, f"Expected 30 ISMS clause requirements, got {len(ISMS_CLAUSES)}"
+
+
 DEFAULT_ROLES: list[dict] = [
     {"name": "CISO", "description": "Chief Information Security Officer — full access", "permissions": ["*"]},
     {"name": "GRC_Manager", "description": "GRC Manager — manage controls, risks, audits, policies", "permissions": ["controls:*", "risks:*", "audits:*", "policies:*", "soa:*", "assets:*", "evidence:*", "users:read"]},
@@ -224,6 +375,21 @@ async def seed_controls(session) -> int:
         session.add(Control(**item))
     await session.flush()
     return len(ANNEX_A_CONTROLS)
+
+
+async def seed_clauses(session) -> int:
+    """Insert ISMS clause requirements (Clauses 4–10) if the table is empty. Returns count inserted."""
+    from ..models.clause_requirement import ClauseRequirement
+    from sqlalchemy import select, func
+
+    count = (await session.execute(select(func.count()).select_from(ClauseRequirement))).scalar()
+    if count > 0:
+        return 0
+
+    for item in ISMS_CLAUSES:
+        session.add(ClauseRequirement(**item))
+    await session.flush()
+    return len(ISMS_CLAUSES)
 
 
 async def seed_roles(session) -> int:

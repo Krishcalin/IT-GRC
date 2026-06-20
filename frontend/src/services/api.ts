@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { User, Control, Risk, SoAEntry, Evidence, Audit, AuditFinding, Policy, Asset, DashboardStats, ActivityEntry } from '../types'
+import type { User, Control, ClauseRequirement, Risk, SoAEntry, Evidence, Audit, AuditFinding, Policy, Asset, DashboardStats, ActivityEntry } from '../types'
 
 const api = axios.create({ baseURL: '/api/v1' })
 
@@ -29,6 +29,11 @@ export const getMe = () => api.get<User>('/auth/me')
 export const getControls = (params?: Record<string, string>) => api.get<Control[]>('/controls', { params })
 export const getControl = (id: string) => api.get<Control>(`/controls/${id}`)
 export const updateControl = (id: string, data: Partial<Control>) => api.put<Control>(`/controls/${id}`, data)
+
+// ISMS Clauses (4–10)
+export const getClauses = (params?: Record<string, string>) => api.get<ClauseRequirement[]>('/clauses', { params })
+export const getClause = (id: string) => api.get<ClauseRequirement>(`/clauses/${id}`)
+export const updateClause = (id: string, data: Partial<ClauseRequirement>) => api.put<ClauseRequirement>(`/clauses/${id}`, data)
 
 // Risks
 export const getRisks = (params?: Record<string, string>) => api.get<Risk[]>('/risks', { params })

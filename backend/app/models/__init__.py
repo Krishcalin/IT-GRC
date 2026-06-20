@@ -2,6 +2,7 @@
 
 from .user import User, Role, UserRole          # noqa: F401
 from .control import Control                     # noqa: F401
+from .clause_requirement import ClauseRequirement  # noqa: F401
 from .risk import Risk, RiskControl              # noqa: F401
 from .soa import SoAEntry                        # noqa: F401
 from .evidence import Evidence                   # noqa: F401

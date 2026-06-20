@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_db
 from ..models.control import Control
+from ..models.clause_requirement import ClauseRequirement
 from ..models.risk import Risk
 from ..models.audit import Audit, AuditFinding
 from ..models.policy import Policy
@@ -39,6 +40,21 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
         select(Control.theme, func.count()).group_by(Control.theme)
     )).all()
     controls_by_theme = {row[0]: row[1] for row in theme_rows}
+
+    # ISMS management-system clauses (4–10)
+    total_clauses = (await db.execute(select(func.count()).select_from(ClauseRequirement))).scalar() or 0
+    conformant_clauses = (await db.execute(
+        select(func.count()).select_from(ClauseRequirement).where(ClauseRequirement.conformity_status == "Conformant")
+    )).scalar() or 0
+    clause_status_rows = (await db.execute(
+        select(ClauseRequirement.conformity_status, func.count()).group_by(ClauseRequirement.conformity_status)
+    )).all()
+    clauses_by_status = {row[0]: row[1] for row in clause_status_rows}
+    clause_section_rows = (await db.execute(
+        select(ClauseRequirement.section, func.count()).group_by(ClauseRequirement.section)
+    )).all()
+    clauses_by_section = {row[0]: row[1] for row in clause_section_rows}
+    isms_conformity_score = round((conformant_clauses / total_clauses * 100) if total_clauses > 0 else 0, 1)
 
     # Risks
     total_risks = (await db.execute(select(func.count()).select_from(Risk))).scalar() or 0
@@ -90,6 +106,11 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
         risk_posture=risk_posture,
         controls_by_status=controls_by_status,
         controls_by_theme=controls_by_theme,
+        total_clauses=total_clauses,
+        conformant_clauses=conformant_clauses,
+        isms_conformity_score=isms_conformity_score,
+        clauses_by_status=clauses_by_status,
+        clauses_by_section=clauses_by_section,
     )
 
 
