@@ -33,6 +33,9 @@ const DashboardPage: React.FC = () => {
   const scoreColor = stats.compliance_score >= 80 ? 'text-emerald-600' : stats.compliance_score >= 50 ? 'text-amber-600' : 'text-red-600'
   const ismsColor = stats.isms_conformity_score >= 80 ? 'text-emerald-600' : stats.isms_conformity_score >= 50 ? 'text-amber-600' : 'text-red-600'
   const docColor = stats.document_readiness_score >= 80 ? 'text-emerald-600' : stats.document_readiness_score >= 50 ? 'text-amber-600' : 'text-red-600'
+  const objectiveStatusData = Object.entries(stats.objectives_by_status || {}).map(([name, value]) => ({ name, value }))
+  const metricRagData = Object.entries(stats.metrics_by_rag || {}).map(([name, value]) => ({ name, value }))
+  const RAG_COLORS: Record<string, string> = { 'On Target': '#10b981', 'Near Target': '#f59e0b', 'Off Target': '#ef4444', 'No Data': '#9ca3af' }
 
   return (
     <div className="p-8 space-y-8">
@@ -125,6 +128,45 @@ const DashboardPage: React.FC = () => {
           <StatCard label="Mandatory Documents" value={stats.mandatory_documents} color="text-indigo-600" />
           <StatCard label="Approved (Mandatory)" value={stats.approved_mandatory_documents} color="text-emerald-600" />
           <StatCard label="Interested Parties" value={stats.total_interested_parties} color="text-gray-700" />
+        </div>
+      </div>
+
+      {/* ISMS objectives (6.2) + metrics / KxI (9.1) */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">ISMS Objectives &amp; KPIs</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard label="IS Objectives" value={stats.total_objectives} color="text-indigo-600" />
+          <StatCard label="Achieved" value={stats.achieved_objectives} color="text-emerald-600" />
+          <StatCard label="Metrics (KPI/KRI/KCI)" value={stats.total_metrics} color="text-gray-700" />
+          <StatCard label="On-Target Metrics" value={stats.on_target_metrics} color="text-emerald-600" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          <div className="card">
+            <h3 className="text-sm font-semibold text-gray-700 mb-4">Objectives by Status</h3>
+            {objectiveStatusData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={objectiveStatusData}>
+                  <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip />
+                  <Bar dataKey="value" fill="#6366f1" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : <p className="text-sm text-gray-400 py-12 text-center">No data</p>}
+          </div>
+          <div className="card">
+            <h3 className="text-sm font-semibold text-gray-700 mb-4">Metric RAG Status</h3>
+            {metricRagData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={260}>
+                <PieChart>
+                  <Pie data={metricRagData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
+                    {metricRagData.map((d, i) => <Cell key={i} fill={RAG_COLORS[d.name] || COLORS[i % COLORS.length]} />)}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : <p className="text-sm text-gray-400 py-12 text-center">No data</p>}
+          </div>
         </div>
       </div>
 

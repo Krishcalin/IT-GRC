@@ -32,3 +32,11 @@ class DashboardStats(BaseModel):
     document_readiness_score: float = 0.0
     documents_by_status: dict = {}
     total_interested_parties: int = 0
+    # IS objectives (Clause 6.2) and metrics (Clause 9.1)
+    total_objectives: int = 0
+    achieved_objectives: int = 0
+    objectives_by_status: dict = {}
+    total_metrics: int = 0
+    on_target_metrics: int = 0
+    metrics_by_rag: dict = {}
+    metrics_by_type: dict = {}

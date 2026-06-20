@@ -5,6 +5,8 @@ from .control import Control                     # noqa: F401
 from .clause_requirement import ClauseRequirement  # noqa: F401
 from .documented_information import DocumentedInformation  # noqa: F401
 from .interested_party import InterestedParty             # noqa: F401
+from .objective import Objective                          # noqa: F401
+from .metric import Metric                                # noqa: F401
 from .risk import Risk, RiskControl              # noqa: F401
 from .soa import SoAEntry                        # noqa: F401
 from .evidence import Evidence                   # noqa: F401

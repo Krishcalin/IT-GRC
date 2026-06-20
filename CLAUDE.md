@@ -18,14 +18,14 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 - `database.py` — Async SQLAlchemy engine + session factory + Base
 - `models/` — SQLAlchemy ORM models (all UUID PKs, timezone-aware timestamps)
 - `schemas/` — Pydantic v2 request/response schemas (Create/Update/Read per model)
-- `api/` — FastAPI route handlers, one file per module: `auth`, `controls`, `clauses`, `documents`, `interested_parties`, `risks`, `soa`, `evidence`, `audits`, `policies`, `assets`, `dashboard`
+- `api/` — FastAPI route handlers, one file per module: `auth`, `controls`, `clauses`, `documents`, `interested_parties`, `objectives`, `metrics`, `risks`, `soa`, `evidence`, `audits`, `policies`, `assets`, `dashboard`
 - `api/deps.py` — Shared dependencies (get_db, get_current_user, require_superuser)
-- `seed/iso27001.py` — 93 Annex A controls + 30 ISMS clauses (4–10) + 17 mandatory documents + sample interested parties + 6 RBAC roles
+- `seed/iso27001.py` — 93 Annex A controls + 30 ISMS clauses (4–10) + 17 mandatory documents + sample interested parties + sample objectives & KPI/KRI/KCI metrics + 6 RBAC roles
 
 ### Frontend (`frontend/src/`)
 - `App.tsx` — Root with AuthProvider + React Router
-- `components/` — `Layout` (sidebar shell) and `StatusBadge` (status/theme/conformity pill)
-- `pages/` — One page per module (Dashboard, Controls, ISMS Clauses, Interested Parties, Risks, SoA, Evidence, Documents, Audits, Policies, Assets, Login) plus detail pages (`ControlDetailPage`, `ClauseDetailPage`, `DocumentDetailPage`, `AuditDetailPage`)
+- `components/` — `Layout` (sidebar shell) and `StatusBadge` (status/theme/conformity/RAG pill)
+- `pages/` — One page per module (Dashboard, Controls, ISMS Clauses, Interested Parties, IS Objectives, Metrics, Risks, SoA, Evidence, Documents, Audits, Policies, Assets, Login) plus detail pages (`ControlDetailPage`, `ClauseDetailPage`, `DocumentDetailPage`, `ObjectiveDetailPage`, `MetricDetailPage`, `AuditDetailPage`)
 - `services/api.ts` — Axios client with JWT interceptor
 - `hooks/useAuth.ts` — Auth context (login, logout, current user)
 - `types/index.ts` — TypeScript interfaces matching backend schemas
@@ -39,6 +39,8 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 | ClauseRequirement | clause_requirements | clause (6.1.2), title, section, clause_number, requirement, documented_info, conformity_status, owner_id |
 | DocumentedInformation | documented_information | ref_id (DOC-001), title, doc_type, clause_ref, mandatory, version, status, classification, owner/approver, review dates |
 | InterestedParty | interested_parties | ref_id (PARTY-001), name, party_type, category, requirements, addressed_in_isms |
+| Objective | objectives | ref_id (OBJ-001), title, clause_ref (6.2), measure, target/current_value, status, owner_id, metrics[] |
+| Metric | metrics | ref_id (MET-001), name, metric_type (KPI/KRI/KCI), objective_id, target/current_value, direction, frequency, rag (derived) |
 | Risk | risks | ref_id (RISK-001), likelihood×impact scoring, treatment, status |
 | SoAEntry | soa_entries | control_id (unique), applicable, implementation_status |
 | Evidence | evidence | file_name, file_path, linked to control/risk/audit/policy |
@@ -66,6 +68,8 @@ All API routes under `/api/v1/`. Swagger at `/docs`, ReDoc at `/redoc`, health a
 | `/clauses` | list / get / create / update / delete (ISMS Clauses 4–10) |
 | `/documents` | list / get / create / update / delete (Documented Information 7.5) |
 | `/interested-parties` | list / get / create / update / delete (Interested Parties 4.2) |
+| `/objectives` | list / get / create / update / delete (IS Objectives 6.2; embeds metrics) |
+| `/metrics` | list / get / create / update / delete (KPI/KRI/KCI 9.1; derived RAG) |
 | `/risks` | list / get / create / update / delete |
 | `/soa` | list / create / update |
 | `/evidence` | list / upload / download |
@@ -77,7 +81,7 @@ All API routes under `/api/v1/`. Swagger at `/docs`, ReDoc at `/redoc`, health a
 `/dashboard/stats` returns control posture (by status/theme), risk posture, ISMS
 clause conformity (total, conformant, conformity score, by status/section),
 documented-information readiness (mandatory vs approved, by status), interested-party
-count, the compliance score, and module counts.
+count, IS objective status, metric RAG/type breakdown, the compliance score, and module counts.
 
 ## ISO 27001:2022 Annex A
 93 controls across 4 themes:
@@ -126,9 +130,27 @@ A stakeholder register (`interested_parties`): name, `party_type` (Internal/Exte
 starter set; ref IDs `PARTY-001…`. API `/api/v1/interested-parties`; UI
 `/interested-parties`.
 
+## IS Objectives (Clause 6.2) & Metrics / KxI (Clause 9.1)
+Two linked registers covering the ISACA guide's "IS Objectives" and
+"Performance/Risk/Compliance Monitoring" building blocks.
+
+- **Objectives** (`objectives`, ref `OBJ-001`): measurable ISMS goals with a
+  textual target/current, owner, due/review dates, and `status` (Not Started /
+  On Track / At Risk / Achieved / Missed). `ObjectiveRead` embeds its metrics.
+- **Metrics** (`metrics`, ref `MET-001`): KPI / KRI / KCI indicators with numeric
+  `target_value` vs `current_value`, a `direction` (higher/lower is better), and
+  `frequency`. A **RAG status** (`On Target` / `Near Target` / `Off Target` /
+  `No Data`) is derived by `compute_rag()` in `models/metric.py` (used by both the
+  `MetricRead.rag` property and the dashboard). Each metric optionally links to an
+  objective (`objective_id`).
+- Seeded with a small sample set (3 objectives, 5 metrics) demonstrating the
+  target-vs-actual model. Dashboard adds objectives-by-status and metric-RAG charts.
+- API `/api/v1/objectives` and `/api/v1/metrics`; UI `/objectives` and `/metrics`
+  (each with a detail page).
+
 > Identified next-tranche gaps from the ISACA Implementation Guide (not yet built):
-> IS Objectives + KPIs/KRIs/KCIs (6.2/9.1), Supplier register (5.19–5.23),
-> Incident management (5.24–5.28), Awareness/training (7.2/7.3).
+> Supplier register (5.19–5.23), Incident management (5.24–5.28),
+> Awareness/training (7.2/7.3).
 
 ## Key Patterns
 - All models use UUID primary keys

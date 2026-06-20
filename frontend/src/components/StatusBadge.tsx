@@ -11,17 +11,22 @@ const colors: Record<string, string> = {
   Verified: 'bg-emerald-100 text-emerald-800',
   Completed: 'bg-emerald-100 text-emerald-800',
   Conformant: 'bg-emerald-100 text-emerald-800',
+  Achieved: 'bg-emerald-100 text-emerald-800',
+  'On Target': 'bg-emerald-100 text-emerald-800',
   // yellow
   'In Progress': 'bg-amber-100 text-amber-800',
   'Partially Implemented': 'bg-amber-100 text-amber-800',
   'Partially Conformant': 'bg-amber-100 text-amber-800',
   'Under Review': 'bg-amber-100 text-amber-800',
   'In Treatment': 'bg-amber-100 text-amber-800',
+  'At Risk': 'bg-amber-100 text-amber-800',
+  'Near Target': 'bg-amber-100 text-amber-800',
   Medium: 'bg-amber-100 text-amber-800',
   // gray
   'Not Started': 'bg-gray-100 text-gray-600',
   'Not Implemented': 'bg-gray-100 text-gray-600',
   'Not Assessed': 'bg-gray-100 text-gray-600',
+  'No Data': 'bg-gray-100 text-gray-600',
   Open: 'bg-gray-100 text-gray-600',
   Draft: 'bg-gray-100 text-gray-600',
   Planned: 'bg-gray-100 text-gray-600',
@@ -32,6 +37,10 @@ const colors: Record<string, string> = {
   Failed: 'bg-red-100 text-red-800',
   Cancelled: 'bg-red-100 text-red-800',
   Nonconformant: 'bg-red-100 text-red-800',
+  Missed: 'bg-red-100 text-red-800',
+  'Off Target': 'bg-red-100 text-red-800',
+  // blue
+  'On Track': 'bg-sky-100 text-sky-800',
   // orange
   High: 'bg-orange-100 text-orange-800',
   // teal

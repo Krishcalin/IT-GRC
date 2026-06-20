@@ -40,6 +40,12 @@ An **open-source IT Governance, Risk & Compliance (GRC) portal** purpose-built f
 - Record their relevant requirements/expectations (legal, regulatory, contractual)
 - Flag whether each party's requirements are **addressed by the ISMS** (Clause 4.2c)
 
+### IS Objectives & KPIs (Clauses 6.2 / 9.1)
+- Define **measurable information security objectives** with targets, owners, and status (On Track → At Risk → Achieved / Missed)
+- Track **KPIs / KRIs / KCIs** — Key Performance, Risk, and Control Indicators with a numeric target vs. current value
+- Each metric auto-derives a **RAG status** (On Target / Near Target / Off Target) honouring whether higher or lower is better
+- Link metrics to the objectives they measure; dashboard shows objectives-by-status and metric-RAG breakdowns
+
 ### Risk Register
 - Create and manage information security risks with full lifecycle tracking
 - **5x5 risk matrix** — likelihood × impact scoring (Low / Medium / High / Critical)
@@ -154,6 +160,7 @@ On first startup, the system automatically:
 - Seeds 93 ISO 27001:2022 Annex A controls
 - Seeds 30 ISO 27001:2022 ISMS clause requirements (Clauses 4–10)
 - Seeds 17 mandatory documented-information records (Clause 7.5) + sample interested parties (Clause 4.2)
+- Seeds sample IS objectives (Clause 6.2) and KPI/KRI/KCI metrics (Clause 9.1)
 - Creates 6 default RBAC roles
 - Creates the first superuser account
 
@@ -199,6 +206,8 @@ IT-GRC/
 │   │   │   ├── clauses.py   #   ISMS clauses 4–10 conformity CRUD
 │   │   │   ├── documents.py #   Documented information register (7.5)
 │   │   │   ├── interested_parties.py # Interested parties register (4.2)
+│   │   │   ├── objectives.py #   IS objectives register (6.2)
+│   │   │   ├── metrics.py   #   KPI/KRI/KCI metrics (9.1)
 │   │   │   ├── risks.py     #   Risk register CRUD
 │   │   │   ├── soa.py       #   Statement of Applicability
 │   │   │   ├── evidence.py  #   Evidence upload/download
@@ -294,6 +303,8 @@ Key API endpoints:
 | GET | `/api/v1/clauses` | List ISMS clause requirements (4–10) |
 | GET | `/api/v1/documents` | List documented information (7.5) |
 | GET | `/api/v1/interested-parties` | List interested parties (4.2) |
+| GET | `/api/v1/objectives` | List IS objectives (6.2) |
+| GET | `/api/v1/metrics` | List KPI/KRI/KCI metrics (9.1) |
 | GET | `/api/v1/risks` | List risks |
 | POST | `/api/v1/risks` | Create a new risk |
 | GET | `/api/v1/soa` | List Statement of Applicability |

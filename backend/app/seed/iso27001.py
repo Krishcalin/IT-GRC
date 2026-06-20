@@ -414,6 +414,39 @@ SAMPLE_INTERESTED_PARTIES: list[dict] = [
 ]
 
 
+# Sample information security objectives (Clause 6.2) — tailor per organization.
+SAMPLE_OBJECTIVES: list[dict] = [
+    {"title": "Reduce workforce phishing susceptibility", "measure": "Phishing simulation click-through rate",
+     "target_value": "<= 5%", "unit": "%", "status": "On Track",
+     "description": "Lower the proportion of staff who click simulated phishing links through targeted awareness campaigns."},
+    {"title": "Remediate critical vulnerabilities within SLA", "measure": "% of critical vulnerabilities remediated within 14 days",
+     "target_value": ">= 95%", "unit": "%", "status": "At Risk",
+     "description": "Ensure critical technical vulnerabilities are remediated within the defined service level."},
+    {"title": "Maintain security awareness coverage", "measure": "% of in-scope staff completing annual training",
+     "target_value": ">= 98%", "unit": "%", "status": "On Track",
+     "description": "Sustain high completion of mandatory annual information security awareness training."},
+]
+
+# Sample KPI/KRI/KCI metrics (Clause 9.1). objective_ref links to a seeded objective.
+SAMPLE_METRICS: list[dict] = [
+    {"name": "Phishing simulation click-through rate", "metric_type": "KRI", "objective_ref": "OBJ-001",
+     "target_value": 5, "current_value": 8, "unit": "%", "direction": "lower_is_better", "frequency": "Quarterly",
+     "description": "Percentage of recipients clicking a simulated phishing link during the campaign."},
+    {"name": "Critical vulnerabilities remediated within SLA", "metric_type": "KPI", "objective_ref": "OBJ-002",
+     "target_value": 95, "current_value": 91, "unit": "%", "direction": "higher_is_better", "frequency": "Monthly",
+     "description": "Percentage of critical vulnerabilities closed within the 14-day SLA window."},
+    {"name": "Critical vulnerabilities past SLA (open)", "metric_type": "KRI", "objective_ref": "OBJ-002",
+     "target_value": 0, "current_value": 4, "unit": "count", "direction": "lower_is_better", "frequency": "Monthly",
+     "description": "Number of critical vulnerabilities still open beyond the remediation SLA."},
+    {"name": "Annual awareness training completion", "metric_type": "KCI", "objective_ref": "OBJ-003",
+     "target_value": 98, "current_value": 99, "unit": "%", "direction": "higher_is_better", "frequency": "Annual",
+     "description": "Percentage of in-scope personnel who completed the mandatory awareness training."},
+    {"name": "Mean time to detect (MTTD)", "metric_type": "KPI", "objective_ref": None,
+     "target_value": 60, "current_value": 45, "unit": "minutes", "direction": "lower_is_better", "frequency": "Continuous",
+     "description": "Average time from a security event occurring to its detection."},
+]
+
+
 DEFAULT_ROLES: list[dict] = [
     {"name": "CISO", "description": "Chief Information Security Officer — full access", "permissions": ["*"]},
     {"name": "GRC_Manager", "description": "GRC Manager — manage controls, risks, audits, policies", "permissions": ["controls:*", "risks:*", "audits:*", "policies:*", "soa:*", "assets:*", "evidence:*", "users:read"]},
@@ -484,6 +517,42 @@ async def seed_interested_parties(session) -> int:
         session.add(InterestedParty(ref_id=f"PARTY-{i:03d}", **item))
     await session.flush()
     return len(SAMPLE_INTERESTED_PARTIES)
+
+
+async def seed_objectives(session) -> int:
+    """Insert sample information security objectives (Clause 6.2) if empty. Returns count inserted."""
+    from ..models.objective import Objective
+    from sqlalchemy import select, func
+
+    count = (await session.execute(select(func.count()).select_from(Objective))).scalar()
+    if count > 0:
+        return 0
+
+    for i, item in enumerate(SAMPLE_OBJECTIVES, start=1):
+        session.add(Objective(ref_id=f"OBJ-{i:03d}", **item))
+    await session.flush()
+    return len(SAMPLE_OBJECTIVES)
+
+
+async def seed_metrics(session) -> int:
+    """Insert sample KPI/KRI/KCI metrics (Clause 9.1) if empty, linked to objectives. Returns count inserted."""
+    from ..models.metric import Metric
+    from ..models.objective import Objective
+    from sqlalchemy import select, func
+
+    count = (await session.execute(select(func.count()).select_from(Metric))).scalar()
+    if count > 0:
+        return 0
+
+    rows = (await session.execute(select(Objective.ref_id, Objective.id))).all()
+    ref_to_id = {ref: oid for ref, oid in rows}
+
+    for i, item in enumerate(SAMPLE_METRICS, start=1):
+        data = dict(item)
+        obj_ref = data.pop("objective_ref", None)
+        session.add(Metric(ref_id=f"MET-{i:03d}", objective_id=ref_to_id.get(obj_ref), **data))
+    await session.flush()
+    return len(SAMPLE_METRICS)
 
 
 async def seed_roles(session) -> int:

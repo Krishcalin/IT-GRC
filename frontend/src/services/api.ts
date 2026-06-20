@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { User, Control, ClauseRequirement, DocumentedInformation, InterestedParty, Risk, SoAEntry, Evidence, Audit, AuditFinding, Policy, Asset, DashboardStats, ActivityEntry } from '../types'
+import type { User, Control, ClauseRequirement, DocumentedInformation, InterestedParty, Objective, Metric, Risk, SoAEntry, Evidence, Audit, AuditFinding, Policy, Asset, DashboardStats, ActivityEntry } from '../types'
 
 const api = axios.create({ baseURL: '/api/v1' })
 
@@ -47,6 +47,20 @@ export const getInterestedParties = (params?: Record<string, string>) => api.get
 export const createInterestedParty = (data: Record<string, unknown>) => api.post<InterestedParty>('/interested-parties', data)
 export const updateInterestedParty = (id: string, data: Partial<InterestedParty>) => api.put<InterestedParty>(`/interested-parties/${id}`, data)
 export const deleteInterestedParty = (id: string) => api.delete(`/interested-parties/${id}`)
+
+// IS Objectives (Clause 6.2)
+export const getObjectives = (params?: Record<string, string>) => api.get<Objective[]>('/objectives', { params })
+export const getObjective = (id: string) => api.get<Objective>(`/objectives/${id}`)
+export const createObjective = (data: Record<string, unknown>) => api.post<Objective>('/objectives', data)
+export const updateObjective = (id: string, data: Partial<Objective>) => api.put<Objective>(`/objectives/${id}`, data)
+export const deleteObjective = (id: string) => api.delete(`/objectives/${id}`)
+
+// Metrics — KPI/KRI/KCI (Clause 9.1)
+export const getMetrics = (params?: Record<string, string>) => api.get<Metric[]>('/metrics', { params })
+export const getMetric = (id: string) => api.get<Metric>(`/metrics/${id}`)
+export const createMetric = (data: Record<string, unknown>) => api.post<Metric>('/metrics', data)
+export const updateMetric = (id: string, data: Record<string, unknown>) => api.put<Metric>(`/metrics/${id}`, data)
+export const deleteMetric = (id: string) => api.delete(`/metrics/${id}`)
 
 // Risks
 export const getRisks = (params?: Record<string, string>) => api.get<Risk[]>('/risks', { params })

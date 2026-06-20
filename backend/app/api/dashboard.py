@@ -11,6 +11,8 @@ from ..models.control import Control
 from ..models.clause_requirement import ClauseRequirement
 from ..models.documented_information import DocumentedInformation
 from ..models.interested_party import InterestedParty
+from ..models.objective import Objective
+from ..models.metric import Metric, compute_rag
 from ..models.risk import Risk
 from ..models.audit import Audit, AuditFinding
 from ..models.policy import Policy
@@ -79,6 +81,27 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
     # Interested parties (Clause 4.2)
     total_interested_parties = (await db.execute(select(func.count()).select_from(InterestedParty))).scalar() or 0
 
+    # IS objectives (Clause 6.2)
+    total_objectives = (await db.execute(select(func.count()).select_from(Objective))).scalar() or 0
+    achieved_objectives = (await db.execute(
+        select(func.count()).select_from(Objective).where(Objective.status == "Achieved")
+    )).scalar() or 0
+    obj_status_rows = (await db.execute(
+        select(Objective.status, func.count()).group_by(Objective.status)
+    )).all()
+    objectives_by_status = {row[0]: row[1] for row in obj_status_rows}
+
+    # Metrics (Clause 9.1) — RAG derived per metric
+    metric_rows = (await db.execute(select(Metric))).scalars().all()
+    total_metrics = len(metric_rows)
+    metrics_by_rag: dict = {}
+    metrics_by_type: dict = {}
+    for m in metric_rows:
+        rag = compute_rag(m.target_value, m.current_value, m.direction)
+        metrics_by_rag[rag] = metrics_by_rag.get(rag, 0) + 1
+        metrics_by_type[m.metric_type] = metrics_by_type.get(m.metric_type, 0) + 1
+    on_target_metrics = metrics_by_rag.get("On Target", 0)
+
     # Risks
     total_risks = (await db.execute(select(func.count()).select_from(Risk))).scalar() or 0
     open_risks = (await db.execute(
@@ -140,6 +163,13 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
         document_readiness_score=document_readiness_score,
         documents_by_status=documents_by_status,
         total_interested_parties=total_interested_parties,
+        total_objectives=total_objectives,
+        achieved_objectives=achieved_objectives,
+        objectives_by_status=objectives_by_status,
+        total_metrics=total_metrics,
+        on_target_metrics=on_target_metrics,
+        metrics_by_rag=metrics_by_rag,
+        metrics_by_type=metrics_by_type,
     )
 
 

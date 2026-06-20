@@ -224,6 +224,47 @@ export interface InterestedParty {
   updated_at: string
 }
 
+export interface Metric {
+  id: string
+  ref_id: string
+  name: string
+  description: string | null
+  metric_type: string
+  clause_ref: string
+  objective_id: string | null
+  target_value: number | null
+  current_value: number | null
+  unit: string | null
+  direction: string
+  frequency: string | null
+  rag: string
+  owner_id: string | null
+  owner: User | null
+  last_measured: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface Objective {
+  id: string
+  ref_id: string
+  title: string
+  description: string | null
+  clause_ref: string
+  measure: string | null
+  target_value: string | null
+  current_value: string | null
+  unit: string | null
+  status: string
+  owner_id: string | null
+  owner: User | null
+  due_date: string | null
+  review_date: string | null
+  metrics: Metric[]
+  created_at: string
+  updated_at: string
+}
+
 export interface DashboardStats {
   total_controls: number
   implemented_controls: number
@@ -249,6 +290,13 @@ export interface DashboardStats {
   document_readiness_score: number
   documents_by_status: Record<string, number>
   total_interested_parties: number
+  total_objectives: number
+  achieved_objectives: number
+  objectives_by_status: Record<string, number>
+  total_metrics: number
+  on_target_metrics: number
+  metrics_by_rag: Record<string, number>
+  metrics_by_type: Record<string, number>
 }
 
 export interface ActivityEntry {

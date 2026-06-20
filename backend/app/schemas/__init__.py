@@ -10,6 +10,8 @@ from .documented_information import DocumentCreate, DocumentUpdate, DocumentRead
 from .interested_party import (                                                   # noqa: F401
     InterestedPartyCreate, InterestedPartyUpdate, InterestedPartyRead,
 )
+from .metric import MetricCreate, MetricUpdate, MetricRead                        # noqa: F401
+from .objective import ObjectiveCreate, ObjectiveUpdate, ObjectiveRead            # noqa: F401
 from .risk import RiskCreate, RiskUpdate, RiskRead                               # noqa: F401
 from .soa import SoACreate, SoAUpdate, SoARead                                  # noqa: F401
 from .evidence import EvidenceCreate, EvidenceRead                               # noqa: F401

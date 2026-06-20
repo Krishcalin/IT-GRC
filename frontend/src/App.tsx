@@ -11,6 +11,10 @@ import ClauseDetailPage from './pages/ClauseDetailPage'
 import DocumentsPage from './pages/DocumentsPage'
 import DocumentDetailPage from './pages/DocumentDetailPage'
 import InterestedPartiesPage from './pages/InterestedPartiesPage'
+import ObjectivesPage from './pages/ObjectivesPage'
+import ObjectiveDetailPage from './pages/ObjectiveDetailPage'
+import MetricsPage from './pages/MetricsPage'
+import MetricDetailPage from './pages/MetricDetailPage'
 import RisksPage from './pages/RisksPage'
 import SoAPage from './pages/SoAPage'
 import EvidencePage from './pages/EvidencePage'
@@ -42,6 +46,10 @@ const App: React.FC = () => {
           <Route path="documents" element={<DocumentsPage />} />
           <Route path="documents/:id" element={<DocumentDetailPage />} />
           <Route path="interested-parties" element={<InterestedPartiesPage />} />
+          <Route path="objectives" element={<ObjectivesPage />} />
+          <Route path="objectives/:id" element={<ObjectiveDetailPage />} />
+          <Route path="metrics" element={<MetricsPage />} />
+          <Route path="metrics/:id" element={<MetricDetailPage />} />
           <Route path="risks" element={<RisksPage />} />
           <Route path="soa" element={<SoAPage />} />
           <Route path="evidence" element={<EvidencePage />} />
