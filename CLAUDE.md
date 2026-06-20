@@ -18,14 +18,14 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 - `database.py` — Async SQLAlchemy engine + session factory + Base
 - `models/` — SQLAlchemy ORM models (all UUID PKs, timezone-aware timestamps)
 - `schemas/` — Pydantic v2 request/response schemas (Create/Update/Read per model)
-- `api/` — FastAPI route handlers (one file per module)
+- `api/` — FastAPI route handlers, one file per module: `auth`, `controls`, `clauses`, `risks`, `soa`, `evidence`, `audits`, `policies`, `assets`, `dashboard`
 - `api/deps.py` — Shared dependencies (get_db, get_current_user, require_superuser)
 - `seed/iso27001.py` — All 93 Annex A controls + 30 ISMS clauses (4–10) + 6 RBAC roles
 
 ### Frontend (`frontend/src/`)
 - `App.tsx` — Root with AuthProvider + React Router
-- `components/` — Layout, StatusBadge, DataTable (reusable)
-- `pages/` — One page per module (Dashboard, Controls, ISMS Clauses, Risks, SoA, Evidence, Audits, Policies, Assets, Login)
+- `components/` — `Layout` (sidebar shell) and `StatusBadge` (status/theme/conformity pill)
+- `pages/` — One page per module (Dashboard, Controls, ISMS Clauses, Risks, SoA, Evidence, Audits, Policies, Assets, Login) plus detail pages (`ControlDetailPage`, `ClauseDetailPage`, `AuditDetailPage`)
 - `services/api.ts` — Axios client with JWT interceptor
 - `hooks/useAuth.ts` — Auth context (login, logout, current user)
 - `types/index.ts` — TypeScript interfaces matching backend schemas
@@ -55,7 +55,24 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 - Viewer: `["*:read"]` — read-only
 
 ### API Prefix
-All API routes under `/api/v1/`. Swagger at `/docs`.
+All API routes under `/api/v1/`. Swagger at `/docs`, ReDoc at `/redoc`, health at `/health`.
+
+| Resource | Routes |
+|----------|--------|
+| `/auth` | `login`, `me` |
+| `/controls` | list / get / create / update / delete (Annex A) |
+| `/clauses` | list / get / create / update / delete (ISMS Clauses 4–10) |
+| `/risks` | list / get / create / update / delete |
+| `/soa` | list / create / update |
+| `/evidence` | list / upload / download |
+| `/audits` | audits + nested `findings` |
+| `/policies` | list / get / create / update / acknowledge |
+| `/assets` | list / get / create / update / delete |
+| `/dashboard` | `stats`, `activity` |
+
+`/dashboard/stats` returns control posture (by status/theme), risk posture, ISMS
+clause conformity (total, conformant, conformity score, by status/section), the
+compliance score, and module counts.
 
 ## ISO 27001:2022 Annex A
 93 controls across 4 themes:
