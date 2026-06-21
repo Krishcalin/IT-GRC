@@ -203,6 +203,13 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
     )).scalar() or 0
     compliance_score = round((fully_implemented / total_applicable * 100) if total_applicable > 0 else (implemented / total_controls * 100) if total_controls > 0 else 0, 1)
 
+    # Record today's posture snapshot (idempotent per day) so the trend grows automatically.
+    from .analytics import compute_headline, record_posture_snapshot
+    try:
+        await record_posture_snapshot(db, await compute_headline(db))
+    except Exception:  # never let snapshotting break the dashboard
+        pass
+
     return DashboardStats(
         total_controls=total_controls,
         implemented_controls=implemented,

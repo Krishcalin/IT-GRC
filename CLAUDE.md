@@ -18,9 +18,9 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 - `database.py` — Async SQLAlchemy engine + session factory + Base
 - `models/` — SQLAlchemy ORM models (all UUID PKs, timezone-aware timestamps)
 - `schemas/` — Pydantic v2 request/response schemas (Create/Update/Read per model)
-- `api/` — FastAPI route handlers, one file per module: `auth`, `controls`, `clauses`, `documents`, `interested_parties`, `objectives`, `metrics`, `suppliers`, `incidents`, `training`, `tasks`, `risks`, `soa`, `evidence`, `audits`, `policies`, `assets`, `reports`, `reminders`, `dashboard`
+- `api/` — FastAPI route handlers, one file per module: `auth`, `controls`, `clauses`, `documents`, `interested_parties`, `objectives`, `metrics`, `suppliers`, `incidents`, `training`, `tasks`, `analytics`, `risks`, `soa`, `evidence`, `audits`, `policies`, `assets`, `reports`, `reminders`, `dashboard`
 - `api/deps.py` — Shared dependencies (get_db, get_current_user, require_superuser)
-- `seed/iso27001.py` — 93 Annex A controls + 12 ISO 27019:2024 energy-sector (ENR) controls + 30 ISMS clauses (4–10) + 17 mandatory documents + sample interested parties + sample objectives & KPI/KRI/KCI metrics + sample suppliers + sample incidents + sample training campaigns + sample workflow tasks + 6 RBAC roles
+- `seed/iso27001.py` — 93 Annex A controls + 12 ISO 27019:2024 energy-sector (ENR) controls + 30 ISMS clauses (4–10) + 17 mandatory documents + sample interested parties + sample objectives & KPI/KRI/KCI metrics + metric measurement history + historical posture snapshots + sample suppliers + sample incidents + sample training campaigns + sample workflow tasks + 6 RBAC roles
 
 ### Frontend (`frontend/src/`)
 - `App.tsx` — Root with AuthProvider + React Router
@@ -53,6 +53,8 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 | Policy | policies | ref_id (POL-001), version, status, content (markdown) |
 | Asset | assets | ref_id (ASSET-001), asset_type, classification, criticality |
 | Task | tasks | ref_id (TASK-001), title, task_type (Action/Approval/Review/Remediation), status, priority, assignee_id, due_date, resource_type/id/label (polymorphic link), decision/decided_by (approvals), overdue (derived) |
+| MetricMeasurement | metric_measurements | metric_id, value, note, captured_at — KPI/KRI/KCI trend history |
+| PostureSnapshot | posture_snapshots | snapshot_date (unique/day), compliance/conformity/readiness/training scores + key counts — posture trend time series |
 | ActivityLog | activity_log | user_id, action, resource_type, resource_id |
 
 ### RBAC Roles
@@ -85,6 +87,8 @@ All API routes under `/api/v1/`. Swagger at `/docs`, ReDoc at `/redoc`, health a
 | `/policies` | list / get / create / update / acknowledge |
 | `/assets` | list / get / create / update / delete |
 | `/tasks` | list / get / create / update / delete + `{id}/decision` (approval sign-off) |
+| `/metrics` | metric CRUD + `{id}/history` and `{id}/measurements` (trend points) |
+| `/analytics` | `risk-heatmap`, `posture-trend`, `snapshot` (POST), `my-work` |
 | `/auth/users` | list active users (assignee/owner pickers) |
 | `/dashboard` | `stats`, `activity` |
 
@@ -94,6 +98,13 @@ and `resource_type`/`resource_id`. `POST /tasks/{id}/decision` records an
 Approved/Rejected decision (decider + timestamp) and closes the task. `overdue`
 is derived from `due_date` + open status via the pure `task_is_overdue()` helper
 in `models/task.py` (unit-tested in `tests/test_tasks.py`).
+
+`api/analytics.py` powers the Analytics page: `risk-heatmap` aggregates risks into
+a 5×5 likelihood×impact grid (inherent or residual basis); `posture-trend` returns
+the `posture_snapshots` time series; `my-work` is owner/assignee-scoped to the
+current user. `compute_headline()` is the single source of truth for the headline
+posture numbers, and `record_posture_snapshot()` upserts one row per day — the
+dashboard `stats` call triggers it, so the trend grows with no scheduler.
 
 `/dashboard/stats` returns control posture (by status/theme), risk posture, ISMS
 clause conformity (total, conformant, conformity score, by status/section),

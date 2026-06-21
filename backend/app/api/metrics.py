@@ -8,11 +8,13 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select, or_, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from datetime import datetime, timezone
+
 from ..database import get_db
-from ..models.metric import Metric
+from ..models.metric import Metric, MetricMeasurement
 from ..models.user import User
 from ..models.activity_log import ActivityLog
-from ..schemas.metric import MetricCreate, MetricUpdate, MetricRead
+from ..schemas.metric import MetricCreate, MetricUpdate, MetricRead, MeasurementCreate, MeasurementRead
 from .deps import get_current_user
 
 router = APIRouter()
@@ -78,6 +80,41 @@ async def update_metric(
     await db.refresh(metric)
     db.add(ActivityLog(user_id=current_user.id, action="UPDATE", resource_type="metric", resource_id=str(metric.id)))
     return metric
+
+
+@router.get("/{metric_id}/history", response_model=list[MeasurementRead])
+async def get_metric_history(metric_id: UUID, db: AsyncSession = Depends(get_db)):
+    metric = (await db.execute(select(Metric).where(Metric.id == metric_id))).scalar_one_or_none()
+    if not metric:
+        raise HTTPException(404, "Metric not found")
+    rows = (await db.execute(
+        select(MetricMeasurement)
+        .where(MetricMeasurement.metric_id == metric_id)
+        .order_by(MetricMeasurement.captured_at)
+    )).scalars().all()
+    return rows
+
+
+@router.post("/{metric_id}/measurements", response_model=MeasurementRead, status_code=201)
+async def add_measurement(
+    metric_id: UUID,
+    body: MeasurementCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Record a point-in-time measurement and update the metric's current value."""
+    metric = (await db.execute(select(Metric).where(Metric.id == metric_id))).scalar_one_or_none()
+    if not metric:
+        raise HTTPException(404, "Metric not found")
+    captured = body.captured_at or datetime.now(timezone.utc).date()
+    m = MetricMeasurement(metric_id=metric_id, value=body.value, note=body.note, captured_at=captured)
+    db.add(m)
+    metric.current_value = body.value
+    metric.last_measured = captured
+    await db.flush()
+    await db.refresh(m)
+    db.add(ActivityLog(user_id=current_user.id, action="MEASURE", resource_type="metric", resource_id=str(metric.id)))
+    return m
 
 
 @router.delete("/{metric_id}", status_code=204)

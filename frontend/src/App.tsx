@@ -4,6 +4,7 @@ import { AuthContext, useAuthProvider, useAuth } from './hooks/useAuth'
 import Layout from './components/Layout'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
+import AnalyticsPage from './pages/AnalyticsPage'
 import TasksPage from './pages/TasksPage'
 import ControlsPage from './pages/ControlsPage'
 import ControlDetailPage from './pages/ControlDetailPage'
@@ -49,6 +50,7 @@ const App: React.FC = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           <Route index element={<DashboardPage />} />
+          <Route path="analytics" element={<AnalyticsPage />} />
           <Route path="tasks" element={<TasksPage />} />
           <Route path="controls" element={<ControlsPage />} />
           <Route path="controls/:id" element={<ControlDetailPage />} />

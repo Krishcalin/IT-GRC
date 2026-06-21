@@ -25,6 +25,13 @@ An **open-source IT Governance, Risk & Compliance (GRC) portal** purpose-built f
 - **Approval tasks** capture an Approved/Rejected decision, the decider, a comment, and timestamp — an audit-tracked sign-off
 - Tasks link to any module record (control, risk, finding, incident, document, supplier, policy, …) via a lightweight reference
 
+### Analytics & Dashboards
+- **Risk heat map** — a 5×5 likelihood × impact matrix (inherent or residual basis) with per-cell risk counts and level colouring
+- **ISMS posture trend** — compliance, conformity, document-readiness, and training-completion scores tracked over time (snapshots captured automatically each day)
+- **KPI/KRI/KCI trend history** — record point-in-time measurements per metric and chart the trend against its target
+- **Role/owner-aware "My Work"** panel on the dashboard (my open/overdue tasks, approvals, owned controls/risks, assigned findings)
+- Dashboard **Workflow & Tasks** panel (open / overdue / pending approvals + by-status/priority charts)
+
 ### Controls Library
 - All **93 Annex A controls** from ISO 27001:2022 pre-loaded and categorized by theme
 - 4 themes: Organizational (37), People (8), Physical (14), Technological (34)
@@ -193,6 +200,7 @@ On first startup, the system automatically:
 - Seeds sample IS objectives (Clause 6.2) and KPI/KRI/KCI metrics (Clause 9.1)
 - Seeds sample suppliers / third parties (Clauses 5.19–5.23)
 - Seeds 5 sample workflow tasks (assigned to the first user)
+- Backfills metric measurement history and historical posture snapshots (so trend charts render)
 - Seeds sample security incidents (Clauses 5.24–5.28)
 - Seeds sample awareness & training campaigns with participation records (Clauses 7.2/7.3)
 - Creates 6 default RBAC roles
@@ -354,6 +362,9 @@ Key API endpoints:
 | GET | `/api/v1/auth/users` | List users (for assignee/owner pickers) |
 | GET | `/api/v1/tasks` | List workflow tasks (filters: assignee, status, type, priority, overdue) |
 | POST | `/api/v1/tasks/{id}/decision` | Record an approval/sign-off decision |
+| GET | `/api/v1/analytics/risk-heatmap` | 5×5 risk heat map (inherent/residual) |
+| GET | `/api/v1/analytics/posture-trend` | Posture score time series |
+| POST | `/api/v1/metrics/{id}/measurements` | Record a metric measurement (trend point) |
 | GET | `/api/v1/controls` | List ISO 27001 Annex A controls |
 | GET | `/api/v1/clauses` | List ISMS clause requirements (4–10) |
 | GET | `/api/v1/documents` | List documented information (7.5) |

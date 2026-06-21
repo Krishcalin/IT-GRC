@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { User, Control, ClauseRequirement, DocumentedInformation, InterestedParty, Objective, Metric, Supplier, Incident, TrainingCampaign, TrainingRecord, RemindersResult, Task, Risk, SoAEntry, Evidence, Audit, AuditFinding, Policy, Asset, DashboardStats, ActivityEntry } from '../types'
+import type { User, Control, ClauseRequirement, DocumentedInformation, InterestedParty, Objective, Metric, MetricMeasurement, Supplier, Incident, TrainingCampaign, TrainingRecord, RemindersResult, Task, RiskHeatmap, PostureSnapshot, MyWork, Risk, SoAEntry, Evidence, Audit, AuditFinding, Policy, Asset, DashboardStats, ActivityEntry } from '../types'
 
 const api = axios.create({ baseURL: '/api/v1' })
 
@@ -70,6 +70,14 @@ export const getMetric = (id: string) => api.get<Metric>(`/metrics/${id}`)
 export const createMetric = (data: Record<string, unknown>) => api.post<Metric>('/metrics', data)
 export const updateMetric = (id: string, data: Record<string, unknown>) => api.put<Metric>(`/metrics/${id}`, data)
 export const deleteMetric = (id: string) => api.delete(`/metrics/${id}`)
+export const getMetricHistory = (id: string) => api.get<MetricMeasurement[]>(`/metrics/${id}/history`)
+export const addMeasurement = (id: string, data: { value: number; note?: string; captured_at?: string }) => api.post<MetricMeasurement>(`/metrics/${id}/measurements`, data)
+
+// Analytics
+export const getRiskHeatmap = (basis = 'inherent') => api.get<RiskHeatmap>('/analytics/risk-heatmap', { params: { basis } })
+export const getPostureTrend = (days = 180) => api.get<PostureSnapshot[]>('/analytics/posture-trend', { params: { days } })
+export const captureSnapshot = () => api.post<PostureSnapshot>('/analytics/snapshot')
+export const getMyWork = () => api.get<MyWork>('/analytics/my-work')
 
 // Suppliers / third parties (Clauses 5.19–5.23)
 export const getSuppliers = (params?: Record<string, string>) => api.get<Supplier[]>('/suppliers', { params })

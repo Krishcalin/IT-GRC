@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getMetric, updateMetric } from '../services/api'
-import type { Metric } from '../types'
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine } from 'recharts'
+import { getMetric, updateMetric, getMetricHistory, addMeasurement } from '../services/api'
+import type { Metric, MetricMeasurement } from '../types'
 import StatusBadge from '../components/StatusBadge'
 
 const TYPES = ['KPI', 'KRI', 'KCI']
@@ -15,9 +16,16 @@ const MetricDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [metric, setMetric] = useState<Metric | null>(null)
+  const [history, setHistory] = useState<MetricMeasurement[]>([])
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState({ name: '', description: '', metric_type: 'KPI', target_value: '', current_value: '', unit: '', direction: 'higher_is_better', frequency: '', last_measured: '' })
+  const [meas, setMeas] = useState({ value: '', note: '', captured_at: '' })
+
+  const loadHistory = useCallback(() => {
+    if (!id) return
+    getMetricHistory(id).then((r) => setHistory(r.data)).catch(() => {})
+  }, [id])
 
   useEffect(() => {
     if (!id) return
@@ -30,7 +38,17 @@ const MetricDetailPage: React.FC = () => {
         last_measured: r.data.last_measured || '',
       })
     }).catch(() => navigate('/metrics'))
-  }, [id, navigate])
+    loadHistory()
+  }, [id, navigate, loadHistory])
+
+  const recordMeasurement = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!id || meas.value === '') return
+    await addMeasurement(id, { value: Number(meas.value), note: meas.note || undefined, captured_at: meas.captured_at || undefined })
+    setMeas({ value: '', note: '', captured_at: '' })
+    const r = await getMetric(id); setMetric(r.data)
+    loadHistory()
+  }
 
   const handleSave = async () => {
     if (!id) return
@@ -115,6 +133,33 @@ const MetricDetailPage: React.FC = () => {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Trend + record measurement */}
+      <div className="card">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-semibold text-gray-700">Trend ({history.length} measurement{history.length === 1 ? '' : 's'})</h3>
+          <span className="text-xs text-gray-400">Target {metric.target_value ?? '—'}{metric.unit ? ` ${metric.unit}` : ''}</span>
+        </div>
+        {history.length > 0 ? (
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={history.map((h) => ({ date: h.captured_at.slice(5), value: h.value }))} margin={{ top: 8, right: 16, bottom: 0, left: -8 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+              <XAxis dataKey="date" tick={{ fontSize: 11 }} />
+              <YAxis tick={{ fontSize: 11 }} />
+              <Tooltip />
+              {metric.target_value != null && <ReferenceLine y={metric.target_value} stroke="#10b981" strokeDasharray="4 4" label={{ value: 'target', fontSize: 10, fill: '#10b981' }} />}
+              <Line type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+        ) : <p className="text-sm text-gray-400 py-8 text-center">No measurements yet — record the first one below.</p>}
+
+        <form onSubmit={recordMeasurement} className="flex flex-wrap items-end gap-3 border-t pt-4 mt-4">
+          <div><label className="block text-xs font-medium text-gray-600 mb-1">Value{metric.unit ? ` (${metric.unit})` : ''}</label><input required type="number" step="any" className="input-field w-32" value={meas.value} onChange={(e) => setMeas({ ...meas, value: e.target.value })} /></div>
+          <div><label className="block text-xs font-medium text-gray-600 mb-1">Date</label><input type="date" className="input-field" value={meas.captured_at} onChange={(e) => setMeas({ ...meas, captured_at: e.target.value })} /></div>
+          <div className="flex-1 min-w-[12rem]"><label className="block text-xs font-medium text-gray-600 mb-1">Note</label><input className="input-field w-full" value={meas.note} onChange={(e) => setMeas({ ...meas, note: e.target.value })} /></div>
+          <button type="submit" className="btn-primary">Record</button>
+        </form>
       </div>
     </div>
   )

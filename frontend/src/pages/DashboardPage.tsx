@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
-import { getDashboardStats, getActivityLog } from '../services/api'
-import type { DashboardStats, ActivityEntry } from '../types'
+import { getDashboardStats, getActivityLog, getMyWork } from '../services/api'
+import type { DashboardStats, ActivityEntry, MyWork } from '../types'
 
 const COLORS = ['#6366f1', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6']
 
@@ -16,6 +16,7 @@ const StatCard: React.FC<{ label: string; value: string | number; color: string 
 const DashboardPage: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [activity, setActivity] = useState<ActivityEntry[]>([])
+  const [myWork, setMyWork] = useState<MyWork | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -23,6 +24,7 @@ const DashboardPage: React.FC = () => {
       .then(([s, a]) => { setStats(s.data); setActivity(a.data.slice(0, 10)) })
       .catch(() => {})
       .finally(() => setLoading(false))
+    getMyWork().then((r) => setMyWork(r.data)).catch(() => {})
   }, [])
 
   if (loading || !stats) return <div className="p-8"><div className="animate-pulse space-y-6"><div className="grid grid-cols-4 gap-6">{[1,2,3,4].map(i => <div key={i} className="h-24 bg-gray-200 rounded-xl" />)}</div></div></div>
@@ -50,7 +52,25 @@ const DashboardPage: React.FC = () => {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+        <Link to="/analytics" className="text-sm font-medium text-indigo-600 hover:text-indigo-800">View analytics →</Link>
+      </div>
+
+      {/* My work (personalized) */}
+      {myWork && (
+        <div className="card">
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">My Work</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            <Link to="/tasks" className="text-center hover:bg-indigo-50/50 rounded-lg py-2 transition-colors"><div className="text-2xl font-bold text-indigo-600">{myWork.open_tasks}</div><div className="text-xs text-gray-500">Open Tasks</div></Link>
+            <Link to="/tasks" className="text-center hover:bg-indigo-50/50 rounded-lg py-2 transition-colors"><div className={`text-2xl font-bold ${myWork.overdue_tasks > 0 ? 'text-red-600' : 'text-emerald-600'}`}>{myWork.overdue_tasks}</div><div className="text-xs text-gray-500">Overdue</div></Link>
+            <Link to="/tasks" className="text-center hover:bg-indigo-50/50 rounded-lg py-2 transition-colors"><div className={`text-2xl font-bold ${myWork.pending_approvals > 0 ? 'text-amber-600' : 'text-emerald-600'}`}>{myWork.pending_approvals}</div><div className="text-xs text-gray-500">My Approvals</div></Link>
+            <Link to="/controls" className="text-center hover:bg-indigo-50/50 rounded-lg py-2 transition-colors"><div className="text-2xl font-bold text-gray-700">{myWork.owned_controls}</div><div className="text-xs text-gray-500">My Controls</div></Link>
+            <Link to="/risks" className="text-center hover:bg-indigo-50/50 rounded-lg py-2 transition-colors"><div className="text-2xl font-bold text-gray-700">{myWork.owned_risks}</div><div className="text-xs text-gray-500">My Risks</div></Link>
+            <Link to="/audits" className="text-center hover:bg-indigo-50/50 rounded-lg py-2 transition-colors"><div className="text-2xl font-bold text-gray-700">{myWork.assigned_findings}</div><div className="text-xs text-gray-500">My Findings</div></Link>
+          </div>
+        </div>
+      )}
 
       {/* Stat cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

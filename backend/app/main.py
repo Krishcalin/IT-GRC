@@ -19,8 +19,9 @@ async def _run_seeds() -> None:
     """Seed the database with ISO 27001 controls, default roles, and first superuser."""
     from .seed.iso27001 import (
         seed_controls, seed_iso27019_controls, seed_clauses, seed_documents,
-        seed_interested_parties, seed_objectives, seed_metrics, seed_suppliers,
-        seed_incidents, seed_training, seed_tasks, seed_roles,
+        seed_interested_parties, seed_objectives, seed_metrics, seed_metric_history,
+        seed_posture_snapshots, seed_suppliers, seed_incidents, seed_training,
+        seed_tasks, seed_roles,
     )
     from .models.user import User
     from passlib.context import CryptContext
@@ -60,6 +61,14 @@ async def _run_seeds() -> None:
         n_metrics = await seed_metrics(session)
         if n_metrics:
             logger.info("Seeded %d sample KPI/KRI/KCI metrics", n_metrics)
+
+        n_history = await seed_metric_history(session)
+        if n_history:
+            logger.info("Seeded %d metric measurement points", n_history)
+
+        n_snapshots = await seed_posture_snapshots(session)
+        if n_snapshots:
+            logger.info("Seeded %d posture snapshots", n_snapshots)
 
         n_suppliers = await seed_suppliers(session)
         if n_suppliers:
@@ -165,6 +174,7 @@ from .api.training import router as training_router    # noqa: E402
 from .api.reports import router as reports_router      # noqa: E402
 from .api.reminders import router as reminders_router  # noqa: E402
 from .api.tasks import router as tasks_router          # noqa: E402
+from .api.analytics import router as analytics_router  # noqa: E402
 from .api.risks import router as risks_router        # noqa: E402
 from .api.soa import router as soa_router            # noqa: E402
 from .api.evidence import router as evidence_router  # noqa: E402
@@ -186,6 +196,7 @@ app.include_router(training_router, prefix=f"{settings.API_V1_PREFIX}/training",
 app.include_router(reports_router, prefix=f"{settings.API_V1_PREFIX}/reports", tags=["Reports"])
 app.include_router(reminders_router, prefix=f"{settings.API_V1_PREFIX}/reminders", tags=["Reminders"])
 app.include_router(tasks_router, prefix=f"{settings.API_V1_PREFIX}/tasks", tags=["Tasks & Workflow"])
+app.include_router(analytics_router, prefix=f"{settings.API_V1_PREFIX}/analytics", tags=["Analytics"])
 app.include_router(risks_router, prefix=f"{settings.API_V1_PREFIX}/risks", tags=["Risks"])
 app.include_router(soa_router, prefix=f"{settings.API_V1_PREFIX}/soa", tags=["Statement of Applicability"])
 app.include_router(evidence_router, prefix=f"{settings.API_V1_PREFIX}/evidence", tags=["Evidence"])

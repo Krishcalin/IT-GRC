@@ -378,6 +378,53 @@ export interface Task {
   updated_at: string
 }
 
+export interface MetricMeasurement {
+  id: string
+  metric_id: string
+  value: number
+  note: string | null
+  captured_at: string
+  created_at: string
+}
+
+export interface HeatCell {
+  likelihood: number
+  impact: number
+  score: number
+  level: string
+  count: number
+}
+
+export interface RiskHeatmap {
+  basis: string
+  cells: HeatCell[]
+  total: number
+}
+
+export interface PostureSnapshot {
+  snapshot_date: string
+  compliance_score: number
+  isms_conformity_score: number
+  document_readiness_score: number
+  training_completion_rate: number
+  implemented_controls: number
+  total_controls: number
+  open_risks: number
+  critical_risks: number
+  open_findings: number
+  open_tasks: number
+  overdue_tasks: number
+}
+
+export interface MyWork {
+  open_tasks: number
+  overdue_tasks: number
+  pending_approvals: number
+  owned_controls: number
+  owned_risks: number
+  assigned_findings: number
+}
+
 export interface ReminderItem {
   category: string
   ref_id: string

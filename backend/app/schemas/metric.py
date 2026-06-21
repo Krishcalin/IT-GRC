@@ -38,6 +38,22 @@ class MetricUpdate(BaseModel):
     last_measured: date | None = None
 
 
+class MeasurementCreate(BaseModel):
+    value: float
+    note: str | None = None
+    captured_at: date | None = None
+
+
+class MeasurementRead(BaseModel):
+    id: UUID
+    metric_id: UUID
+    value: float
+    note: str | None = None
+    captured_at: date
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+
 class MetricRead(BaseModel):
     id: UUID
     ref_id: str

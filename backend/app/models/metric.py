@@ -8,7 +8,7 @@ compares a target against the current (actual) value and yields a RAG status.
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 from sqlalchemy import Date, DateTime, Float, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
@@ -61,7 +61,26 @@ class Metric(Base):
 
     owner: Mapped["User | None"] = relationship("User", foreign_keys=[owner_id], lazy="selectin")
     objective: Mapped["Objective | None"] = relationship("Objective", back_populates="metrics", lazy="selectin")
+    measurements: Mapped[list["MetricMeasurement"]] = relationship(
+        "MetricMeasurement", back_populates="metric", lazy="selectin",
+        cascade="all, delete-orphan", order_by="MetricMeasurement.captured_at",
+    )
 
     @property
     def rag(self) -> str:
         return compute_rag(self.target_value, self.current_value, self.direction)
+
+
+class MetricMeasurement(Base):
+    """A point-in-time measurement of a metric — the trend history behind KPIs/KRIs."""
+
+    __tablename__ = "metric_measurements"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    metric_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("metrics.id", ondelete="CASCADE"), nullable=False, index=True)
+    value: Mapped[float] = mapped_column(Float, nullable=False)
+    note: Mapped[str | None] = mapped_column(Text)
+    captured_at: Mapped[date] = mapped_column(Date, default=lambda: datetime.now(timezone.utc).date(), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+    metric: Mapped["Metric"] = relationship("Metric", back_populates="measurements")

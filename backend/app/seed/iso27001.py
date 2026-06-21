@@ -753,6 +753,69 @@ async def seed_metrics(session) -> int:
     return len(SAMPLE_METRICS)
 
 
+async def seed_metric_history(session) -> int:
+    """Backfill ~6 monthly measurements per metric so trend charts render. Returns points inserted."""
+    from ..models.metric import Metric, MetricMeasurement
+    from datetime import datetime, timedelta, timezone
+    from sqlalchemy import select, func
+
+    count = (await session.execute(select(func.count()).select_from(MetricMeasurement))).scalar()
+    if count > 0:
+        return 0
+
+    metrics = (await session.execute(select(Metric))).scalars().all()
+    today = datetime.now(timezone.utc).date()
+    points = 0
+    for m in metrics:
+        if m.current_value is None:
+            continue
+        current = float(m.current_value)
+        # Start from a plausibly "worse" baseline and trend toward the current value.
+        start = current * (1.3 if m.direction == "lower_is_better" else 0.7)
+        n = 6
+        for i in range(n):
+            frac = i / (n - 1)
+            value = round(start + (current - start) * frac, 1)
+            captured = today - timedelta(days=(n - 1 - i) * 30)
+            session.add(MetricMeasurement(metric_id=m.id, value=value, captured_at=captured, note="seed backfill"))
+            points += 1
+    await session.flush()
+    return points
+
+
+async def seed_posture_snapshots(session) -> int:
+    """Seed a handful of historical posture snapshots so the trend line shows immediately."""
+    from ..models.posture import PostureSnapshot
+    from datetime import datetime, timedelta, timezone
+    from sqlalchemy import select, func
+
+    count = (await session.execute(select(func.count()).select_from(PostureSnapshot))).scalar()
+    if count > 0:
+        return 0
+
+    today = datetime.now(timezone.utc).date()
+    # (days_ago, compliance, conformity, readiness, training)
+    history = [
+        (150, 22.0, 30.0, 18.0, 60.0),
+        (120, 31.0, 43.0, 24.0, 68.0),
+        (90, 45.0, 57.0, 41.0, 75.0),
+        (60, 58.0, 70.0, 53.0, 82.0),
+        (30, 67.0, 80.0, 65.0, 90.0),
+    ]
+    for days_ago, comp, conf, ready, train in history:
+        session.add(PostureSnapshot(
+            snapshot_date=today - timedelta(days=days_ago),
+            compliance_score=comp, isms_conformity_score=conf,
+            document_readiness_score=ready, training_completion_rate=train,
+            implemented_controls=int(round(105 * comp / 100)), total_controls=105,
+            open_risks=max(0, int(12 - comp / 10)), critical_risks=max(0, int(4 - comp / 30)),
+            open_findings=max(0, int(8 - comp / 15)), open_tasks=max(0, int(10 - comp / 12)),
+            overdue_tasks=max(0, int(4 - comp / 30)),
+        ))
+    await session.flush()
+    return len(history)
+
+
 async def seed_suppliers(session) -> int:
     """Insert sample suppliers (Clauses 5.19–5.23) if the table is empty. Returns count inserted."""
     from ..models.supplier import Supplier
