@@ -218,7 +218,21 @@ cd frontend && npm run dev
 # Database migrations
 cd backend && alembic revision --autogenerate -m "description"
 cd backend && alembic upgrade head
+
+# Backend tests (DB-free unit tests)
+cd backend && pip install -r requirements-dev.txt && python -m pytest -q
+
+# Frontend type-check + build
+cd frontend && npm run build
 ```
+
+## Testing & CI
+- `backend/tests/` holds DB-free pytest unit tests (`compute_rag` RAG logic,
+  5×5 `_risk_level`, and seed-data integrity counts/keys). Run with
+  `python -m pytest` from `backend/`.
+- `.github/workflows/ci.yml` runs on push/PR: a **backend** job
+  (`compileall` + `pytest`) and a **frontend** job (`npm run build`, i.e.
+  `tsc && vite build`) that type-checks the whole React app.
 
 ## Environment Variables
 See `.env.example`. Key variables:

@@ -9,6 +9,7 @@
 [![Controls](https://img.shields.io/badge/Annex_A_Controls-93-orange)](#controls-library)
 [![ISMS Clauses](https://img.shields.io/badge/ISMS_Clauses_4--10-30-9cf)](#isms-clause-conformity-clauses-410)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](#quick-start)
+[![CI](https://github.com/Krishcalin/IT-GRC/actions/workflows/ci.yml/badge.svg)](https://github.com/Krishcalin/IT-GRC/actions/workflows/ci.yml)
 
 An **open-source IT Governance, Risk & Compliance (GRC) portal** purpose-built for **ISO 27001:2022** certification management. Clone it, deploy internally with Docker Compose, integrate with your corporate IdP (SAML/OIDC), and start managing your ISMS.
 
@@ -360,6 +361,25 @@ OIDC_DISCOVERY_URL=https://your-idp.com/.well-known/openid-configuration
 OIDC_CLIENT_ID=your-client-id
 OIDC_CLIENT_SECRET=your-client-secret
 ```
+
+---
+
+## Testing & CI
+
+```bash
+# Backend unit tests (no database required)
+cd backend
+pip install -r requirements-dev.txt
+python -m pytest -q
+
+# Frontend type-check + production build
+cd frontend
+npm run build
+```
+
+GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs on every push and pull request:
+- **Backend** — byte-compiles the app and runs the pytest unit suite (RAG metric logic, 5×5 risk scoring, seed-data integrity)
+- **Frontend** — runs `tsc && vite build` to type-check and build the entire React app
 
 ---
 
