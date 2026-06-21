@@ -9,6 +9,7 @@ from .objective import Objective                          # noqa: F401
 from .metric import Metric                                # noqa: F401
 from .supplier import Supplier                            # noqa: F401
 from .incident import Incident                            # noqa: F401
+from .training import TrainingCampaign, TrainingRecord    # noqa: F401
 from .risk import Risk, RiskControl              # noqa: F401
 from .soa import SoAEntry                        # noqa: F401
 from .evidence import Evidence                   # noqa: F401

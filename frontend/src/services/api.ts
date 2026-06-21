@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { User, Control, ClauseRequirement, DocumentedInformation, InterestedParty, Objective, Metric, Supplier, Incident, Risk, SoAEntry, Evidence, Audit, AuditFinding, Policy, Asset, DashboardStats, ActivityEntry } from '../types'
+import type { User, Control, ClauseRequirement, DocumentedInformation, InterestedParty, Objective, Metric, Supplier, Incident, TrainingCampaign, TrainingRecord, Risk, SoAEntry, Evidence, Audit, AuditFinding, Policy, Asset, DashboardStats, ActivityEntry } from '../types'
 
 const api = axios.create({ baseURL: '/api/v1' })
 
@@ -75,6 +75,16 @@ export const getIncident = (id: string) => api.get<Incident>(`/incidents/${id}`)
 export const createIncident = (data: Record<string, unknown>) => api.post<Incident>('/incidents', data)
 export const updateIncident = (id: string, data: Partial<Incident>) => api.put<Incident>(`/incidents/${id}`, data)
 export const deleteIncident = (id: string) => api.delete(`/incidents/${id}`)
+
+// Awareness & Training (Clauses 7.2/7.3)
+export const getCampaigns = (params?: Record<string, string>) => api.get<TrainingCampaign[]>('/training', { params })
+export const getCampaign = (id: string) => api.get<TrainingCampaign>(`/training/${id}`)
+export const createCampaign = (data: Record<string, unknown>) => api.post<TrainingCampaign>('/training', data)
+export const updateCampaign = (id: string, data: Partial<TrainingCampaign>) => api.put<TrainingCampaign>(`/training/${id}`, data)
+export const deleteCampaign = (id: string) => api.delete(`/training/${id}`)
+export const addTrainingRecord = (campaignId: string, data: Record<string, unknown>) => api.post<TrainingRecord>(`/training/${campaignId}/records`, data)
+export const updateTrainingRecord = (recordId: string, data: Record<string, unknown>) => api.put<TrainingRecord>(`/training/records/${recordId}`, data)
+export const deleteTrainingRecord = (recordId: string) => api.delete(`/training/records/${recordId}`)
 
 // Risks
 export const getRisks = (params?: Record<string, string>) => api.get<Risk[]>('/risks', { params })

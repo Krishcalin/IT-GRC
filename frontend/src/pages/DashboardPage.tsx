@@ -41,6 +41,8 @@ const DashboardPage: React.FC = () => {
   const incidentSeverityData = Object.entries(stats.incidents_by_severity || {}).map(([name, value]) => ({ name, value }))
   const incidentStatusData = Object.entries(stats.incidents_by_status || {}).map(([name, value]) => ({ name, value }))
   const SEV_COLORS: Record<string, string> = { Critical: '#ef4444', High: '#f97316', Medium: '#f59e0b', Low: '#14b8a6' }
+  const campaignStatusData = Object.entries(stats.campaigns_by_status || {}).map(([name, value]) => ({ name, value }))
+  const trainColor = stats.training_completion_rate >= 80 ? 'text-emerald-600' : stats.training_completion_rate >= 50 ? 'text-amber-600' : 'text-red-600'
 
   return (
     <div className="p-8 space-y-8">
@@ -253,6 +255,39 @@ const DashboardPage: React.FC = () => {
                 </PieChart>
               </ResponsiveContainer>
             ) : <p className="text-sm text-gray-400 py-12 text-center">No data</p>}
+          </div>
+        </div>
+      </div>
+
+      {/* Awareness & training (7.2/7.3) */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Awareness &amp; Training</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard label="Training Completion" value={`${stats.training_completion_rate}%`} color={trainColor} />
+          <StatCard label="Campaigns" value={stats.total_campaigns} color="text-indigo-600" />
+          <StatCard label="Active Campaigns" value={stats.active_campaigns} color="text-amber-600" />
+          <div className="card flex items-center">
+            <p className="text-sm text-gray-500">Awareness campaigns and competence evidence per Clauses 7.2/7.3.</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          <div className="card">
+            <h3 className="text-sm font-semibold text-gray-700 mb-4">Campaigns by Status</h3>
+            {campaignStatusData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={campaignStatusData}>
+                  <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip />
+                  <Bar dataKey="value" fill="#6366f1" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : <p className="text-sm text-gray-400 py-12 text-center">No data</p>}
+          </div>
+          <div className="card flex flex-col justify-center items-center">
+            <p className="text-sm font-semibold text-gray-700 mb-2">Overall Training Completion</p>
+            <p className={`text-5xl font-bold ${trainColor}`}>{stats.training_completion_rate}%</p>
+            <p className="text-sm text-gray-400 mt-2">across all participation records</p>
           </div>
         </div>
       </div>

@@ -14,6 +14,10 @@ from .metric import MetricCreate, MetricUpdate, MetricRead                      
 from .objective import ObjectiveCreate, ObjectiveUpdate, ObjectiveRead            # noqa: F401
 from .supplier import SupplierCreate, SupplierUpdate, SupplierRead                # noqa: F401
 from .incident import IncidentCreate, IncidentUpdate, IncidentRead                # noqa: F401
+from .training import (                                                            # noqa: F401
+    TrainingCampaignCreate, TrainingCampaignUpdate, TrainingCampaignRead,
+    TrainingRecordCreate, TrainingRecordUpdate, TrainingRecordRead,
+)
 from .risk import RiskCreate, RiskUpdate, RiskRead                               # noqa: F401
 from .soa import SoACreate, SoAUpdate, SoARead                                  # noqa: F401
 from .evidence import EvidenceCreate, EvidenceRead                               # noqa: F401

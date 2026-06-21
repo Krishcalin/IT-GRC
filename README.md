@@ -58,6 +58,12 @@ An **open-source IT Governance, Risk & Compliance (GRC) portal** purpose-built f
 - Flag **personal-data / reportable breaches**, track reporter, affected assets, and auto-stamped resolution time
 - Dashboard shows incidents by severity and status plus an **open-incident** count
 
+### Awareness & Training (Clauses 7.2 / 7.3)
+- Plan **awareness campaigns / courses** (type, topic, audience, materials, dates) with a lifecycle status
+- Track **per-participant completion records** — the evidence of competence (7.2 d) — with status, score, and proof
+- Each campaign shows an **auto-computed completion rate**; manage participants inline (add, mark complete, change status)
+- Dashboard shows overall **training completion %** and campaigns by status
+
 ### Risk Register
 - Create and manage information security risks with full lifecycle tracking
 - **5x5 risk matrix** — likelihood × impact scoring (Low / Medium / High / Critical)
@@ -175,6 +181,7 @@ On first startup, the system automatically:
 - Seeds sample IS objectives (Clause 6.2) and KPI/KRI/KCI metrics (Clause 9.1)
 - Seeds sample suppliers / third parties (Clauses 5.19–5.23)
 - Seeds sample security incidents (Clauses 5.24–5.28)
+- Seeds sample awareness & training campaigns with participation records (Clauses 7.2/7.3)
 - Creates 6 default RBAC roles
 - Creates the first superuser account
 
@@ -224,6 +231,7 @@ IT-GRC/
 │   │   │   ├── metrics.py   #   KPI/KRI/KCI metrics (9.1)
 │   │   │   ├── suppliers.py #   Supplier / third-party register (5.19–5.23)
 │   │   │   ├── incidents.py #   Security incident register (5.24–5.28)
+│   │   │   ├── training.py  #   Awareness & training (7.2/7.3)
 │   │   │   ├── risks.py     #   Risk register CRUD
 │   │   │   ├── soa.py       #   Statement of Applicability
 │   │   │   ├── evidence.py  #   Evidence upload/download
@@ -323,6 +331,7 @@ Key API endpoints:
 | GET | `/api/v1/metrics` | List KPI/KRI/KCI metrics (9.1) |
 | GET | `/api/v1/suppliers` | List suppliers / third parties (5.19–5.23) |
 | GET | `/api/v1/incidents` | List security incidents (5.24–5.28) |
+| GET | `/api/v1/training` | List awareness & training campaigns (7.2/7.3) |
 | GET | `/api/v1/risks` | List risks |
 | POST | `/api/v1/risks` | Create a new risk |
 | GET | `/api/v1/soa` | List Statement of Applicability |

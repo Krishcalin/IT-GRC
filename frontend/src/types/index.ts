@@ -313,6 +313,43 @@ export interface Incident {
   updated_at: string
 }
 
+export interface TrainingRecord {
+  id: string
+  ref_id: string
+  campaign_id: string
+  participant: string
+  user_id: string | null
+  status: string
+  score: number | null
+  completed_at: string | null
+  evidence: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface TrainingCampaign {
+  id: string
+  ref_id: string
+  title: string
+  description: string | null
+  training_type: string
+  topic: string | null
+  clause_ref: string
+  status: string
+  audience: string | null
+  materials_link: string | null
+  owner_id: string | null
+  owner: User | null
+  start_date: string | null
+  end_date: string | null
+  total_participants: number
+  completed_participants: number
+  completion_rate: number
+  records: TrainingRecord[]
+  created_at: string
+  updated_at: string
+}
+
 export interface DashboardStats {
   total_controls: number
   implemented_controls: number
@@ -353,6 +390,10 @@ export interface DashboardStats {
   open_incidents: number
   incidents_by_severity: Record<string, number>
   incidents_by_status: Record<string, number>
+  total_campaigns: number
+  active_campaigns: number
+  training_completion_rate: number
+  campaigns_by_status: Record<string, number>
 }
 
 export interface ActivityEntry {

@@ -495,6 +495,32 @@ SAMPLE_INCIDENTS: list[dict] = [
 ]
 
 
+# Sample awareness & training campaigns with participation records (Clauses 7.2/7.3).
+SAMPLE_TRAINING: list[dict] = [
+    {"title": "Annual Security Awareness 2026", "training_type": "Awareness Campaign", "topic": "General security",
+     "status": "In Progress", "audience": "All staff",
+     "description": "Mandatory annual information security awareness training for all personnel.",
+     "records": [
+         {"participant": "Alex Morgan", "status": "Completed", "score": 95},
+         {"participant": "Jordan Lee", "status": "Completed", "score": 88},
+         {"participant": "Priya Sharma", "status": "Completed", "score": 100},
+         {"participant": "Sam Carter", "status": "Assigned"},
+     ]},
+    {"title": "Q2 Phishing Simulation", "training_type": "Phishing Simulation", "topic": "Phishing",
+     "status": "Completed", "audience": "All staff",
+     "description": "Simulated phishing campaign measuring click-through and reporting rates.",
+     "records": [
+         {"participant": "Alex Morgan", "status": "Completed", "score": 100},
+         {"participant": "Jordan Lee", "status": "Completed", "score": 100},
+         {"participant": "Sam Carter", "status": "Overdue"},
+     ]},
+    {"title": "Developer Secure Coding Onboarding", "training_type": "Role-based Training", "topic": "Secure development",
+     "status": "Planned", "audience": "Engineering team",
+     "description": "Role-based secure coding training for new engineering hires.",
+     "records": []},
+]
+
+
 DEFAULT_ROLES: list[dict] = [
     {"name": "CISO", "description": "Chief Information Security Officer — full access", "permissions": ["*"]},
     {"name": "GRC_Manager", "description": "GRC Manager — manage controls, risks, audits, policies", "permissions": ["controls:*", "risks:*", "audits:*", "policies:*", "soa:*", "assets:*", "evidence:*", "users:read"]},
@@ -631,6 +657,29 @@ async def seed_incidents(session) -> int:
         session.add(Incident(ref_id=f"INC-{i:03d}", **item))
     await session.flush()
     return len(SAMPLE_INCIDENTS)
+
+
+async def seed_training(session) -> int:
+    """Insert sample training campaigns + records (Clauses 7.2/7.3) if empty. Returns campaigns inserted."""
+    from ..models.training import TrainingCampaign, TrainingRecord
+    from sqlalchemy import select, func
+
+    count = (await session.execute(select(func.count()).select_from(TrainingCampaign))).scalar()
+    if count > 0:
+        return 0
+
+    rec_no = 0
+    for i, item in enumerate(SAMPLE_TRAINING, start=1):
+        data = dict(item)
+        records = data.pop("records", [])
+        campaign = TrainingCampaign(ref_id=f"TRN-{i:03d}", **data)
+        session.add(campaign)
+        await session.flush()  # assign campaign.id
+        for rec in records:
+            rec_no += 1
+            session.add(TrainingRecord(ref_id=f"TRR-{rec_no:03d}", campaign_id=campaign.id, **rec))
+    await session.flush()
+    return len(SAMPLE_TRAINING)
 
 
 async def seed_roles(session) -> int:

@@ -15,6 +15,7 @@ from ..models.objective import Objective
 from ..models.metric import Metric, compute_rag
 from ..models.supplier import Supplier
 from ..models.incident import Incident
+from ..models.training import TrainingCampaign, TrainingRecord
 from ..models.risk import Risk
 from ..models.audit import Audit, AuditFinding
 from ..models.policy import Policy
@@ -132,6 +133,21 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
     )).all()
     incidents_by_status = {row[0]: row[1] for row in inc_status_rows}
 
+    # Awareness & training (Clauses 7.2/7.3)
+    total_campaigns = (await db.execute(select(func.count()).select_from(TrainingCampaign))).scalar() or 0
+    active_campaigns = (await db.execute(
+        select(func.count()).select_from(TrainingCampaign).where(TrainingCampaign.status == "In Progress")
+    )).scalar() or 0
+    camp_status_rows = (await db.execute(
+        select(TrainingCampaign.status, func.count()).group_by(TrainingCampaign.status)
+    )).all()
+    campaigns_by_status = {row[0]: row[1] for row in camp_status_rows}
+    total_records = (await db.execute(select(func.count()).select_from(TrainingRecord))).scalar() or 0
+    completed_records = (await db.execute(
+        select(func.count()).select_from(TrainingRecord).where(TrainingRecord.status == "Completed")
+    )).scalar() or 0
+    training_completion_rate = round((completed_records / total_records * 100) if total_records else 0, 1)
+
     # Risks
     total_risks = (await db.execute(select(func.count()).select_from(Risk))).scalar() or 0
     open_risks = (await db.execute(
@@ -208,6 +224,10 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
         open_incidents=open_incidents,
         incidents_by_severity=incidents_by_severity,
         incidents_by_status=incidents_by_status,
+        total_campaigns=total_campaigns,
+        active_campaigns=active_campaigns,
+        training_completion_rate=training_completion_rate,
+        campaigns_by_status=campaigns_by_status,
     )
 
 

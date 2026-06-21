@@ -50,3 +50,8 @@ class DashboardStats(BaseModel):
     open_incidents: int = 0
     incidents_by_severity: dict = {}
     incidents_by_status: dict = {}
+    # Awareness & training (Clauses 7.2/7.3)
+    total_campaigns: int = 0
+    active_campaigns: int = 0
+    training_completion_rate: float = 0.0
+    campaigns_by_status: dict = {}
