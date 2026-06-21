@@ -18,6 +18,13 @@ An **open-source IT Governance, Risk & Compliance (GRC) portal** purpose-built f
 
 ## Features
 
+### Workflow & Task Management
+- Cross-cutting **task/assignment layer** any record can route work to — actions, reviews, remediation, and **approvals/sign-off**
+- **"My Tasks" inbox** (filter by assignee) plus an all-tasks board with status, type, priority, and search filters
+- **Due dates with overdue (SLA) flagging** and a dashboard panel for open / overdue / pending-approval counts
+- **Approval tasks** capture an Approved/Rejected decision, the decider, a comment, and timestamp — an audit-tracked sign-off
+- Tasks link to any module record (control, risk, finding, incident, document, supplier, policy, …) via a lightweight reference
+
 ### Controls Library
 - All **93 Annex A controls** from ISO 27001:2022 pre-loaded and categorized by theme
 - 4 themes: Organizational (37), People (8), Physical (14), Technological (34)
@@ -185,6 +192,7 @@ On first startup, the system automatically:
 - Seeds 17 mandatory documented-information records (Clause 7.5) + sample interested parties (Clause 4.2)
 - Seeds sample IS objectives (Clause 6.2) and KPI/KRI/KCI metrics (Clause 9.1)
 - Seeds sample suppliers / third parties (Clauses 5.19–5.23)
+- Seeds 5 sample workflow tasks (assigned to the first user)
 - Seeds sample security incidents (Clauses 5.24–5.28)
 - Seeds sample awareness & training campaigns with participation records (Clauses 7.2/7.3)
 - Creates 6 default RBAC roles
@@ -343,6 +351,9 @@ Key API endpoints:
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | `/api/v1/auth/login` | Authenticate and get JWT token |
+| GET | `/api/v1/auth/users` | List users (for assignee/owner pickers) |
+| GET | `/api/v1/tasks` | List workflow tasks (filters: assignee, status, type, priority, overdue) |
+| POST | `/api/v1/tasks/{id}/decision` | Record an approval/sign-off decision |
 | GET | `/api/v1/controls` | List ISO 27001 Annex A controls |
 | GET | `/api/v1/clauses` | List ISMS clause requirements (4–10) |
 | GET | `/api/v1/documents` | List documented information (7.5) |

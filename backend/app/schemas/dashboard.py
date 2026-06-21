@@ -58,3 +58,10 @@ class DashboardStats(BaseModel):
     # Reviews due (across registers)
     reviews_overdue: int = 0
     reviews_upcoming: int = 0
+    # Workflow tasks
+    total_tasks: int = 0
+    open_tasks: int = 0
+    overdue_tasks: int = 0
+    pending_approvals: int = 0
+    tasks_by_status: dict = {}
+    tasks_by_priority: dict = {}

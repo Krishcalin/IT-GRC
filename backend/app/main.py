@@ -20,7 +20,7 @@ async def _run_seeds() -> None:
     from .seed.iso27001 import (
         seed_controls, seed_iso27019_controls, seed_clauses, seed_documents,
         seed_interested_parties, seed_objectives, seed_metrics, seed_suppliers,
-        seed_incidents, seed_training, seed_roles,
+        seed_incidents, seed_training, seed_tasks, seed_roles,
     )
     from .models.user import User
     from passlib.context import CryptContext
@@ -85,7 +85,12 @@ async def _run_seeds() -> None:
                 auth_provider="local",
             )
             session.add(user)
+            await session.flush()  # ensure a user exists before seeding sample tasks
             logger.info("Created first superuser: %s", settings.FIRST_SUPERUSER_EMAIL)
+
+        n_tasks = await seed_tasks(session)
+        if n_tasks:
+            logger.info("Seeded %d sample workflow tasks", n_tasks)
 
         await session.commit()
 
@@ -159,6 +164,7 @@ from .api.incidents import router as incidents_router  # noqa: E402
 from .api.training import router as training_router    # noqa: E402
 from .api.reports import router as reports_router      # noqa: E402
 from .api.reminders import router as reminders_router  # noqa: E402
+from .api.tasks import router as tasks_router          # noqa: E402
 from .api.risks import router as risks_router        # noqa: E402
 from .api.soa import router as soa_router            # noqa: E402
 from .api.evidence import router as evidence_router  # noqa: E402
@@ -179,6 +185,7 @@ app.include_router(incidents_router, prefix=f"{settings.API_V1_PREFIX}/incidents
 app.include_router(training_router, prefix=f"{settings.API_V1_PREFIX}/training", tags=["Awareness & Training"])
 app.include_router(reports_router, prefix=f"{settings.API_V1_PREFIX}/reports", tags=["Reports"])
 app.include_router(reminders_router, prefix=f"{settings.API_V1_PREFIX}/reminders", tags=["Reminders"])
+app.include_router(tasks_router, prefix=f"{settings.API_V1_PREFIX}/tasks", tags=["Tasks & Workflow"])
 app.include_router(risks_router, prefix=f"{settings.API_V1_PREFIX}/risks", tags=["Risks"])
 app.include_router(soa_router, prefix=f"{settings.API_V1_PREFIX}/soa", tags=["Statement of Applicability"])
 app.include_router(evidence_router, prefix=f"{settings.API_V1_PREFIX}/evidence", tags=["Evidence"])

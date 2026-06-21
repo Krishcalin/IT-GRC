@@ -16,4 +16,5 @@ from .evidence import Evidence                   # noqa: F401
 from .audit import Audit, AuditFinding           # noqa: F401
 from .policy import Policy, PolicyAcknowledgment # noqa: F401
 from .asset import Asset, AssetRisk              # noqa: F401
+from .task import Task                            # noqa: F401
 from .activity_log import ActivityLog            # noqa: F401

@@ -18,6 +18,7 @@ from ..models.incident import Incident
 from ..models.training import TrainingCampaign, TrainingRecord
 from ..models.risk import Risk
 from .reminders import gather_reminders
+from ..models.task import Task, task_is_overdue, TASK_OPEN_STATUSES
 from ..models.audit import Audit, AuditFinding
 from ..models.policy import Policy
 from ..models.asset import Asset
@@ -154,6 +155,18 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
     reviews_overdue = reminders["overdue_count"]
     reviews_upcoming = reminders["upcoming_count"]
 
+    # Workflow tasks
+    task_rows = (await db.execute(select(Task))).scalars().all()
+    total_tasks = len(task_rows)
+    open_tasks = sum(1 for t in task_rows if t.status in TASK_OPEN_STATUSES)
+    overdue_tasks = sum(1 for t in task_rows if task_is_overdue(t.due_date, t.status))
+    pending_approvals = sum(1 for t in task_rows if t.task_type == "Approval" and t.status in TASK_OPEN_STATUSES)
+    tasks_by_status: dict = {}
+    tasks_by_priority: dict = {}
+    for t in task_rows:
+        tasks_by_status[t.status] = tasks_by_status.get(t.status, 0) + 1
+        tasks_by_priority[t.priority] = tasks_by_priority.get(t.priority, 0) + 1
+
     # Risks
     total_risks = (await db.execute(select(func.count()).select_from(Risk))).scalar() or 0
     open_risks = (await db.execute(
@@ -236,6 +249,12 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
         campaigns_by_status=campaigns_by_status,
         reviews_overdue=reviews_overdue,
         reviews_upcoming=reviews_upcoming,
+        total_tasks=total_tasks,
+        open_tasks=open_tasks,
+        overdue_tasks=overdue_tasks,
+        pending_approvals=pending_approvals,
+        tasks_by_status=tasks_by_status,
+        tasks_by_priority=tasks_by_priority,
     )
 
 

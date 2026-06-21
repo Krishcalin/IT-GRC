@@ -596,6 +596,33 @@ SAMPLE_TRAINING: list[dict] = [
 ]
 
 
+# Sample workflow tasks (assignment / approval / remediation) — generic demo set.
+# `due_offset_days` is resolved to an absolute date at seed time; assignee/creator
+# default to the first available user.
+SAMPLE_TASKS: list[dict] = [
+    {"title": "Review and approve Information Security Policy", "task_type": "Approval", "priority": "High",
+     "status": "Open", "resource_type": "document", "resource_label": "Information Security Policy",
+     "due_offset_days": 7,
+     "description": "Top-management sign-off required before publication (Clause 5.2 / 7.5.2)."},
+    {"title": "Complete Statement of Applicability sign-off", "task_type": "Approval", "priority": "High",
+     "status": "Open", "resource_type": "soa", "resource_label": "Statement of Applicability",
+     "due_offset_days": 14,
+     "description": "Risk owner to approve the SoA and accept residual risk (Clause 6.1.3)."},
+    {"title": "Remediate critical vulnerabilities past SLA", "task_type": "Remediation", "priority": "Critical",
+     "status": "In Progress", "resource_type": "metric", "resource_label": "Critical vulns past SLA (open)",
+     "due_offset_days": -3,
+     "description": "Four critical vulnerabilities remain open beyond the 14-day SLA."},
+    {"title": "Quarterly access-rights review", "task_type": "Review", "priority": "Medium",
+     "status": "Open", "resource_type": "control", "resource_label": "A.5.18 Access rights",
+     "due_offset_days": 21,
+     "description": "Recertify privileged and application access rights for the quarter."},
+    {"title": "Vendor security assessment — Payroll SaaS", "task_type": "Action", "priority": "Medium",
+     "status": "Open", "resource_type": "supplier", "resource_label": "Payroll SaaS Vendor",
+     "due_offset_days": 30,
+     "description": "Issue and review the security questionnaire for the payroll provider."},
+]
+
+
 DEFAULT_ROLES: list[dict] = [
     {"name": "CISO", "description": "Chief Information Security Officer — full access", "permissions": ["*"]},
     {"name": "GRC_Manager", "description": "GRC Manager — manage controls, risks, audits, policies", "permissions": ["controls:*", "risks:*", "audits:*", "policies:*", "soa:*", "assets:*", "evidence:*", "users:read"]},
@@ -777,6 +804,36 @@ async def seed_training(session) -> int:
             session.add(TrainingRecord(ref_id=f"TRR-{rec_no:03d}", campaign_id=campaign.id, **rec))
     await session.flush()
     return len(SAMPLE_TRAINING)
+
+
+async def seed_tasks(session) -> int:
+    """Insert sample workflow tasks if the table is empty. Returns count inserted.
+
+    Assigns tasks to the first available user; resolves relative due dates to
+    absolute dates. Call after users have been seeded.
+    """
+    from ..models.task import Task
+    from ..models.user import User
+    from datetime import datetime, timedelta, timezone
+    from sqlalchemy import select, func
+
+    count = (await session.execute(select(func.count()).select_from(Task))).scalar()
+    if count > 0:
+        return 0
+
+    user = (await session.execute(select(User).order_by(User.created_at))).scalars().first()
+    user_id = user.id if user else None
+    today = datetime.now(timezone.utc).date()
+
+    for i, item in enumerate(SAMPLE_TASKS, start=1):
+        data = dict(item)
+        offset = data.pop("due_offset_days", None)
+        due = today + timedelta(days=offset) if offset is not None else None
+        session.add(Task(
+            ref_id=f"TASK-{i:03d}", assignee_id=user_id, created_by_id=user_id, due_date=due, **data,
+        ))
+    await session.flush()
+    return len(SAMPLE_TASKS)
 
 
 async def seed_roles(session) -> int:

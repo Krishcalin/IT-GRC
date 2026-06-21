@@ -81,3 +81,15 @@ async def register(
 @router.get("/me", response_model=UserRead)
 async def me(current_user: User = Depends(get_current_user)):
     return current_user
+
+
+@router.get("/users", response_model=list[UserRead])
+async def list_users(
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(get_current_user),
+):
+    """Active users — used to populate assignee/owner pickers across the portal."""
+    rows = (await db.execute(
+        select(User).where(User.is_active == True).order_by(User.full_name)
+    )).scalars().all()
+    return rows

@@ -2,7 +2,7 @@
 
 from app.seed.iso27001 import (
     ANNEX_A_CONTROLS, ISO27019_CONTROLS, ISMS_CLAUSES, MANDATORY_DOCUMENTS,
-    SAMPLE_METRICS, SAMPLE_TRAINING, DEFAULT_ROLES,
+    SAMPLE_METRICS, SAMPLE_TRAINING, SAMPLE_TASKS, DEFAULT_ROLES,
 )
 
 THEMES = {"Organizational", "People", "Physical", "Technological"}
@@ -57,3 +57,16 @@ def test_metric_directions_and_types_valid():
 
 def test_training_campaigns_have_records_list():
     assert all(isinstance(t.get("records", []), list) for t in SAMPLE_TRAINING)
+
+
+def test_sample_tasks_well_formed():
+    types = {"Action", "Approval", "Review", "Remediation"}
+    priorities = {"Low", "Medium", "High", "Critical"}
+    statuses = {"Open", "In Progress", "Blocked", "Done", "Cancelled"}
+    assert len(SAMPLE_TASKS) >= 1
+    for t in SAMPLE_TASKS:
+        assert t["title"]
+        assert t["task_type"] in types
+        assert t["priority"] in priorities
+        assert t["status"] in statuses
+        assert isinstance(t["due_offset_days"], int)

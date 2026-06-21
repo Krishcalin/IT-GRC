@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { User, Control, ClauseRequirement, DocumentedInformation, InterestedParty, Objective, Metric, Supplier, Incident, TrainingCampaign, TrainingRecord, RemindersResult, Risk, SoAEntry, Evidence, Audit, AuditFinding, Policy, Asset, DashboardStats, ActivityEntry } from '../types'
+import type { User, Control, ClauseRequirement, DocumentedInformation, InterestedParty, Objective, Metric, Supplier, Incident, TrainingCampaign, TrainingRecord, RemindersResult, Task, Risk, SoAEntry, Evidence, Audit, AuditFinding, Policy, Asset, DashboardStats, ActivityEntry } from '../types'
 
 const api = axios.create({ baseURL: '/api/v1' })
 
@@ -24,6 +24,15 @@ api.interceptors.response.use(
 export const login = (email: string, password: string) =>
   api.post<{ access_token: string }>('/auth/login', new URLSearchParams({ username: email, password }))
 export const getMe = () => api.get<User>('/auth/me')
+export const getUsers = () => api.get<User[]>('/auth/users')
+
+// Tasks & Workflow
+export const getTasks = (params?: Record<string, string>) => api.get<Task[]>('/tasks', { params })
+export const getTask = (id: string) => api.get<Task>(`/tasks/${id}`)
+export const createTask = (data: Record<string, unknown>) => api.post<Task>('/tasks', data)
+export const updateTask = (id: string, data: Partial<Task>) => api.put<Task>(`/tasks/${id}`, data)
+export const decideTask = (id: string, data: { decision: string; decision_comment?: string }) => api.post<Task>(`/tasks/${id}/decision`, data)
+export const deleteTask = (id: string) => api.delete(`/tasks/${id}`)
 
 // Controls
 export const getControls = (params?: Record<string, string>) => api.get<Control[]>('/controls', { params })

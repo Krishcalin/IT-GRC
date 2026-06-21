@@ -44,6 +44,9 @@ const DashboardPage: React.FC = () => {
   const SEV_COLORS: Record<string, string> = { Critical: '#ef4444', High: '#f97316', Medium: '#f59e0b', Low: '#14b8a6' }
   const campaignStatusData = Object.entries(stats.campaigns_by_status || {}).map(([name, value]) => ({ name, value }))
   const trainColor = stats.training_completion_rate >= 80 ? 'text-emerald-600' : stats.training_completion_rate >= 50 ? 'text-amber-600' : 'text-red-600'
+  const taskStatusData = Object.entries(stats.tasks_by_status || {}).map(([name, value]) => ({ name, value }))
+  const taskPriorityData = Object.entries(stats.tasks_by_priority || {}).map(([name, value]) => ({ name, value }))
+  const PRIORITY_COLORS: Record<string, string> = { Critical: '#ef4444', High: '#f97316', Medium: '#f59e0b', Low: '#14b8a6' }
 
   return (
     <div className="p-8 space-y-8">
@@ -70,6 +73,50 @@ const DashboardPage: React.FC = () => {
           </div>
         </Link>
       )}
+
+      {/* Workflow & tasks */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">Workflow &amp; Tasks</h2>
+          <Link to="/tasks" className="text-sm font-medium text-indigo-600 hover:text-indigo-800">Open task board →</Link>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Link to="/tasks" className="card hover:bg-indigo-50/50 transition-colors"><p className="text-sm font-medium text-gray-500">Open Tasks</p><p className="text-3xl font-bold mt-1 text-indigo-600">{stats.open_tasks}</p></Link>
+          <Link to="/tasks" className="card hover:bg-indigo-50/50 transition-colors"><p className="text-sm font-medium text-gray-500">Overdue</p><p className={`text-3xl font-bold mt-1 ${stats.overdue_tasks > 0 ? 'text-red-600' : 'text-emerald-600'}`}>{stats.overdue_tasks}</p></Link>
+          <Link to="/tasks" className="card hover:bg-indigo-50/50 transition-colors"><p className="text-sm font-medium text-gray-500">Pending Approvals</p><p className={`text-3xl font-bold mt-1 ${stats.pending_approvals > 0 ? 'text-amber-600' : 'text-emerald-600'}`}>{stats.pending_approvals}</p></Link>
+          <StatCard label="Total Tasks" value={stats.total_tasks} color="text-gray-700" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          <div className="card">
+            <h3 className="text-sm font-semibold text-gray-700 mb-4">Tasks by Status</h3>
+            {taskStatusData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={taskStatusData}>
+                  <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip />
+                  <Bar dataKey="value" fill="#6366f1" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : <p className="text-sm text-gray-400 py-12 text-center">No tasks yet</p>}
+          </div>
+          <div className="card">
+            <h3 className="text-sm font-semibold text-gray-700 mb-4">Tasks by Priority</h3>
+            {taskPriorityData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={taskPriorityData}>
+                  <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip />
+                  <Bar dataKey="value" radius={[6, 6, 0, 0]}>
+                    {taskPriorityData.map((d, i) => <Cell key={i} fill={PRIORITY_COLORS[d.name] || COLORS[i % COLORS.length]} />)}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            ) : <p className="text-sm text-gray-400 py-12 text-center">No tasks yet</p>}
+          </div>
+        </div>
+      </div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

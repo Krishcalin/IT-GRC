@@ -353,6 +353,31 @@ export interface TrainingCampaign {
   updated_at: string
 }
 
+export interface Task {
+  id: string
+  ref_id: string
+  title: string
+  description: string | null
+  task_type: string
+  status: string
+  priority: string
+  assignee_id: string | null
+  assignee: User | null
+  created_by: User | null
+  due_date: string | null
+  overdue: boolean
+  completed_at: string | null
+  resource_type: string | null
+  resource_id: string | null
+  resource_label: string | null
+  decision: string | null
+  decision_comment: string | null
+  decided_by: User | null
+  decided_at: string | null
+  created_at: string
+  updated_at: string
+}
+
 export interface ReminderItem {
   category: string
   ref_id: string
@@ -416,6 +441,12 @@ export interface DashboardStats {
   campaigns_by_status: Record<string, number>
   reviews_overdue: number
   reviews_upcoming: number
+  total_tasks: number
+  open_tasks: number
+  overdue_tasks: number
+  pending_approvals: number
+  tasks_by_status: Record<string, number>
+  tasks_by_priority: Record<string, number>
 }
 
 export interface ActivityEntry {
