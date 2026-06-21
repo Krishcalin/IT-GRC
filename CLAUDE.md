@@ -20,7 +20,7 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 - `schemas/` — Pydantic v2 request/response schemas (Create/Update/Read per model)
 - `api/` — FastAPI route handlers, one file per module: `auth`, `controls`, `clauses`, `documents`, `interested_parties`, `objectives`, `metrics`, `suppliers`, `incidents`, `training`, `risks`, `soa`, `evidence`, `audits`, `policies`, `assets`, `dashboard`
 - `api/deps.py` — Shared dependencies (get_db, get_current_user, require_superuser)
-- `seed/iso27001.py` — 93 Annex A controls + 30 ISMS clauses (4–10) + 17 mandatory documents + sample interested parties + sample objectives & KPI/KRI/KCI metrics + sample suppliers + sample incidents + sample training campaigns + 6 RBAC roles
+- `seed/iso27001.py` — 93 Annex A controls + 12 ISO 27019:2024 energy-sector (ENR) controls + 30 ISMS clauses (4–10) + 17 mandatory documents + sample interested parties + sample objectives & KPI/KRI/KCI metrics + sample suppliers + sample incidents + sample training campaigns + 6 RBAC roles
 
 ### Frontend (`frontend/src/`)
 - `App.tsx` — Root with AuthProvider + React Router
@@ -35,7 +35,7 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 |-------|-------|-----------|
 | User | users | email, full_name, hashed_password, is_superuser, auth_provider |
 | Role | roles | name, description, permissions (JSON) |
-| Control | controls | clause (A.5.1), title, description, theme, status, owner_id |
+| Control | controls | clause (A.5.1 / ENR.8.40), title, description, theme, framework, status, owner_id |
 | ClauseRequirement | clause_requirements | clause (6.1.2), title, section, clause_number, requirement, documented_info, conformity_status, owner_id |
 | DocumentedInformation | documented_information | ref_id (DOC-001), title, doc_type, clause_ref, mandatory, version, status, classification, owner/approver, review dates |
 | InterestedParty | interested_parties | ref_id (PARTY-001), name, party_type, category, requirements, addressed_in_isms |
@@ -100,6 +100,20 @@ campaigns-by-status, the compliance score, and module counts.
 - A.8 Technological (34): A.8.1 – A.8.34
 
 Auto-seeded on first startup. Controls are read-only by default (update status/owner via PUT).
+
+## ISO/IEC 27019:2024 (energy-utility sector controls)
+12 sector-specific **ENR** controls — the only controls 27019 adds beyond Annex A
+(the rest of 27019 reuses Annex A with energy-specific guidance). Loaded as a
+separate `framework` value on the `controls` table (`"ISO 27019:2024"` vs the
+default `"ISO 27001:2022"`); clause ids use an `ENR.` prefix (ENR.5.38, ENR.5.39,
+ENR.7.15–7.18, ENR.8.35–8.40) so they never collide with the `A.` Annex A clauses.
+- `seed_iso27019_controls()` is gated on the absence of 27019 controls (not an
+  empty table) so it can be added to a DB that already holds the Annex A set.
+- `main.py` `_run_light_migrations()` runs `ALTER TABLE controls ADD COLUMN IF NOT
+  EXISTS framework …` after `create_all`, so existing DBs gain the column (the app
+  has no migration tool; `create_all` does not alter existing tables).
+- Filter via `GET /controls?framework=ISO 27019:2024`; the Controls page has a
+  Framework filter + column. Wording is paraphrased, not reproduced from the standard.
 
 ## ISO 27001:2022 Clauses 4–10 (mandatory ISMS requirements)
 30 management-system requirements seeded into `clause_requirements`, tracked for

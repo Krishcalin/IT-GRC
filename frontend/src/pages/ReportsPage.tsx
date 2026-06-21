@@ -13,7 +13,7 @@ interface ReportDef {
 const REPORTS: ReportDef[] = [
   { key: 'soa', path: 'soa.csv', filename: 'statement_of_applicability.csv', title: 'Statement of Applicability (SoA)', description: 'Every control with applicability, implementation status, justification, and responsible owner.', kind: 'csv' },
   { key: 'risks', path: 'risks.csv', filename: 'risk_register.csv', title: 'Risk Register', description: 'Full risk register with likelihood × impact scoring, treatment, residual level, and status.', kind: 'csv' },
-  { key: 'controls', path: 'controls.csv', filename: 'annex_a_controls.csv', title: 'Annex A Controls', description: 'All 93 ISO 27001:2022 Annex A controls with status, owner, and review date.', kind: 'csv' },
+  { key: 'controls', path: 'controls.csv', filename: 'controls.csv', title: 'Controls Catalogue', description: 'All controls (ISO 27001:2022 Annex A + ISO 27019:2024 energy sector) with framework, theme, status, owner, and review date.', kind: 'csv' },
   { key: 'board', path: 'board-pack.html', title: 'Board Pack (printable)', description: 'One-page executive summary — compliance, conformity, risks, incidents, training — ready to print or save as PDF.', kind: 'html' },
 ]
 

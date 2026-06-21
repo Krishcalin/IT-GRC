@@ -74,13 +74,13 @@ async def export_risks(db: AsyncSession = Depends(get_db), _: User = Depends(get
 
 @router.get("/controls.csv")
 async def export_controls(db: AsyncSession = Depends(get_db), _: User = Depends(get_current_user)):
-    controls = (await db.execute(select(Control).order_by(Control.clause))).scalars().all()
+    controls = (await db.execute(select(Control).order_by(Control.framework, Control.clause))).scalars().all()
     rows = [[
-        c.clause, c.title, c.theme, c.status,
+        c.clause, c.title, c.theme, c.framework, c.status,
         c.owner.full_name if c.owner else "", c.review_date.isoformat() if c.review_date else "",
     ] for c in controls]
-    return _csv("annex_a_controls.csv",
-                ["Clause", "Title", "Theme", "Status", "Owner", "Review Date"], rows)
+    return _csv("controls.csv",
+                ["Clause", "Title", "Theme", "Framework", "Status", "Owner", "Review Date"], rows)
 
 
 async def _count(db: AsyncSession, model, *where) -> int:

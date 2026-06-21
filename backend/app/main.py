@@ -18,9 +18,9 @@ logger = logging.getLogger(__name__)
 async def _run_seeds() -> None:
     """Seed the database with ISO 27001 controls, default roles, and first superuser."""
     from .seed.iso27001 import (
-        seed_controls, seed_clauses, seed_documents, seed_interested_parties,
-        seed_objectives, seed_metrics, seed_suppliers, seed_incidents,
-        seed_training, seed_roles,
+        seed_controls, seed_iso27019_controls, seed_clauses, seed_documents,
+        seed_interested_parties, seed_objectives, seed_metrics, seed_suppliers,
+        seed_incidents, seed_training, seed_roles,
     )
     from .models.user import User
     from passlib.context import CryptContext
@@ -36,6 +36,10 @@ async def _run_seeds() -> None:
         n_controls = await seed_controls(session)
         if n_controls:
             logger.info("Seeded %d ISO 27001:2022 Annex A controls", n_controls)
+
+        n_enr = await seed_iso27019_controls(session)
+        if n_enr:
+            logger.info("Seeded %d ISO 27019:2024 energy-sector controls", n_enr)
 
         n_clauses = await seed_clauses(session)
         if n_clauses:
@@ -86,11 +90,35 @@ async def _run_seeds() -> None:
         await session.commit()
 
 
+async def _run_light_migrations() -> None:
+    """Idempotent, additive schema touch-ups for existing databases.
+
+    The app provisions schema with ``Base.metadata.create_all``, which creates
+    missing tables but does NOT alter existing ones. New columns added to models
+    over time are applied here with ``ADD COLUMN IF NOT EXISTS`` so databases
+    created before the column existed keep working without a full migration tool.
+    Safe to run on every startup.
+    """
+    from sqlalchemy import text
+
+    statements = [
+        # Added with the ISO 27019:2024 energy-sector control set.
+        "ALTER TABLE controls ADD COLUMN IF NOT EXISTS framework VARCHAR(48) NOT NULL DEFAULT 'ISO 27001:2022'",
+    ]
+    async with engine.begin() as conn:
+        for stmt in statements:
+            try:
+                await conn.execute(text(stmt))
+            except Exception as exc:  # never block startup on a best-effort migration
+                logger.warning("Light migration skipped (%s): %s", stmt.split(" ADD")[0], exc)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    await _run_light_migrations()
     logger.info("Database tables created")
 
     await _run_seeds()

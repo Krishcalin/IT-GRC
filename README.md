@@ -7,6 +7,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![ISO 27001](https://img.shields.io/badge/ISO_27001-2022-blue)](https://www.iso.org/standard/27001)
 [![Controls](https://img.shields.io/badge/Annex_A_Controls-93-orange)](#controls-library)
+[![ISO 27019](https://img.shields.io/badge/ISO_27019_(Energy)-12-teal)](#isoiec-270192024-energy-sector-coverage)
 [![ISMS Clauses](https://img.shields.io/badge/ISMS_Clauses_4--10-30-9cf)](#isms-clause-conformity-clauses-410)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](#quick-start)
 [![CI](https://github.com/Krishcalin/IT-GRC/actions/workflows/ci.yml/badge.svg)](https://github.com/Krishcalin/IT-GRC/actions/workflows/ci.yml)
@@ -20,8 +21,10 @@ An **open-source IT Governance, Risk & Compliance (GRC) portal** purpose-built f
 ### Controls Library
 - All **93 Annex A controls** from ISO 27001:2022 pre-loaded and categorized by theme
 - 4 themes: Organizational (37), People (8), Physical (14), Technological (34)
+- **12 ISO/IEC 27019:2024 energy-sector controls** (the "ENR" controls for SCADA/ICS in the energy utility industry) loaded as an additional, filterable framework
 - Track implementation status, assign owners, set review dates
 - Link controls to risks, evidence, and audit findings
+- Filter the library by **framework** (ISO 27001:2022 / ISO 27019:2024), theme, and status
 
 ### ISMS Clause Conformity (Clauses 4–10)
 - All **30 mandatory management-system requirements** from ISO 27001:2022 Clauses 4–10 pre-loaded
@@ -177,6 +180,7 @@ Use the credentials from your `.env` file:
 On first startup, the system automatically:
 - Creates all database tables
 - Seeds 93 ISO 27001:2022 Annex A controls
+- Seeds 12 ISO/IEC 27019:2024 energy-sector (ENR) controls
 - Seeds 30 ISO 27001:2022 ISMS clause requirements (Clauses 4–10)
 - Seeds 17 mandatory documented-information records (Clause 7.5) + sample interested parties (Clause 4.2)
 - Seeds sample IS objectives (Clause 6.2) and KPI/KRI/KCI metrics (Clause 9.1)
@@ -277,6 +281,21 @@ IT-GRC/
 | **Physical** | 14 | A.7.1 – A.7.14 |
 | **Technological** | 34 | A.8.1 – A.8.34 |
 | **Total** | **93** | |
+
+---
+
+## ISO/IEC 27019:2024 Energy-Sector Coverage
+
+ISO/IEC 27019:2024 extends ISO/IEC 27002:2022 for **process control systems (SCADA/ICS) in the energy utility industry**. It reuses the Annex A controls above (adding energy-specific guidance) and introduces **12 sector-specific "ENR" controls** — the only controls it adds beyond Annex A. These are loaded as a distinct, filterable framework (`ISO 27019:2024`) that energy-sector organizations can adopt in addition to the base set. Wording is paraphrased for the app, not reproduced from the standard.
+
+| Theme | Controls | Clauses |
+|-------|----------|---------|
+| **Organizational** | 2 | ENR.5.38 – ENR.5.39 |
+| **Physical** | 4 | ENR.7.15 – ENR.7.18 |
+| **Technological** | 6 | ENR.8.35 – ENR.8.40 |
+| **Total** | **12** | |
+
+> ENR.5.38 Identification of risks related to external business partners · ENR.5.39 Addressing security when dealing with customers · ENR.7.15 Securing control centres · ENR.7.16 Securing equipment rooms · ENR.7.17 Securing peripheral sites · ENR.7.18 Interconnected control and communication systems · ENR.8.35 Treatment of legacy systems · ENR.8.36 Integrity and availability of safety functions · ENR.8.37 Securing process control data communication · ENR.8.38 Logical connection of external process control systems · ENR.8.39 Least functionality · ENR.8.40 Emergency communication
 
 ---
 

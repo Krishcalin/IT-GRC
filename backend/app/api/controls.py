@@ -22,9 +22,10 @@ router = APIRouter()
 async def list_controls(
     theme: str | None = None,
     status: str | None = None,
+    framework: str | None = None,
     search: str | None = None,
     skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1, le=500),
+    limit: int = Query(200, ge=1, le=500),
     db: AsyncSession = Depends(get_db),
 ):
     q = select(Control)
@@ -32,6 +33,8 @@ async def list_controls(
         q = q.where(Control.theme == theme)
     if status:
         q = q.where(Control.status == status)
+    if framework:
+        q = q.where(Control.framework == framework)
     if search:
         q = q.where(or_(Control.clause.ilike(f"%{search}%"), Control.title.ilike(f"%{search}%")))
     q = q.order_by(Control.clause).offset(skip).limit(limit)

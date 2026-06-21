@@ -24,6 +24,7 @@ export interface Control {
   title: string
   description: string
   theme: string
+  framework: string
   implementation_guidance: string | null
   status: string
   owner_id: string | null

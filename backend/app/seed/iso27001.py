@@ -202,6 +202,81 @@ assert len(ANNEX_A_CONTROLS) == 93, f"Expected 93 controls, got {len(ANNEX_A_CON
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+#  ISO/IEC 27019:2024 — energy-utility-industry sector controls
+#
+#  ISO/IEC 27019:2024 is a sector-specific extension of ISO/IEC 27002:2022 for
+#  process control systems (SCADA/ICS) in the energy utility industry. It reuses
+#  the ISO 27001:2022 Annex A controls above (adding energy-specific guidance to
+#  many of them) and introduces NEW sector-specific controls, prefixed "ENR".
+#  Those 12 ENR controls are the only controls 27019 adds beyond Annex A, so they
+#  are loaded here as a distinct framework ("ISO 27019:2024") that energy-sector
+#  organizations can adopt in addition to the base Annex A set.
+#
+#  Descriptions and guidance below are paraphrased for the application; they are
+#  not a reproduction of the copyrighted standard. Refer to ISO/IEC 27019:2024
+#  for the authoritative wording. Clause ids use an "ENR." prefix to keep them
+#  distinct from the "A." Annex A clauses.
+# ─────────────────────────────────────────────────────────────────────────────
+ISO27019_CONTROLS: list[dict] = [
+    # ── Organizational ────────────────────────────────────────
+    {"clause": "ENR.5.38", "title": "Identification of risks related to external business partners",
+     "theme": "Organizational", "framework": "ISO 27019:2024",
+     "description": "Identify and assess the information security risks that arise when external business partners — vendors, system integrators, interconnected operators — access process control systems or critical-asset information, and implement appropriate controls before access is granted.",
+     "implementation_guidance": "Energy process-control environments depend heavily on vendors and integrators for maintenance and on interconnection with other operators. Assess the exposure of the physical process being controlled, require partners to maintain a comparable security level (e.g. through contractual obligations), and tightly control remote-access pathways to critical assets."},
+    {"clause": "ENR.5.39", "title": "Addressing security when dealing with customers",
+     "theme": "Organizational", "framework": "ISO 27019:2024",
+     "description": "Address all identified security requirements before giving customers access to the organization's information or assets, accounting for the complex ownership and demarcation of responsibilities typical of energy supply relationships.",
+     "implementation_guidance": "Define responsibility boundaries among asset owners, system operators, service providers and customers. Where equipment is sited on customer or other-utility premises, or where process control systems are interconnected, apply the corresponding physical-protection and interconnection controls (see ENR.7.15–ENR.7.18)."},
+
+    # ── Physical ──────────────────────────────────────────────
+    {"clause": "ENR.7.15", "title": "Securing control centres",
+     "theme": "Physical", "framework": "ISO 27019:2024",
+     "description": "Design, develop and apply measures to physically secure control centres — where control-system servers, HMIs and supporting systems are housed — against unauthorized access and physical and environmental threats.",
+     "implementation_guidance": "Consider siting on stable ground away from hazardous-material storage and strong electromagnetic fields; disaster- and fire-resistant construction; adequate structural load capacity; automatic fire detection and suppression; and strict segregation from other ICT where control systems share an externally operated data centre."},
+    {"clause": "ENR.7.16", "title": "Securing equipment rooms",
+     "theme": "Physical", "framework": "ISO 27019:2024",
+     "description": "Design, develop and implement measures to physically secure the rooms in which energy-utility control-system equipment is located.",
+     "implementation_guidance": "Locate equipment rooms to minimize exposure to extreme environmental conditions, flooding and electromagnetic interference; keep their purpose unobtrusive; restrict and detect unauthorized access; provide fire detection/suppression, anti-static measures and resilient air-conditioning; and place components with heightened sensitivity in dedicated, hardened rooms."},
+    {"clause": "ENR.7.17", "title": "Securing peripheral sites",
+     "theme": "Physical", "framework": "ISO 27019:2024",
+     "description": "Apply physical security controls to peripheral, frequently unattended sites housing control-system equipment, or apply compensating countermeasures where an adequate level of physical protection is not attainable.",
+     "implementation_guidance": "For decentralized substations and distributed-generation sites, consider disaster-proofing, automatic fire control, remote monitoring (component malfunction, power loss, fire, humidity/temperature), secure perimeters and central-monitored alarms. Where protection is limited, weigh asset criticality and existing redundancy/fall-back when selecting countermeasures."},
+    {"clause": "ENR.7.18", "title": "Interconnected control and communication systems",
+     "theme": "Physical", "framework": "ISO 27019:2024",
+     "description": "Where control systems and related communication links are interconnected with external parties, clearly define responsibility boundaries and interfaces so each organization can be disconnected and isolated within an appropriate period to contain identified risks.",
+     "implementation_guidance": "Monitor interconnection status; provide a means to isolate and later reconnect links; contractually allow suspension where severe interference affects own services; predefine suspension criteria, assess the impact of suspension and prepare fall-back measures. Applies to both routed network-based and serial communication."},
+
+    # ── Technological ─────────────────────────────────────────
+    {"clause": "ENR.8.35", "title": "Treatment of legacy systems",
+     "theme": "Technological", "framework": "ISO 27019:2024",
+     "description": "Identify legacy process-control technologies, systems and components together with their potential security vulnerabilities, and implement appropriate controls through the risk-treatment process where standard controls cannot be applied.",
+     "implementation_guidance": "Many industrial control systems lack basic security features. Where standard controls are infeasible, apply compensating measures: strict network segregation; avoidance of remote access (or, where necessary, isolation via hardened, regularly patched secure proxies at defined monitored interconnection points); and strict access control at network, system and application levels. Secure the equipment used to maintain and configure legacy systems."},
+    {"clause": "ENR.8.36", "title": "Integrity and availability of safety functions",
+     "theme": "Technological", "framework": "ISO 27019:2024",
+     "description": "Protect the integrity and availability of the information, assets, systems, components and functions required to ensure safety functions, in accordance with sector-specific standards and legal requirements.",
+     "implementation_guidance": "Use dedicated, isolated communication systems for safety-related data; keep safety functions independent of process-control and automation systems where possible; avoid changing critical safety systems and their safety-related configuration via remote access; and log changes to safety-system configuration."},
+    {"clause": "ENR.8.37", "title": "Securing process control data communication",
+     "theme": "Technological", "framework": "ISO 27019:2024",
+     "description": "Design, develop and implement measures to meet the confidentiality, integrity and availability requirements (identified during risk assessment) of internal and external process-control data communication.",
+     "implementation_guidance": "Many process-control protocols (e.g. IEC 60870-5/-6, DNP3, IEC 61850, Modbus) include no built-in security or make it optional. Address the residual risk by enabling supported security features (e.g. per IEC 62351) or adding cryptographic protection — encryption, integrity checks and authentication of communication partners — on the lower communication layers. Applies to networked and serial communication."},
+    {"clause": "ENR.8.38", "title": "Logical connection of external process control systems",
+     "theme": "Technological", "framework": "ISO 27019:2024",
+     "description": "Before logically connecting process-control systems and communication links with external parties, evaluate the resulting risk and ensure only authorized communications and information flows — including control-system commands and messages — can be exchanged over the link.",
+     "implementation_guidance": "Connect only where operationally necessary, at defined, securely operated and monitored connection points. Define and approve the type and extent of permitted communications, and use filtering devices such as gateways, proxies or application-level firewalls to allow only the authorized flows."},
+    {"clause": "ENR.8.39", "title": "Least functionality",
+     "theme": "Technological", "framework": "ISO 27019:2024",
+     "description": "Design, configure, operate and maintain process-control systems to provide only the functions required for operation.",
+     "implementation_guidance": "Document, then disable and explicitly prohibit unnecessary functions, software, ports, protocols and services; document and explicitly allow the functions, software, ports, protocols and services that are required."},
+    {"clause": "ENR.8.40", "title": "Emergency communication",
+     "theme": "Technological", "framework": "ISO 27019:2024",
+     "description": "During major disturbances, natural disasters, accidents or other emergencies (or where there is a risk of them), ensure that essential communication links are maintained with internal and other-utility emergency staff, essential control systems and the external emergency organizations needed to protect against, handle or recover from such incidents.",
+     "implementation_guidance": "Provide for voice and data links with operating and crisis-management staff, power stations and producers, transmission/distribution system operators, meteorological and disaster-relief organizations, authorities and telecommunication providers. Recognize that communication links needed for system restoration can themselves depend on the electricity supply, and plan redundancy accordingly."},
+]
+
+assert len(ISO27019_CONTROLS) == 12, f"Expected 12 ISO 27019:2024 controls, got {len(ISO27019_CONTROLS)}"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 #  ISO/IEC 27001:2022 mandatory management-system requirements (Clauses 4–10)
 #
 #  These are the normative ISMS "shall" requirements an organization is audited
@@ -544,6 +619,28 @@ async def seed_controls(session) -> int:
         session.add(Control(**item))
     await session.flush()
     return len(ANNEX_A_CONTROLS)
+
+
+async def seed_iso27019_controls(session) -> int:
+    """Insert ISO 27019:2024 energy-sector controls if not already present.
+
+    Gated on the absence of *ISO 27019:2024* controls specifically (not on an
+    empty table) so the set can be added to a database that already holds the
+    base Annex A controls. Returns count inserted.
+    """
+    from ..models.control import Control
+    from sqlalchemy import select, func
+
+    count = (await session.execute(
+        select(func.count()).select_from(Control).where(Control.framework == "ISO 27019:2024")
+    )).scalar()
+    if count > 0:
+        return 0
+
+    for item in ISO27019_CONTROLS:
+        session.add(Control(**item))
+    await session.flush()
+    return len(ISO27019_CONTROLS)
 
 
 async def seed_clauses(session) -> int:

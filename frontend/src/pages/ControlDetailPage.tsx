@@ -45,7 +45,11 @@ const ControlDetailPage: React.FC = () => {
       <div className="card">
         <div className="flex items-start justify-between mb-6">
           <div>
-            <span className="text-sm font-mono font-semibold text-indigo-600">{control.clause}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-mono font-semibold text-indigo-600">{control.clause}</span>
+              <span className="text-xs text-gray-400">·</span>
+              <span className="text-xs font-medium text-gray-500">{control.framework}</span>
+            </div>
             <h1 className="text-2xl font-bold text-gray-900 mt-1">{control.title}</h1>
             <div className="flex gap-2 mt-2">
               <StatusBadge value={control.theme} />

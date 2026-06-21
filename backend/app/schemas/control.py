@@ -15,6 +15,7 @@ class ControlCreate(BaseModel):
     title: str
     description: str
     theme: str
+    framework: str = "ISO 27001:2022"
     implementation_guidance: str | None = None
     status: str = "Not Started"
     owner_id: UUID | None = None
@@ -36,6 +37,7 @@ class ControlRead(BaseModel):
     title: str
     description: str
     theme: str
+    framework: str = "ISO 27001:2022"
     implementation_guidance: str | None = None
     status: str
     owner_id: UUID | None = None
