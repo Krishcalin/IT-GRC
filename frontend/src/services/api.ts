@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { User, Control, ClauseRequirement, DocumentedInformation, InterestedParty, Objective, Metric, MetricMeasurement, Supplier, Incident, TrainingCampaign, TrainingRecord, RemindersResult, Task, RiskHeatmap, PostureSnapshot, MyWork, Risk, SoAEntry, Evidence, Audit, AuditFinding, Policy, Asset, DashboardStats, ActivityEntry } from '../types'
+import type { User, Control, ControlMappingItem, FrameworkCoverage, ClauseRequirement, DocumentedInformation, InterestedParty, Objective, Metric, MetricMeasurement, Supplier, Incident, TrainingCampaign, TrainingRecord, RemindersResult, Task, RiskHeatmap, PostureSnapshot, MyWork, Risk, SoAEntry, Evidence, Audit, AuditFinding, Policy, Asset, DashboardStats, ActivityEntry } from '../types'
 
 const api = axios.create({ baseURL: '/api/v1' })
 
@@ -38,6 +38,10 @@ export const deleteTask = (id: string) => api.delete(`/tasks/${id}`)
 export const getControls = (params?: Record<string, string>) => api.get<Control[]>('/controls', { params })
 export const getControl = (id: string) => api.get<Control>(`/controls/${id}`)
 export const updateControl = (id: string, data: Partial<Control>) => api.put<Control>(`/controls/${id}`, data)
+export const getControlMappings = (id: string) => api.get<ControlMappingItem[]>(`/controls/${id}/mappings`)
+export const addControlMapping = (id: string, data: { target_control_id: string; relationship_type?: string; note?: string }) => api.post<ControlMappingItem>(`/controls/${id}/mappings`, data)
+export const deleteControlMapping = (id: string, mappingId: string) => api.delete(`/controls/${id}/mappings/${mappingId}`)
+export const getFrameworkCoverage = () => api.get<FrameworkCoverage>('/analytics/framework-coverage')
 
 // ISMS Clauses (4–10)
 export const getClauses = (params?: Record<string, string>) => api.get<ClauseRequirement[]>('/clauses', { params })

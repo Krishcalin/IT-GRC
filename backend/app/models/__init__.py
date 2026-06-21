@@ -2,6 +2,7 @@
 
 from .user import User, Role, UserRole          # noqa: F401
 from .control import Control                     # noqa: F401
+from .control_mapping import ControlMapping       # noqa: F401
 from .clause_requirement import ClauseRequirement  # noqa: F401
 from .documented_information import DocumentedInformation  # noqa: F401
 from .interested_party import InterestedParty             # noqa: F401

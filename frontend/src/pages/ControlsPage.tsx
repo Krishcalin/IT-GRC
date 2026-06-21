@@ -6,7 +6,7 @@ import StatusBadge from '../components/StatusBadge'
 
 const THEMES = ['', 'Organizational', 'People', 'Physical', 'Technological']
 const STATUSES = ['', 'Not Started', 'In Progress', 'Implemented', 'Not Applicable']
-const FRAMEWORKS = ['', 'ISO 27001:2022', 'ISO 27019:2024']
+const FRAMEWORKS = ['', 'ISO 27001:2022', 'ISO 27019:2024', 'NIST CSF 2.0', 'SOC 2']
 
 const ControlsPage: React.FC = () => {
   const navigate = useNavigate()
@@ -14,7 +14,7 @@ const ControlsPage: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [theme, setTheme] = useState('')
   const [status, setStatus] = useState('')
-  const [framework, setFramework] = useState('')
+  const [framework, setFramework] = useState(() => new URLSearchParams(window.location.search).get('framework') || '')
   const [search, setSearch] = useState('')
 
   useEffect(() => {
@@ -75,7 +75,7 @@ const ControlsPage: React.FC = () => {
                   <td className="table-cell font-mono font-semibold text-indigo-600">{c.clause}</td>
                   <td className="table-cell">{c.title}</td>
                   <td className="table-cell"><StatusBadge value={c.theme} /></td>
-                  <td className="table-cell text-xs text-gray-500">{c.framework === 'ISO 27019:2024' ? 'ISO 27019 (Energy)' : 'ISO 27001'}</td>
+                  <td className="table-cell text-xs text-gray-500">{c.framework === 'ISO 27019:2024' ? 'ISO 27019 (Energy)' : c.framework}</td>
                   <td className="table-cell"><StatusBadge value={c.status} /></td>
                   <td className="table-cell text-gray-400">{c.owner?.full_name || '—'}</td>
                 </tr>

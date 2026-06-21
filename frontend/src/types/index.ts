@@ -378,6 +378,43 @@ export interface Task {
   updated_at: string
 }
 
+export interface ControlSummary {
+  id: string
+  clause: string
+  title: string
+  framework: string
+  theme: string
+  status: string
+}
+
+export interface ControlMappingItem {
+  id: string
+  relationship_type: string
+  note: string | null
+  direction: string
+  control: ControlSummary
+}
+
+export interface FrameworkSummary {
+  framework: string
+  total: number
+  mapped_any: number
+  coverage_pct: number
+}
+
+export interface CoverageCell {
+  source: string
+  target: string
+  mapped: number
+  total: number
+  coverage_pct: number
+}
+
+export interface FrameworkCoverage {
+  frameworks: FrameworkSummary[]
+  matrix: CoverageCell[]
+}
+
 export interface MetricMeasurement {
   id: string
   metric_id: string

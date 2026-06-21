@@ -17,6 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..database import get_db
 from ..models.risk import Risk, _risk_level
 from ..models.control import Control
+from ..models.control_mapping import ControlMapping
 from ..models.clause_requirement import ClauseRequirement
 from ..models.documented_information import DocumentedInformation
 from ..models.training import TrainingRecord
@@ -141,6 +142,57 @@ async def capture_snapshot(
 ):
     headline = await compute_headline(db)
     return await record_posture_snapshot(db, headline)
+
+
+@router.get("/frameworks")
+async def frameworks(db: AsyncSession = Depends(get_db)):
+    """Distinct control frameworks with control counts."""
+    rows = (await db.execute(
+        select(Control.framework, func.count()).group_by(Control.framework).order_by(Control.framework)
+    )).all()
+    return [{"framework": fw, "total": n} for fw, n in rows]
+
+
+@router.get("/framework-coverage")
+async def framework_coverage(db: AsyncSession = Depends(get_db)):
+    """Cross-framework crosswalk coverage: how many controls in each framework map
+    to controls in each other framework ("test once, comply many")."""
+    controls = (await db.execute(select(Control.id, Control.framework))).all()
+    fw_of = {cid: fw for cid, fw in controls}
+    totals: dict[str, int] = {}
+    for _, fw in controls:
+        totals[fw] = totals.get(fw, 0) + 1
+
+    mappings = (await db.execute(select(ControlMapping.source_control_id, ControlMapping.target_control_id))).all()
+    covered: dict[tuple[str, str], set] = {}  # (source_fw, target_fw) -> set of source control ids
+    for a, b in mappings:
+        fa, fb = fw_of.get(a), fw_of.get(b)
+        if not fa or not fb or fa == fb:
+            continue
+        covered.setdefault((fa, fb), set()).add(a)
+        covered.setdefault((fb, fa), set()).add(b)
+
+    fw_list = sorted(totals)
+    matrix = []
+    for src in fw_list:
+        for tgt in fw_list:
+            if src == tgt:
+                continue
+            mapped = len(covered.get((src, tgt), set()))
+            total = totals[src] or 1
+            matrix.append({"source": src, "target": tgt, "mapped": mapped, "total": totals[src],
+                           "coverage_pct": round(mapped / total * 100, 1)})
+
+    any_covered: dict[str, set] = {}
+    for (src, _tgt), ids in covered.items():
+        any_covered.setdefault(src, set()).update(ids)
+    frameworks_summary = [{
+        "framework": fw, "total": totals[fw],
+        "mapped_any": len(any_covered.get(fw, set())),
+        "coverage_pct": round(len(any_covered.get(fw, set())) / (totals[fw] or 1) * 100, 1),
+    } for fw in fw_list]
+
+    return {"frameworks": frameworks_summary, "matrix": matrix}
 
 
 @router.get("/my-work", response_model=MyWork)

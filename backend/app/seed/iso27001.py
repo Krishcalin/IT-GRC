@@ -277,6 +277,141 @@ assert len(ISO27019_CONTROLS) == 12, f"Expected 12 ISO 27019:2024 controls, got 
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+#  NIST Cybersecurity Framework (CSF) 2.0 — Functions & Categories
+#
+#  Seeded at the Category level (22 categories across the 6 Functions) so controls
+#  can be cross-mapped to ISO 27001 ("test once, comply many"). `theme` holds the
+#  CSF Function. Titles are the standard Category names; descriptions are
+#  paraphrased for the application.
+# ─────────────────────────────────────────────────────────────────────────────
+NIST_CSF_CONTROLS: list[dict] = [
+    {"clause": "GV.OC", "title": "Organizational Context", "theme": "Govern", "framework": "NIST CSF 2.0",
+     "description": "Understand the mission, stakeholders, legal/regulatory obligations, and dependencies that shape cybersecurity risk decisions."},
+    {"clause": "GV.RM", "title": "Risk Management Strategy", "theme": "Govern", "framework": "NIST CSF 2.0",
+     "description": "Establish and communicate the organization's priorities, constraints, risk tolerance, and assumptions for managing cybersecurity risk."},
+    {"clause": "GV.RR", "title": "Roles, Responsibilities, and Authorities", "theme": "Govern", "framework": "NIST CSF 2.0",
+     "description": "Define and communicate cybersecurity roles, responsibilities, and authorities to foster accountability and adequate resourcing."},
+    {"clause": "GV.PO", "title": "Policy", "theme": "Govern", "framework": "NIST CSF 2.0",
+     "description": "Establish, communicate, and maintain organizational cybersecurity policy."},
+    {"clause": "GV.OV", "title": "Oversight", "theme": "Govern", "framework": "NIST CSF 2.0",
+     "description": "Use results of cybersecurity risk activities to inform, improve, and adjust the risk management strategy."},
+    {"clause": "GV.SC", "title": "Cybersecurity Supply Chain Risk Management", "theme": "Govern", "framework": "NIST CSF 2.0",
+     "description": "Establish and manage cyber supply-chain risk management processes with suppliers and third parties."},
+    {"clause": "ID.AM", "title": "Asset Management", "theme": "Identify", "framework": "NIST CSF 2.0",
+     "description": "Identify and manage assets (data, hardware, software, systems, people, facilities) consistent with their importance and risk."},
+    {"clause": "ID.RA", "title": "Risk Assessment", "theme": "Identify", "framework": "NIST CSF 2.0",
+     "description": "Understand the cybersecurity risk to the organization, its assets, and individuals."},
+    {"clause": "ID.IM", "title": "Improvement", "theme": "Identify", "framework": "NIST CSF 2.0",
+     "description": "Identify improvements to cybersecurity risk management across all Functions."},
+    {"clause": "PR.AA", "title": "Identity Management, Authentication, and Access Control", "theme": "Protect", "framework": "NIST CSF 2.0",
+     "description": "Limit access to assets to authorized users, services, and hardware, commensurate with assessed risk."},
+    {"clause": "PR.AT", "title": "Awareness and Training", "theme": "Protect", "framework": "NIST CSF 2.0",
+     "description": "Provide cybersecurity awareness and training so personnel can perform their security-relevant duties."},
+    {"clause": "PR.DS", "title": "Data Security", "theme": "Protect", "framework": "NIST CSF 2.0",
+     "description": "Manage data consistent with the risk strategy to protect confidentiality, integrity, and availability."},
+    {"clause": "PR.PS", "title": "Platform Security", "theme": "Protect", "framework": "NIST CSF 2.0",
+     "description": "Manage the hardware, software, and services of physical and virtual platforms consistent with risk."},
+    {"clause": "PR.IR", "title": "Technology Infrastructure Resilience", "theme": "Protect", "framework": "NIST CSF 2.0",
+     "description": "Manage security architectures to protect asset confidentiality, integrity, availability, and resilience."},
+    {"clause": "DE.CM", "title": "Continuous Monitoring", "theme": "Detect", "framework": "NIST CSF 2.0",
+     "description": "Monitor assets to find anomalies, indicators of compromise, and other potentially adverse events."},
+    {"clause": "DE.AE", "title": "Adverse Event Analysis", "theme": "Detect", "framework": "NIST CSF 2.0",
+     "description": "Analyze anomalies and events to characterize them and detect cybersecurity incidents."},
+    {"clause": "RS.MA", "title": "Incident Management", "theme": "Respond", "framework": "NIST CSF 2.0",
+     "description": "Manage responses to detected cybersecurity incidents."},
+    {"clause": "RS.AN", "title": "Incident Analysis", "theme": "Respond", "framework": "NIST CSF 2.0",
+     "description": "Investigate incidents to ensure effective response and support recovery and forensics."},
+    {"clause": "RS.CO", "title": "Incident Response Reporting and Communication", "theme": "Respond", "framework": "NIST CSF 2.0",
+     "description": "Coordinate response activities with internal and external stakeholders as required by laws, regulations, or policies."},
+    {"clause": "RS.MI", "title": "Incident Mitigation", "theme": "Respond", "framework": "NIST CSF 2.0",
+     "description": "Perform activities to prevent expansion of an event and mitigate its effects."},
+    {"clause": "RC.RP", "title": "Incident Recovery Plan Execution", "theme": "Recover", "framework": "NIST CSF 2.0",
+     "description": "Perform restoration activities to ensure operational availability of systems and services affected by an incident."},
+    {"clause": "RC.CO", "title": "Incident Recovery Communication", "theme": "Recover", "framework": "NIST CSF 2.0",
+     "description": "Coordinate restoration activities with internal and external parties."},
+]
+
+assert len(NIST_CSF_CONTROLS) == 22, f"Expected 22 NIST CSF 2.0 categories, got {len(NIST_CSF_CONTROLS)}"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  SOC 2 (AICPA Trust Services Criteria) — criteria categories
+#
+#  Seeded at the criteria-series level (Common Criteria CC1–CC9 plus the
+#  Availability, Confidentiality, Processing Integrity, and Privacy categories).
+#  `theme` groups them; descriptions are paraphrased.
+# ─────────────────────────────────────────────────────────────────────────────
+SOC2_CONTROLS: list[dict] = [
+    {"clause": "CC1", "title": "Control Environment", "theme": "Common Criteria", "framework": "SOC 2",
+     "description": "Commitment to integrity and ethics, board oversight, organizational structure, competence, and accountability."},
+    {"clause": "CC2", "title": "Communication and Information", "theme": "Common Criteria", "framework": "SOC 2",
+     "description": "Obtain or generate and communicate relevant, quality information to support the functioning of internal control."},
+    {"clause": "CC3", "title": "Risk Assessment", "theme": "Common Criteria", "framework": "SOC 2",
+     "description": "Specify objectives and identify, assess, and analyze risks, including fraud and the impact of change."},
+    {"clause": "CC4", "title": "Monitoring Activities", "theme": "Common Criteria", "framework": "SOC 2",
+     "description": "Perform ongoing and separate evaluations and communicate and remediate control deficiencies."},
+    {"clause": "CC5", "title": "Control Activities", "theme": "Common Criteria", "framework": "SOC 2",
+     "description": "Select and develop control activities, including over technology, to mitigate risks to objectives."},
+    {"clause": "CC6", "title": "Logical and Physical Access Controls", "theme": "Common Criteria", "framework": "SOC 2",
+     "description": "Implement logical and physical access controls to protect against unauthorized access to assets."},
+    {"clause": "CC7", "title": "System Operations", "theme": "Common Criteria", "framework": "SOC 2",
+     "description": "Detect, respond to, and recover from system operations issues, anomalies, and security incidents."},
+    {"clause": "CC8", "title": "Change Management", "theme": "Common Criteria", "framework": "SOC 2",
+     "description": "Authorize, design, develop, test, approve, and implement changes to infrastructure, data, and software."},
+    {"clause": "CC9", "title": "Risk Mitigation", "theme": "Common Criteria", "framework": "SOC 2",
+     "description": "Identify, select, and develop risk-mitigation activities, including for vendors and business partners."},
+    {"clause": "A1", "title": "Availability", "theme": "Availability", "framework": "SOC 2",
+     "description": "Maintain capacity, environmental protections, backup, and recovery to meet availability commitments."},
+    {"clause": "C1", "title": "Confidentiality", "theme": "Confidentiality", "framework": "SOC 2",
+     "description": "Identify and protect confidential information throughout its lifecycle, including secure disposal."},
+    {"clause": "PI1", "title": "Processing Integrity", "theme": "Processing Integrity", "framework": "SOC 2",
+     "description": "Ensure system processing is complete, valid, accurate, timely, and authorized to meet objectives."},
+    {"clause": "P1", "title": "Privacy", "theme": "Privacy", "framework": "SOC 2",
+     "description": "Collect, use, retain, disclose, and dispose of personal information in line with commitments and criteria."},
+]
+
+assert len(SOC2_CONTROLS) == 13, f"Expected 13 SOC 2 criteria, got {len(SOC2_CONTROLS)}"
+
+
+# Representative cross-framework crosswalk: (source_clause, target_clause, relationship).
+# Source = ISO 27001:2022 Annex A; targets = NIST CSF 2.0 / SOC 2. Illustrative, not exhaustive.
+CONTROL_MAPPINGS: list[tuple[str, str, str]] = [
+    # ISO 27001 → NIST CSF 2.0
+    ("A.5.1", "GV.PO", "equivalent"),
+    ("A.5.2", "GV.RR", "related"),
+    ("A.5.19", "GV.SC", "related"),
+    ("A.5.9", "ID.AM", "equivalent"),
+    ("A.5.7", "ID.RA", "related"),
+    ("A.6.3", "PR.AT", "equivalent"),
+    ("A.5.15", "PR.AA", "related"),
+    ("A.5.18", "PR.AA", "equivalent"),
+    ("A.8.13", "PR.DS", "related"),
+    ("A.8.16", "DE.CM", "equivalent"),
+    ("A.8.15", "DE.CM", "related"),
+    ("A.5.25", "RS.MA", "related"),
+    ("A.5.26", "RS.MA", "equivalent"),
+    ("A.5.27", "RS.AN", "related"),
+    ("A.5.29", "RC.RP", "related"),
+    ("A.5.30", "RC.RP", "equivalent"),
+    # ISO 27001 → SOC 2
+    ("A.5.1", "CC1", "related"),
+    ("A.5.7", "CC3", "related"),
+    ("A.8.16", "CC4", "related"),
+    ("A.5.15", "CC6", "related"),
+    ("A.5.18", "CC6", "equivalent"),
+    ("A.7.1", "CC6", "related"),
+    ("A.5.26", "CC7", "related"),
+    ("A.8.32", "CC8", "equivalent"),
+    ("A.5.19", "CC9", "related"),
+    ("A.8.14", "A1", "related"),
+    ("A.5.12", "C1", "related"),
+    ("A.8.24", "C1", "related"),
+    ("A.5.34", "P1", "equivalent"),
+    ("A.8.29", "PI1", "related"),
+]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 #  ISO/IEC 27001:2022 mandatory management-system requirements (Clauses 4–10)
 #
 #  These are the normative ISMS "shall" requirements an organization is audited
@@ -668,6 +803,56 @@ async def seed_iso27019_controls(session) -> int:
         session.add(Control(**item))
     await session.flush()
     return len(ISO27019_CONTROLS)
+
+
+async def _seed_framework_controls(session, framework: str, items: list[dict]) -> int:
+    """Insert a framework's controls if that framework is not yet present."""
+    from ..models.control import Control
+    from sqlalchemy import select, func
+
+    count = (await session.execute(
+        select(func.count()).select_from(Control).where(Control.framework == framework)
+    )).scalar()
+    if count > 0:
+        return 0
+    for item in items:
+        session.add(Control(**item))
+    await session.flush()
+    return len(items)
+
+
+async def seed_nist_csf_controls(session) -> int:
+    """Insert NIST CSF 2.0 categories if not already present. Returns count inserted."""
+    return await _seed_framework_controls(session, "NIST CSF 2.0", NIST_CSF_CONTROLS)
+
+
+async def seed_soc2_controls(session) -> int:
+    """Insert SOC 2 criteria if not already present. Returns count inserted."""
+    return await _seed_framework_controls(session, "SOC 2", SOC2_CONTROLS)
+
+
+async def seed_control_mappings(session) -> int:
+    """Insert the cross-framework crosswalk if the mapping table is empty. Returns count inserted."""
+    from ..models.control import Control
+    from ..models.control_mapping import ControlMapping
+    from sqlalchemy import select, func
+
+    count = (await session.execute(select(func.count()).select_from(ControlMapping))).scalar()
+    if count > 0:
+        return 0
+
+    rows = (await session.execute(select(Control.clause, Control.id))).all()
+    id_of = {clause: cid for clause, cid in rows}
+
+    inserted = 0
+    for src_clause, tgt_clause, rel in CONTROL_MAPPINGS:
+        src, tgt = id_of.get(src_clause), id_of.get(tgt_clause)
+        if not src or not tgt:
+            continue
+        session.add(ControlMapping(source_control_id=src, target_control_id=tgt, relationship_type=rel))
+        inserted += 1
+    await session.flush()
+    return inserted
 
 
 async def seed_clauses(session) -> int:

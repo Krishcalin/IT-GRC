@@ -20,7 +20,7 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 - `schemas/` — Pydantic v2 request/response schemas (Create/Update/Read per model)
 - `api/` — FastAPI route handlers, one file per module: `auth`, `controls`, `clauses`, `documents`, `interested_parties`, `objectives`, `metrics`, `suppliers`, `incidents`, `training`, `tasks`, `analytics`, `risks`, `soa`, `evidence`, `audits`, `policies`, `assets`, `reports`, `reminders`, `dashboard`
 - `api/deps.py` — Shared dependencies (get_db, get_current_user, require_superuser)
-- `seed/iso27001.py` — 93 Annex A controls + 12 ISO 27019:2024 energy-sector (ENR) controls + 30 ISMS clauses (4–10) + 17 mandatory documents + sample interested parties + sample objectives & KPI/KRI/KCI metrics + metric measurement history + historical posture snapshots + sample suppliers + sample incidents + sample training campaigns + sample workflow tasks + 6 RBAC roles
+- `seed/iso27001.py` — 93 Annex A controls + 12 ISO 27019:2024 (ENR) controls + 22 NIST CSF 2.0 categories + 13 SOC 2 criteria + cross-framework crosswalk + 30 ISMS clauses (4–10) + 17 mandatory documents + sample interested parties + sample objectives & KPI/KRI/KCI metrics + metric measurement history + historical posture snapshots + sample suppliers + sample incidents + sample training campaigns + sample workflow tasks + 6 RBAC roles
 
 ### Frontend (`frontend/src/`)
 - `App.tsx` — Root with AuthProvider + React Router
@@ -35,7 +35,8 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 |-------|-------|-----------|
 | User | users | email, full_name, hashed_password, is_superuser, auth_provider |
 | Role | roles | name, description, permissions (JSON) |
-| Control | controls | clause (A.5.1 / ENR.8.40), title, description, theme, framework, status, owner_id |
+| Control | controls | clause (A.5.1 / ENR.8.40 / GV.PO / CC6), title, description, theme, framework (ISO 27001:2022 / ISO 27019:2024 / NIST CSF 2.0 / SOC 2), status, owner_id |
+| ControlMapping | control_mappings | source_control_id, target_control_id, relationship_type (equivalent/related/broader/narrower), note — cross-framework crosswalk |
 | ClauseRequirement | clause_requirements | clause (6.1.2), title, section, clause_number, requirement, documented_info, conformity_status, owner_id |
 | DocumentedInformation | documented_information | ref_id (DOC-001), title, doc_type, clause_ref, mandatory, version, status, classification, owner/approver, review dates |
 | InterestedParty | interested_parties | ref_id (PARTY-001), name, party_type, category, requirements, addressed_in_isms |
@@ -88,7 +89,8 @@ All API routes under `/api/v1/`. Swagger at `/docs`, ReDoc at `/redoc`, health a
 | `/assets` | list / get / create / update / delete |
 | `/tasks` | list / get / create / update / delete + `{id}/decision` (approval sign-off) |
 | `/metrics` | metric CRUD + `{id}/history` and `{id}/measurements` (trend points) |
-| `/analytics` | `risk-heatmap`, `posture-trend`, `snapshot` (POST), `my-work` |
+| `/controls` | control CRUD + `{id}/mappings` (cross-framework crosswalk, both directions) |
+| `/analytics` | `risk-heatmap`, `posture-trend`, `snapshot` (POST), `my-work`, `frameworks`, `framework-coverage` |
 | `/auth/users` | list active users (assignee/owner pickers) |
 | `/dashboard` | `stats`, `activity` |
 
@@ -121,6 +123,16 @@ campaigns-by-status, the compliance score, and module counts.
 - A.8 Technological (34): A.8.1 – A.8.34
 
 Auto-seeded on first startup. Controls are read-only by default (update status/owner via PUT).
+
+## Multi-framework & crosswalk
+Controls span four frameworks via the `framework` column: ISO 27001:2022 (93),
+ISO 27019:2024 (12), NIST CSF 2.0 (22 categories, clause = code e.g. GV.PO, theme =
+Function), SOC 2 (13 criteria, clause = CC1/A1/…). `control_mappings` is a
+control↔control crosswalk; `seed_control_mappings()` seeds a starter ISO↔CSF /
+ISO↔SOC2 set (gated on empty table). `GET /analytics/framework-coverage` builds the
+cross-framework coverage matrix (per source framework, % of controls mapped to each
+target framework). Catalog seeders (`seed_nist_csf_controls`, `seed_soc2_controls`)
+are gated per-framework so they add to a DB that already holds Annex A.
 
 ## ISO/IEC 27019:2024 (energy-utility sector controls)
 12 sector-specific **ENR** controls — the only controls 27019 adds beyond Annex A

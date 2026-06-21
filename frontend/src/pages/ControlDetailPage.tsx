@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getControl, updateControl } from '../services/api'
-import type { Control } from '../types'
+import { getControl, updateControl, getControls, getControlMappings, addControlMapping, deleteControlMapping } from '../services/api'
+import type { Control, ControlMappingItem } from '../types'
 import StatusBadge from '../components/StatusBadge'
+
+const RELATIONSHIPS = ['equivalent', 'related', 'broader', 'narrower']
 
 const STATUSES = ['Not Started', 'In Progress', 'Implemented', 'Not Applicable']
 
@@ -13,6 +15,16 @@ const ControlDetailPage: React.FC = () => {
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState({ status: '', implementation_guidance: '', review_date: '' })
   const [saving, setSaving] = useState(false)
+  const [mappings, setMappings] = useState<ControlMappingItem[]>([])
+  const [allControls, setAllControls] = useState<Control[]>([])
+  const [pickFramework, setPickFramework] = useState('')
+  const [pickTarget, setPickTarget] = useState('')
+  const [pickRel, setPickRel] = useState('related')
+
+  const loadMappings = useCallback(() => {
+    if (!id) return
+    getControlMappings(id).then((r) => setMappings(r.data)).catch(() => {})
+  }, [id])
 
   useEffect(() => {
     if (!id) return
@@ -20,7 +32,25 @@ const ControlDetailPage: React.FC = () => {
       setControl(r.data)
       setForm({ status: r.data.status, implementation_guidance: r.data.implementation_guidance || '', review_date: r.data.review_date || '' })
     }).catch(() => navigate('/controls'))
-  }, [id, navigate])
+    loadMappings()
+    getControls().then((r) => setAllControls(r.data)).catch(() => {})
+  }, [id, navigate, loadMappings])
+
+  const addMapping = async () => {
+    if (!id || !pickTarget) return
+    try { await addControlMapping(id, { target_control_id: pickTarget, relationship_type: pickRel }) } catch { /* dup/ignore */ }
+    setPickTarget('')
+    loadMappings()
+  }
+  const removeMapping = async (mappingId: string) => {
+    if (!id) return
+    await deleteControlMapping(id, mappingId)
+    loadMappings()
+  }
+
+  const frameworkOptions = Array.from(new Set(allControls.map((c) => c.framework))).filter((f) => f !== control?.framework)
+  const mappedIds = new Set(mappings.map((m) => m.control.id))
+  const targetOptions = allControls.filter((c) => c.id !== id && !mappedIds.has(c.id) && (!pickFramework || c.framework === pickFramework))
 
   const handleSave = async () => {
     if (!id) return
@@ -103,6 +133,59 @@ const ControlDetailPage: React.FC = () => {
               </div>
             </>
           )}
+        </div>
+      </div>
+
+      {/* Cross-framework crosswalk */}
+      <div className="card">
+        <h3 className="text-sm font-semibold text-gray-700 mb-1">Framework Crosswalk</h3>
+        <p className="text-xs text-gray-400 mb-4">Map this control to equivalent controls in other frameworks — satisfy multiple frameworks from one control set.</p>
+
+        {mappings.length > 0 ? (
+          <table className="w-full mb-4">
+            <thead><tr className="bg-gray-50 border-b border-gray-200">
+              <th className="table-header">Framework</th>
+              <th className="table-header">Clause</th>
+              <th className="table-header">Title</th>
+              <th className="table-header">Relationship</th>
+              <th className="table-header"></th>
+            </tr></thead>
+            <tbody>
+              {mappings.map((m) => (
+                <tr key={m.id} className="border-b border-gray-100">
+                  <td className="table-cell text-xs text-gray-500">{m.control.framework}</td>
+                  <td className="table-cell font-mono text-indigo-600 cursor-pointer hover:underline" onClick={() => navigate(`/controls/${m.control.id}`)}>{m.control.clause}</td>
+                  <td className="table-cell">{m.control.title}</td>
+                  <td className="table-cell"><span className="text-xs capitalize bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full">{m.relationship_type}</span></td>
+                  <td className="table-cell text-right"><button onClick={() => removeMapping(m.id)} className="text-xs text-gray-400 hover:text-red-600">Remove</button></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : <p className="text-sm text-gray-400 mb-4">No cross-framework mappings yet.</p>}
+
+        <div className="flex flex-wrap items-end gap-3 border-t pt-4">
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Framework</label>
+            <select className="select-field" value={pickFramework} onChange={(e) => { setPickFramework(e.target.value); setPickTarget('') }}>
+              <option value="">All frameworks</option>
+              {frameworkOptions.map((f) => <option key={f} value={f}>{f}</option>)}
+            </select>
+          </div>
+          <div className="flex-1 min-w-[16rem]">
+            <label className="block text-xs font-medium text-gray-600 mb-1">Control</label>
+            <select className="select-field w-full" value={pickTarget} onChange={(e) => setPickTarget(e.target.value)}>
+              <option value="">Select a control…</option>
+              {targetOptions.map((c) => <option key={c.id} value={c.id}>{c.framework} · {c.clause} — {c.title}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Relationship</label>
+            <select className="select-field capitalize" value={pickRel} onChange={(e) => setPickRel(e.target.value)}>
+              {RELATIONSHIPS.map((r) => <option key={r} value={r}>{r}</option>)}
+            </select>
+          </div>
+          <button onClick={addMapping} disabled={!pickTarget} className="btn-primary disabled:opacity-50">Add Mapping</button>
         </div>
       </div>
     </div>

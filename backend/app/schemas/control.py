@@ -46,3 +46,28 @@ class ControlRead(BaseModel):
     created_at: datetime
     updated_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
+
+class ControlSummary(BaseModel):
+    """Lightweight control reference for crosswalk listings."""
+    id: UUID
+    clause: str
+    title: str
+    framework: str
+    theme: str
+    status: str
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ControlMappingCreate(BaseModel):
+    target_control_id: UUID
+    relationship_type: str = "related"
+    note: str | None = None
+
+
+class ControlMappingRead(BaseModel):
+    id: UUID
+    relationship_type: str
+    note: str | None = None
+    direction: str  # outgoing | incoming
+    control: ControlSummary  # the OTHER control in the mapping

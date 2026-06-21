@@ -1,16 +1,20 @@
 """Integrity checks for the ISO 27001 seed data (no DB required)."""
 
 from app.seed.iso27001 import (
-    ANNEX_A_CONTROLS, ISO27019_CONTROLS, ISMS_CLAUSES, MANDATORY_DOCUMENTS,
+    ANNEX_A_CONTROLS, ISO27019_CONTROLS, NIST_CSF_CONTROLS, SOC2_CONTROLS,
+    CONTROL_MAPPINGS, ISMS_CLAUSES, MANDATORY_DOCUMENTS,
     SAMPLE_METRICS, SAMPLE_TRAINING, SAMPLE_TASKS, DEFAULT_ROLES,
 )
 
 THEMES = {"Organizational", "People", "Physical", "Technological"}
+ALL_CONTROLS = ANNEX_A_CONTROLS + ISO27019_CONTROLS + NIST_CSF_CONTROLS + SOC2_CONTROLS
 
 
 def test_expected_counts():
     assert len(ANNEX_A_CONTROLS) == 93
     assert len(ISO27019_CONTROLS) == 12
+    assert len(NIST_CSF_CONTROLS) == 22
+    assert len(SOC2_CONTROLS) == 13
     assert len(ISMS_CLAUSES) == 30
     assert len(MANDATORY_DOCUMENTS) == 17
     assert len(DEFAULT_ROLES) == 6
@@ -33,8 +37,30 @@ def test_iso27019_controls_well_formed():
 
 
 def test_all_control_clauses_unique():
-    clauses = [c["clause"] for c in ANNEX_A_CONTROLS + ISO27019_CONTROLS]
+    clauses = [c["clause"] for c in ALL_CONTROLS]
     assert len(clauses) == len(set(clauses))
+
+
+def test_additional_frameworks_well_formed():
+    for c in NIST_CSF_CONTROLS:
+        assert {"clause", "title", "theme", "description", "framework"} <= c.keys()
+        assert c["framework"] == "NIST CSF 2.0"
+    for c in SOC2_CONTROLS:
+        assert {"clause", "title", "theme", "description", "framework"} <= c.keys()
+        assert c["framework"] == "SOC 2"
+
+
+def test_control_mappings_reference_known_clauses():
+    clause_set = {c["clause"] for c in ALL_CONTROLS}
+    rels = {"equivalent", "related", "broader", "narrower"}
+    pairs = set()
+    for src, tgt, rel in CONTROL_MAPPINGS:
+        assert src in clause_set, f"unknown source clause {src}"
+        assert tgt in clause_set, f"unknown target clause {tgt}"
+        assert src != tgt
+        assert rel in rels
+        pairs.add((src, tgt))
+    assert len(pairs) == len(CONTROL_MAPPINGS), "duplicate mapping pair"
 
 
 def test_clauses_keys_and_numbering():
