@@ -13,6 +13,7 @@
 [![Controls](https://img.shields.io/badge/Annex_A_Controls-93-orange)](#controls-library)
 [![ISO 27019](https://img.shields.io/badge/ISO_27019_(Energy)-12-teal)](#isoiec-270192024-energy-sector-coverage)
 [![IEC 62443](https://img.shields.io/badge/IEC_62443--2--1_(OT)-8_SPEs-darkgreen)](#additional-frameworks--crosswalk)
+[![Frameworks](https://img.shields.io/badge/Frameworks-5_cross--mapped-blueviolet)](#additional-frameworks--crosswalk)
 [![ISMS Clauses](https://img.shields.io/badge/ISMS_Clauses_4--10-30-9cf)](#isms-clause-conformity-clauses-410)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](#quick-start)
 [![CI](https://github.com/Krishcalin/IT-GRC/actions/workflows/ci.yml/badge.svg)](https://github.com/Krishcalin/IT-GRC/actions/workflows/ci.yml)
@@ -273,6 +274,9 @@ IT-GRC/
 │   │   │   ├── suppliers.py #   Supplier / third-party register (5.19–5.23)
 │   │   │   ├── incidents.py #   Security incident register (5.24–5.28)
 │   │   │   ├── training.py  #   Awareness & training (7.2/7.3)
+│   │   │   ├── tasks.py     #   Cross-cutting workflow / task & approval engine
+│   │   │   ├── analytics.py #   Risk heat map, posture trend, framework coverage
+│   │   │   ├── assessments.py #  CSA / maturity / vendor questionnaires
 │   │   │   ├── risks.py     #   Risk register CRUD
 │   │   │   ├── soa.py       #   Statement of Applicability
 │   │   │   ├── evidence.py  #   Evidence upload/download

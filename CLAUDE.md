@@ -26,7 +26,7 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 ### Frontend (`frontend/src/`)
 - `App.tsx` — Root with AuthProvider + React Router
 - `components/` — `Layout` (sidebar shell) and `StatusBadge` (status/theme/conformity/RAG pill)
-- `pages/` — One page per module (Dashboard, Controls, ISMS Clauses, Interested Parties, IS Objectives, Metrics, Risks, SoA, Evidence, Documents, Audits, Policies, Assets, Suppliers, Incidents, Awareness & Training, Login) plus detail pages (`ControlDetailPage`, `ClauseDetailPage`, `DocumentDetailPage`, `ObjectiveDetailPage`, `MetricDetailPage`, `SupplierDetailPage`, `IncidentDetailPage`, `CampaignDetailPage`, `AuditDetailPage`)
+- `pages/` — One page per module (Dashboard, Controls, ISMS Clauses, Interested Parties, IS Objectives, Metrics, Risks, SoA, Evidence, Documents, Audits, Policies, Assets, Suppliers, Incidents, Awareness & Training, Tasks, Analytics, Frameworks, Assessments, Login) plus detail pages (`ControlDetailPage`, `ClauseDetailPage`, `DocumentDetailPage`, `ObjectiveDetailPage`, `MetricDetailPage`, `SupplierDetailPage`, `IncidentDetailPage`, `CampaignDetailPage`, `AuditDetailPage`, `AssessmentDetailPage`)
 - `services/api.ts` — Axios client with JWT interceptor
 - `hooks/useAuth.ts` — Auth context (login, logout, current user)
 - `types/index.ts` — TypeScript interfaces matching backend schemas
@@ -301,12 +301,24 @@ cd frontend && npm run build
 ```
 
 ## Testing & CI
-- `backend/tests/` holds DB-free pytest unit tests (`compute_rag` RAG logic,
-  5×5 `_risk_level`, and seed-data integrity counts/keys). Run with
+- `backend/tests/` holds DB-free pytest unit tests: `compute_rag` RAG logic,
+  5×5 `_risk_level`, `task_is_overdue` (`test_tasks`), `aggregate_score`
+  (`test_assessments`), and seed-data integrity (counts/keys/themes, all 5
+  framework catalogs, and the crosswalk — `test_seed_integrity`). The
+  model-importing tests need SQLAlchemy (CI); the seed-integrity test runs
+  anywhere (the seed module has no top-level SQLAlchemy import). Run with
   `python -m pytest` from `backend/`.
-- `.github/workflows/ci.yml` runs on push/PR: a **backend** job
-  (`compileall` + `pytest`) and a **frontend** job (`npm run build`, i.e.
-  `tsc && vite build`) that type-checks the whole React app.
+- `.github/workflows/ci.yml` runs on push/PR with three jobs:
+  - **backend** — `compileall` + `pytest`.
+  - **migrations** — spins up Postgres and runs `alembic upgrade head →
+    downgrade base → upgrade head`, then `alembic check` (asserts the schema
+    matches the models / no pending autogenerate diff).
+  - **frontend** — `npm run build` (`tsc && vite build`) type-checks the whole
+    React app.
+- Local validation constraints: Node/npm and Postgres are NOT assumed present
+  locally — the **frontend** and **migrations** CI jobs are the authoritative
+  checks for those. Locally, `python -m py_compile` + the seed-integrity test
+  cover the seed/data changes.
 
 ## Environment Variables
 See `.env.example`. Key variables:
