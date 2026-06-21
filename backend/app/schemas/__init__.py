@@ -12,6 +12,7 @@ from .interested_party import (                                                 
 )
 from .metric import MetricCreate, MetricUpdate, MetricRead                        # noqa: F401
 from .objective import ObjectiveCreate, ObjectiveUpdate, ObjectiveRead            # noqa: F401
+from .supplier import SupplierCreate, SupplierUpdate, SupplierRead                # noqa: F401
 from .risk import RiskCreate, RiskUpdate, RiskRead                               # noqa: F401
 from .soa import SoACreate, SoAUpdate, SoARead                                  # noqa: F401
 from .evidence import EvidenceCreate, EvidenceRead                               # noqa: F401

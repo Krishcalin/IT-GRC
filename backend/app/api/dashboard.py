@@ -13,6 +13,7 @@ from ..models.documented_information import DocumentedInformation
 from ..models.interested_party import InterestedParty
 from ..models.objective import Objective
 from ..models.metric import Metric, compute_rag
+from ..models.supplier import Supplier
 from ..models.risk import Risk
 from ..models.audit import Audit, AuditFinding
 from ..models.policy import Policy
@@ -102,6 +103,20 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
         metrics_by_type[m.metric_type] = metrics_by_type.get(m.metric_type, 0) + 1
     on_target_metrics = metrics_by_rag.get("On Target", 0)
 
+    # Suppliers / third parties (Clauses 5.19–5.23)
+    total_suppliers = (await db.execute(select(func.count()).select_from(Supplier))).scalar() or 0
+    critical_suppliers = (await db.execute(
+        select(func.count()).select_from(Supplier).where(Supplier.criticality.in_(["High", "Critical"]))
+    )).scalar() or 0
+    sup_crit_rows = (await db.execute(
+        select(Supplier.criticality, func.count()).group_by(Supplier.criticality)
+    )).all()
+    suppliers_by_criticality = {row[0]: row[1] for row in sup_crit_rows}
+    sup_cat_rows = (await db.execute(
+        select(Supplier.category, func.count()).group_by(Supplier.category)
+    )).all()
+    suppliers_by_category = {row[0]: row[1] for row in sup_cat_rows}
+
     # Risks
     total_risks = (await db.execute(select(func.count()).select_from(Risk))).scalar() or 0
     open_risks = (await db.execute(
@@ -170,6 +185,10 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
         on_target_metrics=on_target_metrics,
         metrics_by_rag=metrics_by_rag,
         metrics_by_type=metrics_by_type,
+        total_suppliers=total_suppliers,
+        critical_suppliers=critical_suppliers,
+        suppliers_by_criticality=suppliers_by_criticality,
+        suppliers_by_category=suppliers_by_category,
     )
 
 

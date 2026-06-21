@@ -31,6 +31,7 @@ const colors: Record<string, string> = {
   Draft: 'bg-gray-100 text-gray-600',
   Planned: 'bg-gray-100 text-gray-600',
   Retired: 'bg-gray-100 text-gray-600',
+  Offboarded: 'bg-gray-100 text-gray-600',
   // red
   Critical: 'bg-red-100 text-red-800',
   Overdue: 'bg-red-100 text-red-800',
@@ -41,6 +42,7 @@ const colors: Record<string, string> = {
   'Off Target': 'bg-red-100 text-red-800',
   // blue
   'On Track': 'bg-sky-100 text-sky-800',
+  Onboarding: 'bg-sky-100 text-sky-800',
   // orange
   High: 'bg-orange-100 text-orange-800',
   // teal

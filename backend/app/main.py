@@ -19,7 +19,7 @@ async def _run_seeds() -> None:
     """Seed the database with ISO 27001 controls, default roles, and first superuser."""
     from .seed.iso27001 import (
         seed_controls, seed_clauses, seed_documents, seed_interested_parties,
-        seed_objectives, seed_metrics, seed_roles,
+        seed_objectives, seed_metrics, seed_suppliers, seed_roles,
     )
     from .models.user import User
     from passlib.context import CryptContext
@@ -55,6 +55,10 @@ async def _run_seeds() -> None:
         n_metrics = await seed_metrics(session)
         if n_metrics:
             logger.info("Seeded %d sample KPI/KRI/KCI metrics", n_metrics)
+
+        n_suppliers = await seed_suppliers(session)
+        if n_suppliers:
+            logger.info("Seeded %d sample suppliers", n_suppliers)
 
         # Create first superuser if no users exist
         count = (await session.execute(select(func.count()).select_from(User))).scalar()
@@ -113,6 +117,7 @@ from .api.documents import router as documents_router  # noqa: E402
 from .api.interested_parties import router as parties_router  # noqa: E402
 from .api.objectives import router as objectives_router  # noqa: E402
 from .api.metrics import router as metrics_router      # noqa: E402
+from .api.suppliers import router as suppliers_router  # noqa: E402
 from .api.risks import router as risks_router        # noqa: E402
 from .api.soa import router as soa_router            # noqa: E402
 from .api.evidence import router as evidence_router  # noqa: E402
@@ -128,6 +133,7 @@ app.include_router(documents_router, prefix=f"{settings.API_V1_PREFIX}/documents
 app.include_router(parties_router, prefix=f"{settings.API_V1_PREFIX}/interested-parties", tags=["Interested Parties"])
 app.include_router(objectives_router, prefix=f"{settings.API_V1_PREFIX}/objectives", tags=["IS Objectives"])
 app.include_router(metrics_router, prefix=f"{settings.API_V1_PREFIX}/metrics", tags=["Metrics (KPI/KRI/KCI)"])
+app.include_router(suppliers_router, prefix=f"{settings.API_V1_PREFIX}/suppliers", tags=["Suppliers"])
 app.include_router(risks_router, prefix=f"{settings.API_V1_PREFIX}/risks", tags=["Risks"])
 app.include_router(soa_router, prefix=f"{settings.API_V1_PREFIX}/soa", tags=["Statement of Applicability"])
 app.include_router(evidence_router, prefix=f"{settings.API_V1_PREFIX}/evidence", tags=["Evidence"])

@@ -447,6 +447,28 @@ SAMPLE_METRICS: list[dict] = [
 ]
 
 
+# Sample suppliers / third parties (Clauses 5.19–5.23) — generic; tailor per organization.
+SAMPLE_SUPPLIERS: list[dict] = [
+    {"name": "Primary Cloud Platform (IaaS)", "category": "Cloud Service", "criticality": "Critical",
+     "data_classification": "Confidential", "status": "Active", "is_requirements_agreed": True,
+     "right_to_audit": False, "processes_pii": True, "certifications": "ISO 27001, SOC 2 Type II",
+     "service_description": "Hosts production workloads and customer data.",
+     "notes": "Right-to-audit not granted in standard cloud terms — rely on SOC 2 Type II report."},
+    {"name": "Managed IT Services Provider", "category": "Service", "criticality": "High",
+     "data_classification": "Confidential", "status": "Active", "is_requirements_agreed": True,
+     "right_to_audit": True, "processes_pii": True, "certifications": "ISO 27001",
+     "service_description": "Endpoint management, helpdesk, and patching."},
+    {"name": "Payroll SaaS Vendor", "category": "Cloud Service", "criticality": "High",
+     "data_classification": "Restricted", "status": "Active", "is_requirements_agreed": True,
+     "right_to_audit": False, "processes_pii": True, "certifications": "ISO 27001, ISAE 3402",
+     "service_description": "Processes employee payroll and personal data (DPA in place)."},
+    {"name": "Network Hardware Vendor", "category": "ICT Supply Chain", "criticality": "Medium",
+     "data_classification": "Internal", "status": "Active", "is_requirements_agreed": False,
+     "right_to_audit": False, "processes_pii": False, "certifications": "",
+     "service_description": "Supplies firewalls and switches; firmware supply-chain risk."},
+]
+
+
 DEFAULT_ROLES: list[dict] = [
     {"name": "CISO", "description": "Chief Information Security Officer — full access", "permissions": ["*"]},
     {"name": "GRC_Manager", "description": "GRC Manager — manage controls, risks, audits, policies", "permissions": ["controls:*", "risks:*", "audits:*", "policies:*", "soa:*", "assets:*", "evidence:*", "users:read"]},
@@ -553,6 +575,21 @@ async def seed_metrics(session) -> int:
         session.add(Metric(ref_id=f"MET-{i:03d}", objective_id=ref_to_id.get(obj_ref), **data))
     await session.flush()
     return len(SAMPLE_METRICS)
+
+
+async def seed_suppliers(session) -> int:
+    """Insert sample suppliers (Clauses 5.19–5.23) if the table is empty. Returns count inserted."""
+    from ..models.supplier import Supplier
+    from sqlalchemy import select, func
+
+    count = (await session.execute(select(func.count()).select_from(Supplier))).scalar()
+    if count > 0:
+        return 0
+
+    for i, item in enumerate(SAMPLE_SUPPLIERS, start=1):
+        session.add(Supplier(ref_id=f"SUP-{i:03d}", **item))
+    await session.flush()
+    return len(SAMPLE_SUPPLIERS)
 
 
 async def seed_roles(session) -> int:

@@ -18,14 +18,14 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 - `database.py` — Async SQLAlchemy engine + session factory + Base
 - `models/` — SQLAlchemy ORM models (all UUID PKs, timezone-aware timestamps)
 - `schemas/` — Pydantic v2 request/response schemas (Create/Update/Read per model)
-- `api/` — FastAPI route handlers, one file per module: `auth`, `controls`, `clauses`, `documents`, `interested_parties`, `objectives`, `metrics`, `risks`, `soa`, `evidence`, `audits`, `policies`, `assets`, `dashboard`
+- `api/` — FastAPI route handlers, one file per module: `auth`, `controls`, `clauses`, `documents`, `interested_parties`, `objectives`, `metrics`, `suppliers`, `risks`, `soa`, `evidence`, `audits`, `policies`, `assets`, `dashboard`
 - `api/deps.py` — Shared dependencies (get_db, get_current_user, require_superuser)
-- `seed/iso27001.py` — 93 Annex A controls + 30 ISMS clauses (4–10) + 17 mandatory documents + sample interested parties + sample objectives & KPI/KRI/KCI metrics + 6 RBAC roles
+- `seed/iso27001.py` — 93 Annex A controls + 30 ISMS clauses (4–10) + 17 mandatory documents + sample interested parties + sample objectives & KPI/KRI/KCI metrics + sample suppliers + 6 RBAC roles
 
 ### Frontend (`frontend/src/`)
 - `App.tsx` — Root with AuthProvider + React Router
 - `components/` — `Layout` (sidebar shell) and `StatusBadge` (status/theme/conformity/RAG pill)
-- `pages/` — One page per module (Dashboard, Controls, ISMS Clauses, Interested Parties, IS Objectives, Metrics, Risks, SoA, Evidence, Documents, Audits, Policies, Assets, Login) plus detail pages (`ControlDetailPage`, `ClauseDetailPage`, `DocumentDetailPage`, `ObjectiveDetailPage`, `MetricDetailPage`, `AuditDetailPage`)
+- `pages/` — One page per module (Dashboard, Controls, ISMS Clauses, Interested Parties, IS Objectives, Metrics, Risks, SoA, Evidence, Documents, Audits, Policies, Assets, Suppliers, Login) plus detail pages (`ControlDetailPage`, `ClauseDetailPage`, `DocumentDetailPage`, `ObjectiveDetailPage`, `MetricDetailPage`, `SupplierDetailPage`, `AuditDetailPage`)
 - `services/api.ts` — Axios client with JWT interceptor
 - `hooks/useAuth.ts` — Auth context (login, logout, current user)
 - `types/index.ts` — TypeScript interfaces matching backend schemas
@@ -41,6 +41,7 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 | InterestedParty | interested_parties | ref_id (PARTY-001), name, party_type, category, requirements, addressed_in_isms |
 | Objective | objectives | ref_id (OBJ-001), title, clause_ref (6.2), measure, target/current_value, status, owner_id, metrics[] |
 | Metric | metrics | ref_id (MET-001), name, metric_type (KPI/KRI/KCI), objective_id, target/current_value, direction, frequency, rag (derived) |
+| Supplier | suppliers | ref_id (SUP-001), name, category, criticality, data_classification, status, is_requirements_agreed, right_to_audit, processes_pii, certifications, review dates |
 | Risk | risks | ref_id (RISK-001), likelihood×impact scoring, treatment, status |
 | SoAEntry | soa_entries | control_id (unique), applicable, implementation_status |
 | Evidence | evidence | file_name, file_path, linked to control/risk/audit/policy |
@@ -70,6 +71,7 @@ All API routes under `/api/v1/`. Swagger at `/docs`, ReDoc at `/redoc`, health a
 | `/interested-parties` | list / get / create / update / delete (Interested Parties 4.2) |
 | `/objectives` | list / get / create / update / delete (IS Objectives 6.2; embeds metrics) |
 | `/metrics` | list / get / create / update / delete (KPI/KRI/KCI 9.1; derived RAG) |
+| `/suppliers` | list / get / create / update / delete (Suppliers 5.19–5.23) |
 | `/risks` | list / get / create / update / delete |
 | `/soa` | list / create / update |
 | `/evidence` | list / upload / download |
@@ -81,7 +83,8 @@ All API routes under `/api/v1/`. Swagger at `/docs`, ReDoc at `/redoc`, health a
 `/dashboard/stats` returns control posture (by status/theme), risk posture, ISMS
 clause conformity (total, conformant, conformity score, by status/section),
 documented-information readiness (mandatory vs approved, by status), interested-party
-count, IS objective status, metric RAG/type breakdown, the compliance score, and module counts.
+count, IS objective status, metric RAG/type breakdown, supplier criticality/category
+breakdown, the compliance score, and module counts.
 
 ## ISO 27001:2022 Annex A
 93 controls across 4 themes:
@@ -148,9 +151,20 @@ Two linked registers covering the ISACA guide's "IS Objectives" and
 - API `/api/v1/objectives` and `/api/v1/metrics`; UI `/objectives` and `/metrics`
   (each with a detail page).
 
+## Suppliers / Third Parties (Clauses 5.19–5.23)
+A supplier register (`suppliers`, ref `SUP-001`) covering the ISACA guide's
+"Supplier Relationships" building block: ISO 27036-1 `category` (Product / Service
+/ ICT Supply Chain / Cloud Service), `criticality` tiering, highest
+`data_classification` accessed, and `status` (Active / Onboarding / Under Review /
+Offboarded). Flags capture whether IS requirements are agreed in the contract
+(5.20), whether there's a right-to-audit clause, and whether the supplier processes
+PII (DPA needed); plus `certifications` (e.g. ISO 27001, SOC 2, TISAX) and
+contract/review dates (5.22 monitoring). Seeded with a representative sample.
+API `/api/v1/suppliers`; UI `/suppliers` (+ detail page). Dashboard adds
+suppliers-by-criticality and by-category breakdowns.
+
 > Identified next-tranche gaps from the ISACA Implementation Guide (not yet built):
-> Supplier register (5.19–5.23), Incident management (5.24–5.28),
-> Awareness/training (7.2/7.3).
+> Incident management (5.24–5.28), Awareness/training (7.2/7.3).
 
 ## Key Patterns
 - All models use UUID primary keys

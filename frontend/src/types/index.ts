@@ -265,6 +265,31 @@ export interface Objective {
   updated_at: string
 }
 
+export interface Supplier {
+  id: string
+  ref_id: string
+  name: string
+  description: string | null
+  category: string
+  service_description: string | null
+  criticality: string
+  data_classification: string
+  status: string
+  is_requirements_agreed: boolean
+  right_to_audit: boolean
+  processes_pii: boolean
+  certifications: string | null
+  owner_id: string | null
+  owner: User | null
+  contract_start: string | null
+  contract_end: string | null
+  last_review_date: string | null
+  next_review_date: string | null
+  notes: string | null
+  created_at: string
+  updated_at: string
+}
+
 export interface DashboardStats {
   total_controls: number
   implemented_controls: number
@@ -297,6 +322,10 @@ export interface DashboardStats {
   on_target_metrics: number
   metrics_by_rag: Record<string, number>
   metrics_by_type: Record<string, number>
+  total_suppliers: number
+  critical_suppliers: number
+  suppliers_by_criticality: Record<string, number>
+  suppliers_by_category: Record<string, number>
 }
 
 export interface ActivityEntry {

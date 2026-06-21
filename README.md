@@ -46,6 +46,12 @@ An **open-source IT Governance, Risk & Compliance (GRC) portal** purpose-built f
 - Each metric auto-derives a **RAG status** (On Target / Near Target / Off Target) honouring whether higher or lower is better
 - Link metrics to the objectives they measure; dashboard shows objectives-by-status and metric-RAG breakdowns
 
+### Supplier / Third-Party Register (Clauses 5.19–5.23)
+- Catalog suppliers by **ISO 27036-1 category** (Product / Service / ICT Supply Chain / Cloud Service) and **criticality**
+- Record whether **IS requirements are agreed** in the contract (5.20), the **right-to-audit** clause, and whether the supplier **processes PII**
+- Capture **certifications** (ISO 27001, SOC 2, TISAX…), contract dates, and periodic **review dates** (5.22)
+- Dashboard shows suppliers by criticality and by category
+
 ### Risk Register
 - Create and manage information security risks with full lifecycle tracking
 - **5x5 risk matrix** — likelihood × impact scoring (Low / Medium / High / Critical)
@@ -161,6 +167,7 @@ On first startup, the system automatically:
 - Seeds 30 ISO 27001:2022 ISMS clause requirements (Clauses 4–10)
 - Seeds 17 mandatory documented-information records (Clause 7.5) + sample interested parties (Clause 4.2)
 - Seeds sample IS objectives (Clause 6.2) and KPI/KRI/KCI metrics (Clause 9.1)
+- Seeds sample suppliers / third parties (Clauses 5.19–5.23)
 - Creates 6 default RBAC roles
 - Creates the first superuser account
 
@@ -208,6 +215,7 @@ IT-GRC/
 │   │   │   ├── interested_parties.py # Interested parties register (4.2)
 │   │   │   ├── objectives.py #   IS objectives register (6.2)
 │   │   │   ├── metrics.py   #   KPI/KRI/KCI metrics (9.1)
+│   │   │   ├── suppliers.py #   Supplier / third-party register (5.19–5.23)
 │   │   │   ├── risks.py     #   Risk register CRUD
 │   │   │   ├── soa.py       #   Statement of Applicability
 │   │   │   ├── evidence.py  #   Evidence upload/download
@@ -305,6 +313,7 @@ Key API endpoints:
 | GET | `/api/v1/interested-parties` | List interested parties (4.2) |
 | GET | `/api/v1/objectives` | List IS objectives (6.2) |
 | GET | `/api/v1/metrics` | List KPI/KRI/KCI metrics (9.1) |
+| GET | `/api/v1/suppliers` | List suppliers / third parties (5.19–5.23) |
 | GET | `/api/v1/risks` | List risks |
 | POST | `/api/v1/risks` | Create a new risk |
 | GET | `/api/v1/soa` | List Statement of Applicability |

@@ -40,3 +40,8 @@ class DashboardStats(BaseModel):
     on_target_metrics: int = 0
     metrics_by_rag: dict = {}
     metrics_by_type: dict = {}
+    # Suppliers / third parties (Clauses 5.19–5.23)
+    total_suppliers: int = 0
+    critical_suppliers: int = 0
+    suppliers_by_criticality: dict = {}
+    suppliers_by_category: dict = {}

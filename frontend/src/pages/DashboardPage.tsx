@@ -36,6 +36,8 @@ const DashboardPage: React.FC = () => {
   const objectiveStatusData = Object.entries(stats.objectives_by_status || {}).map(([name, value]) => ({ name, value }))
   const metricRagData = Object.entries(stats.metrics_by_rag || {}).map(([name, value]) => ({ name, value }))
   const RAG_COLORS: Record<string, string> = { 'On Target': '#10b981', 'Near Target': '#f59e0b', 'Off Target': '#ef4444', 'No Data': '#9ca3af' }
+  const supplierCriticalityData = Object.entries(stats.suppliers_by_criticality || {}).map(([name, value]) => ({ name, value }))
+  const supplierCategoryData = Object.entries(stats.suppliers_by_category || {}).map(([name, value]) => ({ name, value }))
 
   return (
     <div className="p-8 space-y-8">
@@ -161,6 +163,46 @@ const DashboardPage: React.FC = () => {
                 <PieChart>
                   <Pie data={metricRagData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
                     {metricRagData.map((d, i) => <Cell key={i} fill={RAG_COLORS[d.name] || COLORS[i % COLORS.length]} />)}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : <p className="text-sm text-gray-400 py-12 text-center">No data</p>}
+          </div>
+        </div>
+      </div>
+
+      {/* Suppliers / third parties (5.19–5.23) */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Suppliers &amp; Third Parties</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard label="Total Suppliers" value={stats.total_suppliers} color="text-indigo-600" />
+          <StatCard label="High / Critical" value={stats.critical_suppliers} color="text-red-600" />
+          <div className="card flex items-center lg:col-span-2">
+            <p className="text-sm text-gray-500">Supplier relationships and their IS expectations (agreements, right-to-audit, certifications, periodic review) per Clauses 5.19–5.23.</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          <div className="card">
+            <h3 className="text-sm font-semibold text-gray-700 mb-4">Suppliers by Criticality</h3>
+            {supplierCriticalityData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={supplierCriticalityData}>
+                  <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip />
+                  <Bar dataKey="value" fill="#6366f1" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : <p className="text-sm text-gray-400 py-12 text-center">No data</p>}
+          </div>
+          <div className="card">
+            <h3 className="text-sm font-semibold text-gray-700 mb-4">Suppliers by Category</h3>
+            {supplierCategoryData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={260}>
+                <PieChart>
+                  <Pie data={supplierCategoryData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
+                    {supplierCategoryData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                   </Pie>
                   <Tooltip />
                 </PieChart>
