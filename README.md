@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="banner.svg" alt="IT-GRC Portal — Unified Governance, Risk & Compliance for IT & OT" width="100%">
+</p>
+
 # IT-GRC Portal — ISO 27001:2022
 
 [![Python](https://img.shields.io/badge/Python-3.12+-3776AB?logo=python&logoColor=white)](https://python.org)

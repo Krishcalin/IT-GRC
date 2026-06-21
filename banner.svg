@@ -1,170 +1,207 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" fill="none" role="img" aria-label="IT-GRC Portal — Unified Governance, Risk and Compliance for IT and OT">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="320" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#0a0e17"/>
-      <stop offset="50%" stop-color="#111827"/>
-      <stop offset="100%" stop-color="#0a0e17"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="340" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#070b15"/>
+      <stop offset="48%" stop-color="#0d1426"/>
+      <stop offset="100%" stop-color="#080c17"/>
     </linearGradient>
-    <linearGradient id="accent" x1="0" y1="0" x2="400" y2="0" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#6366f1"/>
-      <stop offset="100%" stop-color="#818cf8"/>
+    <radialGradient id="auroraIndigo" cx="0.82" cy="0.18" r="0.55">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.30"/>
+      <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="auroraCyan" cx="0.10" cy="0.95" r="0.55">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="auroraAmber" cx="0.5" cy="0.0" r="0.7">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="hubGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#818cf8" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#818cf8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="shieldHalo" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="titleGrad" x1="210" y1="80" x2="560" y2="125" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="55%" stop-color="#dbe2ff"/>
+      <stop offset="100%" stop-color="#a5b4fc"/>
     </linearGradient>
-    <linearGradient id="shield" x1="50" y1="60" x2="50" y2="200" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#6366f1"/>
+    <linearGradient id="shield" x1="50" y1="8" x2="50" y2="150" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#818cf8"/>
       <stop offset="50%" stop-color="#4f46e5"/>
-      <stop offset="100%" stop-color="#3730a3"/>
+      <stop offset="100%" stop-color="#312e81"/>
     </linearGradient>
-    <linearGradient id="check" x1="0" y1="0" x2="30" y2="30" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#22c55e"/>
-      <stop offset="100%" stop-color="#16a34a"/>
+    <linearGradient id="check" x1="30" y1="60" x2="70" y2="95" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#10b981"/>
     </linearGradient>
-    <linearGradient id="gold" x1="0" y1="0" x2="200" y2="0" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#f59e0b"/>
-      <stop offset="100%" stop-color="#eab308"/>
+    <linearGradient id="coreGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#a855f7"/>
     </linearGradient>
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="8" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-    <filter id="softglow">
-      <feGaussianBlur stdDeviation="3" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
+    <linearGradient id="accent" x1="0" y1="0" x2="1200" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0"/>
+      <stop offset="20%" stop-color="#6366f1"/>
+      <stop offset="50%" stop-color="#22d3ee"/>
+      <stop offset="80%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+    </linearGradient>
     <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(99,102,241,0.04)" stroke-width="0.5"/>
+      <path d="M40 0 L0 0 0 40" fill="none" stroke="rgba(148,163,184,0.045)" stroke-width="0.5"/>
     </pattern>
-    <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse">
-      <circle cx="10" cy="10" r="0.6" fill="rgba(99,102,241,0.08)"/>
+    <pattern id="hex" width="48" height="56" patternUnits="userSpaceOnUse">
+      <path d="M24 2 L46 15 L46 41 L24 54 L2 41 L2 15 Z" fill="none" stroke="rgba(99,102,241,0.05)" stroke-width="1"/>
     </pattern>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="2.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
   </defs>
 
-  <!-- Background -->
-  <rect width="1200" height="320" fill="url(#bg)"/>
-  <rect width="1200" height="320" fill="url(#grid)"/>
-  <rect width="1200" height="320" fill="url(#dots)"/>
+  <!-- Background layers -->
+  <rect width="1200" height="340" fill="url(#bg)"/>
+  <rect width="1200" height="340" fill="url(#hex)"/>
+  <rect width="1200" height="340" fill="url(#grid)"/>
+  <rect width="1200" height="340" fill="url(#auroraIndigo)"/>
+  <rect width="1200" height="340" fill="url(#auroraCyan)"/>
+  <rect width="1200" height="340" fill="url(#auroraAmber)"/>
 
-  <!-- Decorative border lines -->
-  <rect x="0" y="0" width="1200" height="1" fill="url(#accent)" opacity="0.3"/>
-  <rect x="0" y="319" width="1200" height="1" fill="url(#accent)" opacity="0.3"/>
-  <rect x="0" y="316" width="1200" height="4" fill="url(#accent)" opacity="0.1"/>
+  <!-- Top / bottom accent rails -->
+  <rect x="0" y="0" width="1200" height="3" fill="url(#accent)" opacity="0.9"/>
+  <rect x="0" y="338" width="1200" height="2" fill="url(#accent)" opacity="0.5"/>
 
-  <!-- Decorative orbs -->
-  <circle cx="1050" cy="60" r="120" fill="rgba(99,102,241,0.03)"/>
-  <circle cx="1100" cy="260" r="80" fill="rgba(245,158,11,0.03)"/>
-  <circle cx="150" cy="280" r="100" fill="rgba(99,102,241,0.02)"/>
-
-  <!-- Shield icon -->
-  <g transform="translate(80, 85)">
-    <path d="M50 10 L90 30 L90 75 C90 110 70 135 50 145 C30 135 10 110 10 75 L10 30 Z"
-          fill="url(#shield)" opacity="0.9" filter="url(#glow)"/>
-    <path d="M50 18 L83 35 L83 75 C83 105 66 127 50 136 C34 127 17 105 17 75 L17 35 Z"
-          fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-    <path d="M35 78 L46 89 L68 62" stroke="url(#check)" stroke-width="5"
-          stroke-linecap="round" stroke-linejoin="round" fill="none" filter="url(#softglow)"/>
-    <path d="M50 18 L83 35 L83 55 C60 50 30 55 17 55 L17 35 Z"
-          fill="rgba(255,255,255,0.04)"/>
+  <!-- HUD corner brackets -->
+  <g stroke="#6366f1" stroke-width="1.5" opacity="0.30" stroke-linecap="round">
+    <path d="M26 18 L64 18 M26 18 L26 44" fill="none"/>
+    <path d="M1174 18 L1136 18 M1174 18 L1174 44" fill="none"/>
+    <path d="M26 322 L64 322 M26 322 L26 296" fill="none"/>
+    <path d="M1174 322 L1136 322 M1174 322 L1174 296" fill="none"/>
   </g>
 
-  <!-- Main title -->
-  <text x="200" y="128" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="700" fill="#e2e8f0" letter-spacing="-0.5">
-    IT-GRC Portal
-  </text>
-  <text x="200" y="160" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="16" fill="rgba(255,255,255,0.45)" letter-spacing="0.5">
-    ISO 27001:2022 Governance, Risk &amp; Compliance Management
-  </text>
-
-  <!-- Divider line -->
-  <line x1="200" y1="180" x2="520" y2="180" stroke="url(#accent)" stroke-width="1" opacity="0.3"/>
-
-  <!-- Stat boxes -->
-  <!-- Box 1: Controls -->
-  <g transform="translate(200, 195)">
-    <rect width="120" height="52" rx="8" fill="rgba(99,102,241,0.08)" stroke="rgba(99,102,241,0.15)" stroke-width="1"/>
-    <text x="60" y="24" text-anchor="middle" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="18" font-weight="700" fill="#818cf8">93</text>
-    <text x="60" y="42" text-anchor="middle" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="10" fill="rgba(255,255,255,0.4)" letter-spacing="0.8">CONTROLS</text>
+  <!-- ============ LEFT: Shield emblem ============ -->
+  <circle cx="113" cy="168" r="78" fill="url(#shieldHalo)"/>
+  <g transform="translate(60, 92)">
+    <path d="M50 8 L92 28 L92 78 C92 114 71 140 50 150 C29 140 8 114 8 78 L8 28 Z"
+          fill="url(#shield)" filter="url(#glow)"/>
+    <path d="M50 16 L85 33 L85 78 C85 109 67 132 50 141 C33 132 15 109 15 78 L15 33 Z"
+          fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.2"/>
+    <path d="M50 16 L85 33 L85 56 C62 50 30 56 15 56 L15 33 Z" fill="rgba(255,255,255,0.05)"/>
+    <path d="M33 80 L46 93 L70 60" stroke="url(#check)" stroke-width="6.5"
+          stroke-linecap="round" stroke-linejoin="round" fill="none" filter="url(#softGlow)"/>
   </g>
 
-  <!-- Box 2: Modules -->
-  <g transform="translate(335, 195)">
-    <rect width="120" height="52" rx="8" fill="rgba(34,197,94,0.08)" stroke="rgba(34,197,94,0.15)" stroke-width="1"/>
-    <text x="60" y="24" text-anchor="middle" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="18" font-weight="700" fill="#22c55e">8</text>
-    <text x="60" y="42" text-anchor="middle" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="10" fill="rgba(255,255,255,0.4)" letter-spacing="0.8">MODULES</text>
+  <!-- ============ CENTER: Title block ============ -->
+  <text x="212" y="64" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="12" font-weight="700" fill="#818cf8" letter-spacing="3.5">OPEN-SOURCE ISMS &amp; OT-SECURITY PLATFORM</text>
+  <text x="210" y="112" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="46" font-weight="800" fill="url(#titleGrad)" letter-spacing="-1">IT-GRC Portal</text>
+  <text x="212" y="140" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="15" fill="rgba(226,232,240,0.62)" letter-spacing="0.3">Unified Governance, Risk &amp; Compliance for IT &amp; OT</text>
+
+  <!-- Framework chips -->
+  <g font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="11" font-weight="600">
+    <g transform="translate(210, 160)">
+      <rect width="118" height="28" rx="14" fill="rgba(129,140,248,0.10)" stroke="rgba(129,140,248,0.35)" stroke-width="1"/>
+      <circle cx="16" cy="14" r="3.5" fill="#818cf8"/>
+      <text x="28" y="18" fill="#c7d2fe">ISO 27001:2022</text>
+    </g>
+    <g transform="translate(338, 160)">
+      <rect width="118" height="28" rx="14" fill="rgba(45,212,191,0.10)" stroke="rgba(45,212,191,0.35)" stroke-width="1"/>
+      <circle cx="16" cy="14" r="3.5" fill="#2dd4bf"/>
+      <text x="28" y="18" fill="#99f6e4">ISO 27019:2024</text>
+    </g>
+    <g transform="translate(466, 160)">
+      <rect width="104" height="28" rx="14" fill="rgba(56,189,248,0.10)" stroke="rgba(56,189,248,0.35)" stroke-width="1"/>
+      <circle cx="16" cy="14" r="3.5" fill="#38bdf8"/>
+      <text x="28" y="18" fill="#bae6fd">NIST CSF 2.0</text>
+    </g>
+    <g transform="translate(580, 160)">
+      <rect width="62" height="28" rx="14" fill="rgba(251,191,36,0.10)" stroke="rgba(251,191,36,0.35)" stroke-width="1"/>
+      <circle cx="16" cy="14" r="3.5" fill="#fbbf24"/>
+      <text x="28" y="18" fill="#fde68a">SOC 2</text>
+    </g>
+    <g transform="translate(652, 160)">
+      <rect width="116" height="28" rx="14" fill="rgba(74,222,128,0.10)" stroke="rgba(74,222,128,0.35)" stroke-width="1"/>
+      <circle cx="16" cy="14" r="3.5" fill="#4ade80"/>
+      <text x="28" y="18" fill="#bbf7d0">IEC 62443-2-1</text>
+    </g>
   </g>
 
-  <!-- Box 3: RBAC Roles -->
-  <g transform="translate(470, 195)">
-    <rect width="120" height="52" rx="8" fill="rgba(245,158,11,0.08)" stroke="rgba(245,158,11,0.15)" stroke-width="1"/>
-    <text x="60" y="24" text-anchor="middle" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="18" font-weight="700" fill="#f59e0b">6</text>
-    <text x="60" y="42" text-anchor="middle" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="10" fill="rgba(255,255,255,0.4)" letter-spacing="0.8">RBAC ROLES</text>
+  <!-- Stat cells -->
+  <g font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif">
+    <g transform="translate(210, 212)">
+      <rect width="156" height="60" rx="10" fill="rgba(129,140,248,0.07)" stroke="rgba(129,140,248,0.20)" stroke-width="1"/>
+      <text x="20" y="38" font-size="30" font-weight="800" fill="#a5b4fc">5</text>
+      <text x="78" y="26" font-size="10.5" font-weight="700" fill="rgba(226,232,240,0.85)" letter-spacing="0.6">FRAMEWORKS</text>
+      <text x="78" y="42" font-size="9" fill="rgba(148,163,184,0.7)" letter-spacing="0.4">cross-mapped</text>
+    </g>
+    <g transform="translate(376, 212)">
+      <rect width="156" height="60" rx="10" fill="rgba(52,211,153,0.07)" stroke="rgba(52,211,153,0.20)" stroke-width="1"/>
+      <text x="20" y="38" font-size="30" font-weight="800" fill="#34d399">148</text>
+      <text x="92" y="26" font-size="10.5" font-weight="700" fill="rgba(226,232,240,0.85)" letter-spacing="0.6">CONTROLS</text>
+      <text x="92" y="42" font-size="9" fill="rgba(148,163,184,0.7)" letter-spacing="0.4">IT &amp; OT</text>
+    </g>
+    <g transform="translate(542, 212)">
+      <rect width="156" height="60" rx="10" fill="rgba(251,191,36,0.07)" stroke="rgba(251,191,36,0.20)" stroke-width="1"/>
+      <text x="20" y="38" font-size="30" font-weight="800" fill="#fbbf24">96</text>
+      <text x="74" y="26" font-size="10.5" font-weight="700" fill="rgba(226,232,240,0.85)" letter-spacing="0.6">CROSSWALK</text>
+      <text x="74" y="42" font-size="9" fill="rgba(148,163,184,0.7)" letter-spacing="0.4">control maps</text>
+    </g>
+    <g transform="translate(708, 212)">
+      <rect width="156" height="60" rx="10" fill="rgba(56,189,248,0.07)" stroke="rgba(56,189,248,0.20)" stroke-width="1"/>
+      <text x="20" y="38" font-size="30" font-weight="800" fill="#38bdf8">30</text>
+      <text x="74" y="26" font-size="10.5" font-weight="700" fill="rgba(226,232,240,0.85)" letter-spacing="0.6">ISMS CLAUSES</text>
+      <text x="74" y="42" font-size="9" fill="rgba(148,163,184,0.7)" letter-spacing="0.4">clauses 4&#8211;10</text>
+    </g>
   </g>
 
-  <!-- Box 4: Themes -->
-  <g transform="translate(605, 195)">
-    <rect width="120" height="52" rx="8" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.15)" stroke-width="1"/>
-    <text x="60" y="24" text-anchor="middle" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="18" font-weight="700" fill="#ef4444">4</text>
-    <text x="60" y="42" text-anchor="middle" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="10" fill="rgba(255,255,255,0.4)" letter-spacing="0.8">THEMES</text>
+  <!-- Tech stack micro-tags -->
+  <g font-family="'Courier New',monospace" font-size="9" opacity="0.8">
+    <g transform="translate(210, 292)"><rect width="60" height="20" rx="4" fill="rgba(99,102,241,0.08)" stroke="rgba(99,102,241,0.18)" stroke-width="0.5"/><text x="30" y="14" text-anchor="middle" fill="rgba(165,180,252,0.7)">React</text></g>
+    <g transform="translate(278, 292)"><rect width="64" height="20" rx="4" fill="rgba(34,197,94,0.08)" stroke="rgba(34,197,94,0.18)" stroke-width="0.5"/><text x="32" y="14" text-anchor="middle" fill="rgba(134,239,172,0.7)">FastAPI</text></g>
+    <g transform="translate(350, 292)"><rect width="80" height="20" rx="4" fill="rgba(56,189,248,0.08)" stroke="rgba(56,189,248,0.18)" stroke-width="0.5"/><text x="40" y="14" text-anchor="middle" fill="rgba(125,211,252,0.7)">PostgreSQL</text></g>
+    <g transform="translate(438, 292)"><rect width="62" height="20" rx="4" fill="rgba(168,85,247,0.08)" stroke="rgba(168,85,247,0.18)" stroke-width="0.5"/><text x="31" y="14" text-anchor="middle" fill="rgba(216,180,254,0.7)">Docker</text></g>
+    <g transform="translate(508, 292)"><rect width="78" height="20" rx="4" fill="rgba(251,191,36,0.08)" stroke="rgba(251,191,36,0.18)" stroke-width="0.5"/><text x="39" y="14" text-anchor="middle" fill="rgba(253,224,71,0.7)">TypeScript</text></g>
+    <g transform="translate(594, 292)"><rect width="64" height="20" rx="4" fill="rgba(45,212,191,0.08)" stroke="rgba(45,212,191,0.18)" stroke-width="0.5"/><text x="32" y="14" text-anchor="middle" fill="rgba(153,246,228,0.7)">Alembic</text></g>
   </g>
 
-  <!-- Right side: ISO certification seal -->
-  <g transform="translate(900, 80)" opacity="0.12">
-    <!-- Outer ring -->
-    <circle cx="55" cy="60" r="55" fill="none" stroke="#6366f1" stroke-width="3"/>
-    <circle cx="55" cy="60" r="48" fill="none" stroke="#818cf8" stroke-width="1"/>
-    <!-- Inner text -->
-    <text x="55" y="50" text-anchor="middle" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="14" font-weight="700" fill="#818cf8">ISO</text>
-    <text x="55" y="68" text-anchor="middle" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="12" font-weight="600" fill="#6366f1">27001</text>
-    <text x="55" y="82" text-anchor="middle" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="9" fill="#818cf8">2022</text>
-    <!-- Star decorations -->
-    <text x="20" y="17" font-size="8" fill="#818cf8">&#9733;</text>
-    <text x="82" y="17" font-size="8" fill="#818cf8">&#9733;</text>
-    <text x="55" y="125" font-size="8" fill="#818cf8" text-anchor="middle">&#9733;</text>
-  </g>
-
-  <!-- Right side decorative text -->
-  <g transform="translate(840, 210)">
-    <text x="0" y="0" font-family="'Courier New',monospace" font-size="10" fill="rgba(99,102,241,0.25)" letter-spacing="1">
-      RISK  SOA  AUDIT  POLICY  ASSET
-    </text>
-    <text x="0" y="18" font-family="'Courier New',monospace" font-size="10" fill="rgba(99,102,241,0.15)" letter-spacing="1">
-      PASS  FAIL  WARN  IMPL  SKIP
-    </text>
-  </g>
-
-  <!-- Bottom tags -->
-  <g transform="translate(200, 270)">
-    <rect width="72" height="22" rx="4" fill="rgba(99,102,241,0.1)" stroke="rgba(99,102,241,0.2)" stroke-width="0.5"/>
-    <text x="36" y="15" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="rgba(99,102,241,0.6)">React</text>
-  </g>
-  <g transform="translate(282, 270)">
-    <rect width="72" height="22" rx="4" fill="rgba(34,197,94,0.1)" stroke="rgba(34,197,94,0.2)" stroke-width="0.5"/>
-    <text x="36" y="15" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="rgba(34,197,94,0.6)">FastAPI</text>
-  </g>
-  <g transform="translate(364, 270)">
-    <rect width="72" height="22" rx="4" fill="rgba(245,158,11,0.1)" stroke="rgba(245,158,11,0.2)" stroke-width="0.5"/>
-    <text x="36" y="15" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="rgba(245,158,11,0.6)">PostgreSQL</text>
-  </g>
-  <g transform="translate(446, 270)">
-    <rect width="72" height="22" rx="4" fill="rgba(239,68,68,0.1)" stroke="rgba(239,68,68,0.2)" stroke-width="0.5"/>
-    <text x="36" y="15" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="rgba(239,68,68,0.6)">Docker</text>
-  </g>
-  <g transform="translate(528, 270)">
-    <rect width="72" height="22" rx="4" fill="rgba(168,85,247,0.1)" stroke="rgba(168,85,247,0.2)" stroke-width="0.5"/>
-    <text x="36" y="15" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="rgba(168,85,247,0.6)">TypeScript</text>
-  </g>
-  <g transform="translate(610, 270)">
-    <rect width="72" height="22" rx="4" fill="rgba(56,189,248,0.1)" stroke="rgba(56,189,248,0.2)" stroke-width="0.5"/>
-    <text x="36" y="15" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="rgba(56,189,248,0.6)">Tailwind</text>
+  <!-- ============ RIGHT: Unified control framework hub ============ -->
+  <g>
+    <circle cx="1012" cy="158" r="110" fill="url(#hubGlow)"/>
+    <!-- concentric rings -->
+    <circle cx="1012" cy="158" r="95" fill="none" stroke="rgba(129,140,248,0.18)" stroke-width="1"/>
+    <circle cx="1012" cy="158" r="68" fill="none" stroke="rgba(129,140,248,0.12)" stroke-width="1"/>
+    <circle cx="1012" cy="158" r="42" fill="none" stroke="rgba(129,140,248,0.10)" stroke-width="1"/>
+    <!-- spokes -->
+    <g stroke="rgba(129,140,248,0.25)" stroke-width="1">
+      <line x1="1012" y1="158" x2="1012" y2="63"/>
+      <line x1="1012" y1="158" x2="1102" y2="129"/>
+      <line x1="1012" y1="158" x2="1068" y2="235"/>
+      <line x1="1012" y1="158" x2="956" y2="235"/>
+      <line x1="1012" y1="158" x2="922" y2="129"/>
+    </g>
+    <!-- framework nodes -->
+    <g font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="10" font-weight="700" text-anchor="middle">
+      <g transform="translate(983, 52)"><rect width="58" height="22" rx="11" fill="#0b1220" stroke="#818cf8" stroke-width="1.2"/><text x="29" y="15" fill="#c7d2fe">ISO 27001</text></g>
+      <g transform="translate(1073, 118)"><rect width="58" height="22" rx="11" fill="#0b1220" stroke="#4ade80" stroke-width="1.2"/><text x="29" y="15" fill="#bbf7d0">IEC 62443</text></g>
+      <g transform="translate(1039, 224)"><rect width="58" height="22" rx="11" fill="#0b1220" stroke="#fbbf24" stroke-width="1.2"/><text x="29" y="15" fill="#fde68a">SOC 2</text></g>
+      <g transform="translate(927, 224)"><rect width="58" height="22" rx="11" fill="#0b1220" stroke="#38bdf8" stroke-width="1.2"/><text x="29" y="15" fill="#bae6fd">NIST CSF</text></g>
+      <g transform="translate(893, 118)"><rect width="58" height="22" rx="11" fill="#0b1220" stroke="#2dd4bf" stroke-width="1.2"/><text x="29" y="15" fill="#99f6e4">ISO 27019</text></g>
+    </g>
+    <!-- core -->
+    <circle cx="1012" cy="158" r="22" fill="url(#coreGrad)" filter="url(#glow)"/>
+    <path d="M1001 158 L1009 166 L1025 149" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <text x="1012" y="272" text-anchor="middle" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="9" font-weight="600" fill="rgba(148,163,184,0.7)" letter-spacing="2">UNIFIED CONTROL FRAMEWORK</text>
   </g>
 
   <!-- Version tag -->
-  <g transform="translate(1080, 14)">
-    <rect width="56" height="20" rx="4" fill="rgba(99,102,241,0.12)" stroke="rgba(99,102,241,0.25)" stroke-width="0.5"/>
-    <text x="28" y="14" text-anchor="middle" font-family="'Courier New',monospace" font-size="10" font-weight="600" fill="rgba(99,102,241,0.7)">v1.0.0</text>
+  <g transform="translate(1066, 14)">
+    <rect width="58" height="20" rx="5" fill="rgba(99,102,241,0.14)" stroke="rgba(99,102,241,0.30)" stroke-width="0.5"/>
+    <text x="29" y="14" text-anchor="middle" font-family="'Courier New',monospace" font-size="10" font-weight="700" fill="rgba(165,180,252,0.85)">v1.0.0</text>
   </g>
 </svg>
