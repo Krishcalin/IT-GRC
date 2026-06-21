@@ -17,6 +17,7 @@ from ..models.supplier import Supplier
 from ..models.incident import Incident
 from ..models.training import TrainingCampaign, TrainingRecord
 from ..models.risk import Risk
+from .reminders import gather_reminders
 from ..models.audit import Audit, AuditFinding
 from ..models.policy import Policy
 from ..models.asset import Asset
@@ -148,6 +149,11 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
     )).scalar() or 0
     training_completion_rate = round((completed_records / total_records * 100) if total_records else 0, 1)
 
+    # Reviews due across registers
+    reminders = await gather_reminders(db)
+    reviews_overdue = reminders["overdue_count"]
+    reviews_upcoming = reminders["upcoming_count"]
+
     # Risks
     total_risks = (await db.execute(select(func.count()).select_from(Risk))).scalar() or 0
     open_risks = (await db.execute(
@@ -228,6 +234,8 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
         active_campaigns=active_campaigns,
         training_completion_rate=training_completion_rate,
         campaigns_by_status=campaigns_by_status,
+        reviews_overdue=reviews_overdue,
+        reviews_upcoming=reviews_upcoming,
     )
 
 

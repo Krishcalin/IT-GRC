@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { getDashboardStats, getActivityLog } from '../services/api'
 import type { DashboardStats, ActivityEntry } from '../types'
@@ -55,6 +56,20 @@ const DashboardPage: React.FC = () => {
         <StatCard label="Open Findings" value={stats.open_findings} color="text-red-600" />
         <StatCard label="Compliance Score" value={`${stats.compliance_score}%`} color={scoreColor} />
       </div>
+
+      {/* Reviews-due banner */}
+      {(stats.reviews_overdue > 0 || stats.reviews_upcoming > 0) && (
+        <Link to="/reminders" className="block card hover:bg-indigo-50/50 transition-colors">
+          <div className="flex items-center gap-3">
+            <svg className="w-5 h-5 text-amber-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+            <p className="text-sm text-gray-700">
+              <span className="font-semibold text-red-600">{stats.reviews_overdue}</span> overdue and{' '}
+              <span className="font-semibold text-amber-600">{stats.reviews_upcoming}</span> upcoming review(s).{' '}
+              <span className="text-indigo-600 font-medium">View reminders →</span>
+            </p>
+          </div>
+        </Link>
+      )}
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

@@ -350,6 +350,23 @@ export interface TrainingCampaign {
   updated_at: string
 }
 
+export interface ReminderItem {
+  category: string
+  ref_id: string
+  title: string
+  due_date: string
+  kind: string
+  link: string
+}
+
+export interface RemindersResult {
+  as_of: string
+  window_days: number
+  overdue_count: number
+  upcoming_count: number
+  items: ReminderItem[]
+}
+
 export interface DashboardStats {
   total_controls: number
   implemented_controls: number
@@ -394,6 +411,8 @@ export interface DashboardStats {
   active_campaigns: number
   training_completion_rate: number
   campaigns_by_status: Record<string, number>
+  reviews_overdue: number
+  reviews_upcoming: number
 }
 
 export interface ActivityEntry {

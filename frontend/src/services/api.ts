@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { User, Control, ClauseRequirement, DocumentedInformation, InterestedParty, Objective, Metric, Supplier, Incident, TrainingCampaign, TrainingRecord, Risk, SoAEntry, Evidence, Audit, AuditFinding, Policy, Asset, DashboardStats, ActivityEntry } from '../types'
+import type { User, Control, ClauseRequirement, DocumentedInformation, InterestedParty, Objective, Metric, Supplier, Incident, TrainingCampaign, TrainingRecord, RemindersResult, Risk, SoAEntry, Evidence, Audit, AuditFinding, Policy, Asset, DashboardStats, ActivityEntry } from '../types'
 
 const api = axios.create({ baseURL: '/api/v1' })
 
@@ -88,6 +88,9 @@ export const deleteTrainingRecord = (recordId: string) => api.delete(`/training/
 
 // Reports & export
 export const downloadReport = (path: string) => api.get(`/reports/${path}`, { responseType: 'blob' })
+
+// Reminders / notifications
+export const getReminders = (params?: Record<string, string>) => api.get<RemindersResult>('/reminders', { params })
 
 // Risks
 export const getRisks = (params?: Record<string, string>) => api.get<Risk[]>('/risks', { params })

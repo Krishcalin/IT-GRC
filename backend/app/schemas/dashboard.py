@@ -55,3 +55,6 @@ class DashboardStats(BaseModel):
     active_campaigns: int = 0
     training_completion_rate: float = 0.0
     campaigns_by_status: dict = {}
+    # Reviews due (across registers)
+    reviews_overdue: int = 0
+    reviews_upcoming: int = 0

@@ -130,6 +130,7 @@ from .api.suppliers import router as suppliers_router  # noqa: E402
 from .api.incidents import router as incidents_router  # noqa: E402
 from .api.training import router as training_router    # noqa: E402
 from .api.reports import router as reports_router      # noqa: E402
+from .api.reminders import router as reminders_router  # noqa: E402
 from .api.risks import router as risks_router        # noqa: E402
 from .api.soa import router as soa_router            # noqa: E402
 from .api.evidence import router as evidence_router  # noqa: E402
@@ -149,6 +150,7 @@ app.include_router(suppliers_router, prefix=f"{settings.API_V1_PREFIX}/suppliers
 app.include_router(incidents_router, prefix=f"{settings.API_V1_PREFIX}/incidents", tags=["Incidents"])
 app.include_router(training_router, prefix=f"{settings.API_V1_PREFIX}/training", tags=["Awareness & Training"])
 app.include_router(reports_router, prefix=f"{settings.API_V1_PREFIX}/reports", tags=["Reports"])
+app.include_router(reminders_router, prefix=f"{settings.API_V1_PREFIX}/reminders", tags=["Reminders"])
 app.include_router(risks_router, prefix=f"{settings.API_V1_PREFIX}/risks", tags=["Risks"])
 app.include_router(soa_router, prefix=f"{settings.API_V1_PREFIX}/soa", tags=["Statement of Applicability"])
 app.include_router(evidence_router, prefix=f"{settings.API_V1_PREFIX}/evidence", tags=["Evidence"])
