@@ -8,6 +8,7 @@
 [![ISO 27001](https://img.shields.io/badge/ISO_27001-2022-blue)](https://www.iso.org/standard/27001)
 [![Controls](https://img.shields.io/badge/Annex_A_Controls-93-orange)](#controls-library)
 [![ISO 27019](https://img.shields.io/badge/ISO_27019_(Energy)-12-teal)](#isoiec-270192024-energy-sector-coverage)
+[![IEC 62443](https://img.shields.io/badge/IEC_62443--2--1_(OT)-8_SPEs-darkgreen)](#additional-frameworks--crosswalk)
 [![ISMS Clauses](https://img.shields.io/badge/ISMS_Clauses_4--10-30-9cf)](#isms-clause-conformity-clauses-410)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](#quick-start)
 [![CI](https://github.com/Krishcalin/IT-GRC/actions/workflows/ci.yml/badge.svg)](https://github.com/Krishcalin/IT-GRC/actions/workflows/ci.yml)
@@ -38,13 +39,13 @@ An **open-source IT Governance, Risk & Compliance (GRC) portal** purpose-built f
 - **12 ISO/IEC 27019:2024 energy-sector controls** (the "ENR" controls for SCADA/ICS in the energy utility industry) loaded as an additional, filterable framework
 - Track implementation status, assign owners, set review dates
 - Link controls to risks, evidence, and audit findings
-- Filter the library by **framework** (ISO 27001:2022 / ISO 27019:2024 / NIST CSF 2.0 / SOC 2), theme, and status
+- Filter the library by **framework** (ISO 27001:2022 / ISO 27019:2024 / NIST CSF 2.0 / SOC 2 / IEC 62443-2-1:2024), theme, and status
 
 ### Unified Control Framework (Multi-Framework & Crosswalk)
-- Multiple control catalogs in one place: **ISO 27001:2022 (93)**, **ISO 27019:2024 (12)**, **NIST CSF 2.0 (22 categories)**, **SOC 2 (13 criteria)**
+- Multiple control catalogs in one place: **ISO 27001:2022 (93)**, **ISO 27019:2024 (12)**, **NIST CSF 2.0 (22 categories)**, **SOC 2 (13 criteria)**, **IEC 62443-2-1:2024 (8 OT program elements)**
 - **Control-to-control crosswalk** — map a control to equivalent/related controls in other frameworks ("test once, comply many"), editable from any control's detail page
 - **Cross-framework coverage matrix** — see what % of each framework's controls map to each other framework, with a per-framework coverage summary
-- Pre-seeded ISO 27001 ↔ NIST CSF and ISO 27001 ↔ SOC 2 crosswalk as a starting point
+- Pre-seeded crosswalks: ISO 27001 ↔ NIST CSF, ISO 27001 ↔ SOC 2, and **ISO 27001/27019 ↔ IEC 62443** (the IT-ISMS ↔ OT-security-program bridge for energy/ICS)
 
 ### Assessments & Attestations
 - **Control self-assessments** with **CMMI-style maturity scoring (0–5)** and a derived posture score
@@ -208,7 +209,7 @@ On first startup, the system automatically:
 - Applies database migrations (`alembic upgrade head`)
 - Seeds 93 ISO 27001:2022 Annex A controls
 - Seeds 12 ISO/IEC 27019:2024 energy-sector (ENR) controls
-- Seeds 22 NIST CSF 2.0 categories + 13 SOC 2 criteria and a starter cross-framework crosswalk
+- Seeds 22 NIST CSF 2.0 categories + 13 SOC 2 criteria + 8 IEC 62443-2-1:2024 OT program elements and a starter cross-framework crosswalk (incl. ISO ↔ IEC 62443)
 - Seeds 30 ISO 27001:2022 ISMS clause requirements (Clauses 4–10)
 - Seeds 17 mandatory documented-information records (Clause 7.5) + sample interested parties (Clause 4.2)
 - Seeds sample IS objectives (Clause 6.2) and KPI/KRI/KCI metrics (Clause 9.1)
@@ -332,18 +333,22 @@ ISO/IEC 27019:2024 extends ISO/IEC 27002:2022 for **process control systems (SCA
 
 ## Additional Frameworks & Crosswalk
 
-Beyond ISO 27001/27019, the portal ships **NIST CSF 2.0** and **SOC 2** control
-catalogs so one control set can be mapped across standards. Wording is paraphrased,
-not reproduced from the source frameworks.
+Beyond ISO 27001/27019, the portal ships **NIST CSF 2.0**, **SOC 2** and
+**ISA/IEC 62443-2-1:2024** control catalogs so one control set can be mapped across
+standards. Wording is paraphrased, not reproduced from the source frameworks.
 
 | Framework | Granularity | Entries |
 |-----------|-------------|---------|
 | **NIST CSF 2.0** | Functions → Categories (Govern, Identify, Protect, Detect, Respond, Recover) | 22 |
 | **SOC 2 (Trust Services Criteria)** | Common Criteria CC1–CC9 + Availability / Confidentiality / Processing Integrity / Privacy | 13 |
+| **ISA/IEC 62443-2-1:2024** (OT / IACS) | 8 Security Program Elements — ORG, CM, NET, COMP, DATA, USER, EVENT, AVAIL | 8 |
 
 Map controls across frameworks from any control's **Framework Crosswalk** section; the
-**Frameworks** page shows a cross-framework coverage matrix. A starter ISO 27001 ↔ CSF /
-ISO 27001 ↔ SOC 2 crosswalk is seeded.
+**Frameworks** page shows a cross-framework coverage matrix. Starter crosswalks are
+seeded: ISO 27001 ↔ CSF, ISO 27001 ↔ SOC 2, and **ISO 27001/27019 ↔ IEC 62443** (66
+OT-mappings aligning each Annex A / ENR control with the 62443 program element it
+supports — the IT-ISMS ↔ OT-program bridge from the ISAGCA & Secura combined-approach
+white papers).
 
 ---
 

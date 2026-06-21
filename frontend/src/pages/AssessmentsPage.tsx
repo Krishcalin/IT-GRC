@@ -6,7 +6,7 @@ import StatusBadge from '../components/StatusBadge'
 
 const TYPES = ['Control Self-Assessment', 'Maturity Assessment', 'Vendor Questionnaire']
 const STATUSES = ['Draft', 'In Progress', 'Submitted', 'Reviewed', 'Closed']
-const FRAMEWORKS = ['', 'ISO 27001:2022', 'ISO 27019:2024', 'NIST CSF 2.0', 'SOC 2']
+const FRAMEWORKS = ['', 'ISO 27001:2022', 'ISO 27019:2024', 'NIST CSF 2.0', 'SOC 2', 'IEC 62443-2-1:2024']
 
 const emptyForm = { title: '', assessment_type: 'Control Self-Assessment', framework: '', status: 'Draft', description: '' }
 

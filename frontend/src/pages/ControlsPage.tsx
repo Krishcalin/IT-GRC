@@ -6,7 +6,7 @@ import StatusBadge from '../components/StatusBadge'
 
 const THEMES = ['', 'Organizational', 'People', 'Physical', 'Technological']
 const STATUSES = ['', 'Not Started', 'In Progress', 'Implemented', 'Not Applicable']
-const FRAMEWORKS = ['', 'ISO 27001:2022', 'ISO 27019:2024', 'NIST CSF 2.0', 'SOC 2']
+const FRAMEWORKS = ['', 'ISO 27001:2022', 'ISO 27019:2024', 'NIST CSF 2.0', 'SOC 2', 'IEC 62443-2-1:2024']
 
 const ControlsPage: React.FC = () => {
   const navigate = useNavigate()
@@ -37,7 +37,7 @@ const ControlsPage: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-900">Controls</h1>
           <span className="bg-indigo-100 text-indigo-700 text-xs font-semibold px-2.5 py-1 rounded-full">{controls.length}</span>
         </div>
-        <p className="text-sm text-gray-400">ISO 27001:2022 Annex A + ISO 27019:2024 (energy sector)</p>
+        <p className="text-sm text-gray-400">ISO 27001:2022 · ISO 27019:2024 · NIST CSF 2.0 · SOC 2 · IEC 62443-2-1 (OT)</p>
       </div>
 
       <div className="flex flex-wrap gap-3">

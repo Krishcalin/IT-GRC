@@ -22,7 +22,7 @@ async def _run_seeds() -> None:
     """Seed the database with ISO 27001 controls, default roles, and first superuser."""
     from .seed.iso27001 import (
         seed_controls, seed_iso27019_controls, seed_nist_csf_controls, seed_soc2_controls,
-        seed_control_mappings, seed_clauses, seed_documents,
+        seed_iec62443_controls, seed_control_mappings, seed_clauses, seed_documents,
         seed_interested_parties, seed_objectives, seed_metrics, seed_metric_history,
         seed_posture_snapshots, seed_suppliers, seed_incidents, seed_training,
         seed_assessments, seed_tasks, seed_roles,
@@ -53,6 +53,10 @@ async def _run_seeds() -> None:
         n_soc2 = await seed_soc2_controls(session)
         if n_soc2:
             logger.info("Seeded %d SOC 2 criteria", n_soc2)
+
+        n_iec = await seed_iec62443_controls(session)
+        if n_iec:
+            logger.info("Seeded %d IEC 62443-2-1:2024 OT security-program elements", n_iec)
 
         n_maps = await seed_control_mappings(session)
         if n_maps:

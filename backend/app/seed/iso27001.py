@@ -373,8 +373,73 @@ SOC2_CONTROLS: list[dict] = [
 assert len(SOC2_CONTROLS) == 13, f"Expected 13 SOC 2 criteria, got {len(SOC2_CONTROLS)}"
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+#  ISA/IEC 62443-2-1:2024 — IACS asset-owner security program (OT / ICS)
+#
+#  IEC 62443-2-1:2024 ("Security program requirements for IACS asset owners") is
+#  the part of the ISA/IEC 62443 series that an energy/industrial asset owner is
+#  audited against for its Operational Technology (OT) security program. It is the
+#  natural counterpart to an ISO/IEC 27001 ISMS: ISO 27001/2 governs information
+#  security for the IT/office environment, while 62443-2-1 adds the OT-specific
+#  requirements for Industrial Automation and Control Systems (IACS). The two are
+#  meant to be COMBINED — 62443 delegates security management to an established
+#  ISMS, and ISO 27002 controls are layered into each 62443 topic area (see the
+#  ISAGCA 2025 and Secura white papers).
+#
+#  The 2024 edition organizes its requirements into eight "Security Program
+#  Elements" (SPEs) — logical groupings of requirements covering a security topic,
+#  each further divided into sub-SPEs and requirements (e.g. SPE "NET" → sub-SPE
+#  "NET 3 Secure remote access" → requirements NET 3.1–3.3). This catalog models
+#  the framework at the SPE level (mirroring how NIST CSF is seeded at the Category
+#  level and SOC 2 at the criteria-series level) so ISO 27001 controls can be
+#  cross-mapped to each OT program area. `clause` holds the SPE mnemonic; `theme`
+#  groups the SPE by domain.
+#
+#  Titles/descriptions are paraphrased for the application; they are NOT a
+#  reproduction of the copyrighted standard. Refer to ISA/IEC 62443-2-1:2024 for
+#  the authoritative SPE structure and requirement wording.
+# ─────────────────────────────────────────────────────────────────────────────
+IEC62443_CONTROLS: list[dict] = [
+    {"clause": "ORG", "title": "Organizational security measures", "theme": "Governance & Risk",
+     "framework": "IEC 62443-2-1:2024",
+     "description": "Establish and maintain the IACS security program: governance, security policies, roles and responsibilities, OT risk assessment and treatment, staff competence and awareness, and coordination of the OT security program with any established ISMS.",
+     "implementation_guidance": "62443-2-1 delegates security management to an established ISMS (ISO 27001 clauses 4–10). Define IT/OT management responsibilities and interfaces, plan resources for the unique skills OT requires, and run risk assessments throughout the IACS lifecycle, integrating physical, HSE and cyber results."},
+    {"clause": "CM", "title": "Configuration management", "theme": "Asset & Configuration",
+     "framework": "IEC 62443-2-1:2024",
+     "description": "Maintain an inventory of IACS assets and their configurations, establish and enforce secure configuration baselines, and control changes to hardware, software, firmware and network configuration across the IACS lifecycle.",
+     "implementation_guidance": "Keep up-to-date asset records and network diagrams. Apply least functionality — document, then disable and prohibit unnecessary ports, protocols and services. Manage and test changes so they do not disrupt operational continuity or safety functions."},
+    {"clause": "NET", "title": "Network and communications security", "theme": "Network Security",
+     "framework": "IEC 62443-2-1:2024",
+     "description": "Partition the IACS into zones and conduits, enforce segmentation between OT and other networks, protect zone boundaries, secure wireless and remote access (sub-SPE NET 3), and protect process-control data communications.",
+     "implementation_guidance": "Physically or logically segment critical control networks from non-critical and enterprise networks. For secure remote access (NET 3.1–3.3): allow only authorized remote applications, document authorized interactive connections, and terminate sessions after inactivity. Secure protocols that lack built-in security (e.g. via IEC 62351 or added cryptographic protection)."},
+    {"clause": "COMP", "title": "Component security", "theme": "Host & Component",
+     "framework": "IEC 62443-2-1:2024",
+     "description": "Harden IACS components (controllers, workstations, servers, embedded devices), manage malware protection in an IACS-compatible way, apply security patches through tested processes, and physically protect components.",
+     "implementation_guidance": "Test malware protection for compatibility with IACS before deployment (COMP 2.3). Plan and test patch application to ensure operational continuity (patching is often deferred to scheduled downtime). Apply compensating controls — segregation, hardened proxies, strict access — for legacy components that cannot run standard protections."},
+    {"clause": "DATA", "title": "Protection of data", "theme": "Data Protection",
+     "framework": "IEC 62443-2-1:2024",
+     "description": "Identify and protect IACS data at rest and in transit according to its sensitivity, apply cryptography where appropriate to confidentiality/integrity needs, and manage information handling, retention and disposal in the OT environment.",
+     "implementation_guidance": "Classify process-control information and apply protection commensurate with integrity and availability priorities (in OT, integrity/availability usually outrank confidentiality). Use cryptographic protection on lower communication layers where protocols are unprotected, balancing latency and real-time constraints."},
+    {"clause": "USER", "title": "User access control", "theme": "Access Control",
+     "framework": "IEC 62443-2-1:2024",
+     "description": "Manage identities, authentication and authorization for human, software and device accounts that access the IACS, applying least privilege and segregation of duties with OT-specific safety considerations.",
+     "implementation_guidance": "Apply strong authentication and account management, but adapt controls where they could create unsafe conditions — e.g. an operator screen lock (USER 1.18) may need to be excluded on consoles where locking would impede emergency response. Protect engineering/maintenance access to safety and control systems."},
+    {"clause": "EVENT", "title": "Event and incident management", "theme": "Monitoring & Response",
+     "framework": "IEC 62443-2-1:2024",
+     "description": "Log and monitor IACS security-relevant events, detect and analyze anomalies, and prepare for and respond to security incidents in coordination with safety, operational continuity and emergency procedures.",
+     "implementation_guidance": "Collect and protect logs with synchronized clocks for forensic accuracy. Define OT incident response that accounts for the physical process — containment must not trigger unsafe states. Maintain emergency communication links with operators, other utilities and external response organizations."},
+    {"clause": "AVAIL", "title": "System availability and integrity", "theme": "Resilience & Availability",
+     "framework": "IEC 62443-2-1:2024",
+     "description": "Protect the availability and integrity of the IACS through backup and restore, redundancy, resilient design and recovery planning so operational continuity and safety functions are preserved during disruption.",
+     "implementation_guidance": "Maintain and test backups and recovery procedures for control systems. Provide redundancy for critical components and supporting utilities, and protect the integrity and availability of safety-related functions, keeping them independent of routine control/automation where feasible."},
+]
+
+assert len(IEC62443_CONTROLS) == 8, f"Expected 8 IEC 62443-2-1:2024 SPEs, got {len(IEC62443_CONTROLS)}"
+
+
 # Representative cross-framework crosswalk: (source_clause, target_clause, relationship).
-# Source = ISO 27001:2022 Annex A; targets = NIST CSF 2.0 / SOC 2. Illustrative, not exhaustive.
+# Source = ISO 27001:2022 Annex A (or ISO 27019 ENR); targets = NIST CSF 2.0 / SOC 2 /
+# IEC 62443-2-1:2024 SPEs. Illustrative, not exhaustive.
 CONTROL_MAPPINGS: list[tuple[str, str, str]] = [
     # ISO 27001 → NIST CSF 2.0
     ("A.5.1", "GV.PO", "equivalent"),
@@ -408,6 +473,90 @@ CONTROL_MAPPINGS: list[tuple[str, str, str]] = [
     ("A.8.24", "C1", "related"),
     ("A.5.34", "P1", "equivalent"),
     ("A.8.29", "PI1", "related"),
+
+    # ── ISO 27001:2022 Annex A → ISA/IEC 62443-2-1:2024 SPEs ──────────────────
+    # Aligns each ISO 27002 control with the OT security-program element it
+    # supports, per the combined-approach guidance (ISAGCA 2025 / Secura). An OT
+    # asset owner running an ISO 27001 ISMS can read these to see which 62443-2-1
+    # program area each Annex A control feeds, and where 62443 adds OT specifics.
+    #   ORG — organizational security measures
+    ("A.5.1", "ORG", "related"),
+    ("A.5.2", "ORG", "related"),
+    ("A.5.4", "ORG", "related"),
+    ("A.5.19", "ORG", "related"),
+    ("A.5.20", "ORG", "related"),
+    ("A.5.21", "ORG", "related"),
+    ("A.5.31", "ORG", "related"),
+    ("A.5.35", "ORG", "related"),
+    ("A.6.1", "ORG", "related"),
+    ("A.6.3", "ORG", "related"),
+    ("A.6.6", "ORG", "related"),
+    #   CM — configuration management
+    ("A.5.9", "CM", "related"),
+    ("A.8.9", "CM", "equivalent"),
+    ("A.8.32", "CM", "related"),
+    #   NET — network and communications security
+    ("A.5.14", "NET", "related"),
+    ("A.6.7", "NET", "related"),
+    ("A.8.20", "NET", "equivalent"),
+    ("A.8.21", "NET", "related"),
+    ("A.8.22", "NET", "equivalent"),
+    ("A.8.23", "NET", "related"),
+    ("A.8.26", "NET", "related"),
+    #   COMP — component security
+    ("A.8.1", "COMP", "related"),
+    ("A.8.7", "COMP", "equivalent"),
+    ("A.8.8", "COMP", "related"),
+    ("A.8.18", "COMP", "related"),
+    ("A.8.19", "COMP", "related"),
+    #   DATA — protection of data
+    ("A.5.12", "DATA", "related"),
+    ("A.5.33", "DATA", "related"),
+    ("A.7.10", "DATA", "related"),
+    ("A.8.10", "DATA", "related"),
+    ("A.8.12", "DATA", "related"),
+    ("A.8.24", "DATA", "equivalent"),
+    #   USER — user access control
+    ("A.5.15", "USER", "equivalent"),
+    ("A.5.16", "USER", "equivalent"),
+    ("A.5.17", "USER", "related"),
+    ("A.5.18", "USER", "equivalent"),
+    ("A.7.7", "USER", "related"),
+    ("A.8.2", "USER", "related"),
+    ("A.8.3", "USER", "related"),
+    ("A.8.5", "USER", "related"),
+    #   EVENT — event and incident management
+    ("A.5.7", "EVENT", "related"),
+    ("A.5.24", "EVENT", "related"),
+    ("A.5.25", "EVENT", "related"),
+    ("A.5.26", "EVENT", "equivalent"),
+    ("A.5.27", "EVENT", "related"),
+    ("A.6.8", "EVENT", "related"),
+    ("A.8.15", "EVENT", "equivalent"),
+    ("A.8.16", "EVENT", "equivalent"),
+    ("A.8.17", "EVENT", "related"),
+    #   AVAIL — system availability and integrity
+    ("A.5.29", "AVAIL", "related"),
+    ("A.5.30", "AVAIL", "related"),
+    ("A.7.11", "AVAIL", "related"),
+    ("A.8.6", "AVAIL", "related"),
+    ("A.8.13", "AVAIL", "equivalent"),
+    ("A.8.14", "AVAIL", "equivalent"),
+
+    # ── ISO 27019:2024 (ENR) → ISA/IEC 62443-2-1:2024 SPEs ───────────────────
+    # Both are OT/ICS-sector standards, so the energy-sector ENR controls align
+    # closely with the 62443 program elements.
+    ("ENR.5.38", "ORG", "related"),
+    ("ENR.5.39", "ORG", "related"),
+    ("ENR.7.15", "COMP", "related"),
+    ("ENR.7.17", "COMP", "related"),
+    ("ENR.7.18", "NET", "related"),
+    ("ENR.8.35", "COMP", "related"),
+    ("ENR.8.36", "AVAIL", "related"),
+    ("ENR.8.37", "NET", "related"),
+    ("ENR.8.38", "NET", "related"),
+    ("ENR.8.39", "COMP", "related"),
+    ("ENR.8.40", "AVAIL", "related"),
 ]
 
 
@@ -857,25 +1006,39 @@ async def seed_soc2_controls(session) -> int:
     return await _seed_framework_controls(session, "SOC 2", SOC2_CONTROLS)
 
 
+async def seed_iec62443_controls(session) -> int:
+    """Insert ISA/IEC 62443-2-1:2024 OT security-program elements if not already present."""
+    return await _seed_framework_controls(session, "IEC 62443-2-1:2024", IEC62443_CONTROLS)
+
+
 async def seed_control_mappings(session) -> int:
-    """Insert the cross-framework crosswalk if the mapping table is empty. Returns count inserted."""
+    """Insert any cross-framework crosswalk pairs not already present.
+
+    Additive and idempotent (keyed on the source/target control pair) so new
+    mappings — e.g. ISO 27001 ↔ IEC 62443 — are added even to a database that
+    already holds the earlier ISO↔CSF/SOC 2 crosswalk. Pairs whose endpoints
+    aren't seeded yet are skipped. Returns count inserted.
+    """
     from ..models.control import Control
     from ..models.control_mapping import ControlMapping
-    from sqlalchemy import select, func
-
-    count = (await session.execute(select(func.count()).select_from(ControlMapping))).scalar()
-    if count > 0:
-        return 0
+    from sqlalchemy import select
 
     rows = (await session.execute(select(Control.clause, Control.id))).all()
     id_of = {clause: cid for clause, cid in rows}
 
+    existing = set(
+        (await session.execute(
+            select(ControlMapping.source_control_id, ControlMapping.target_control_id)
+        )).all()
+    )
+
     inserted = 0
     for src_clause, tgt_clause, rel in CONTROL_MAPPINGS:
         src, tgt = id_of.get(src_clause), id_of.get(tgt_clause)
-        if not src or not tgt:
+        if not src or not tgt or (src, tgt) in existing:
             continue
         session.add(ControlMapping(source_control_id=src, target_control_id=tgt, relationship_type=rel))
+        existing.add((src, tgt))
         inserted += 1
     await session.flush()
     return inserted

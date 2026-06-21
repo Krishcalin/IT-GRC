@@ -1,13 +1,13 @@
 """Integrity checks for the ISO 27001 seed data (no DB required)."""
 
 from app.seed.iso27001 import (
-    ANNEX_A_CONTROLS, ISO27019_CONTROLS, NIST_CSF_CONTROLS, SOC2_CONTROLS,
+    ANNEX_A_CONTROLS, ISO27019_CONTROLS, NIST_CSF_CONTROLS, SOC2_CONTROLS, IEC62443_CONTROLS,
     CONTROL_MAPPINGS, ISMS_CLAUSES, MANDATORY_DOCUMENTS,
     SAMPLE_METRICS, SAMPLE_TRAINING, SAMPLE_TASKS, SAMPLE_ASSESSMENTS, DEFAULT_ROLES,
 )
 
 THEMES = {"Organizational", "People", "Physical", "Technological"}
-ALL_CONTROLS = ANNEX_A_CONTROLS + ISO27019_CONTROLS + NIST_CSF_CONTROLS + SOC2_CONTROLS
+ALL_CONTROLS = ANNEX_A_CONTROLS + ISO27019_CONTROLS + NIST_CSF_CONTROLS + SOC2_CONTROLS + IEC62443_CONTROLS
 
 
 def test_expected_counts():
@@ -15,6 +15,7 @@ def test_expected_counts():
     assert len(ISO27019_CONTROLS) == 12
     assert len(NIST_CSF_CONTROLS) == 22
     assert len(SOC2_CONTROLS) == 13
+    assert len(IEC62443_CONTROLS) == 8
     assert len(ISMS_CLAUSES) == 30
     assert len(MANDATORY_DOCUMENTS) == 17
     assert len(DEFAULT_ROLES) == 6
@@ -48,6 +49,22 @@ def test_additional_frameworks_well_formed():
     for c in SOC2_CONTROLS:
         assert {"clause", "title", "theme", "description", "framework"} <= c.keys()
         assert c["framework"] == "SOC 2"
+    for c in IEC62443_CONTROLS:
+        assert {"clause", "title", "theme", "description", "framework"} <= c.keys()
+        assert c["framework"] == "IEC 62443-2-1:2024"
+
+
+def test_iec62443_maps_to_iso_controls():
+    """The ISO 27001 → IEC 62443 crosswalk should reach every 62443 SPE and be
+    sourced from real ISO 27001 / 27019 controls."""
+    iec_clauses = {c["clause"] for c in IEC62443_CONTROLS}
+    iso_clauses = {c["clause"] for c in ANNEX_A_CONTROLS} | {c["clause"] for c in ISO27019_CONTROLS}
+    targeted = set()
+    for src, tgt, _rel in CONTROL_MAPPINGS:
+        if tgt in iec_clauses:
+            assert src in iso_clauses, f"62443 mapping from non-ISO source {src}"
+            targeted.add(tgt)
+    assert targeted == iec_clauses, f"SPEs with no ISO mapping: {iec_clauses - targeted}"
 
 
 def test_sample_assessments_well_formed():

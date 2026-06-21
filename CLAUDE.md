@@ -21,7 +21,7 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 - `schemas/` — Pydantic v2 request/response schemas (Create/Update/Read per model)
 - `api/` — FastAPI route handlers, one file per module: `auth`, `controls`, `clauses`, `documents`, `interested_parties`, `objectives`, `metrics`, `suppliers`, `incidents`, `training`, `tasks`, `analytics`, `assessments`, `risks`, `soa`, `evidence`, `audits`, `policies`, `assets`, `reports`, `reminders`, `dashboard`
 - `api/deps.py` — Shared dependencies (get_db, get_current_user, require_superuser)
-- `seed/iso27001.py` — 93 Annex A controls + 12 ISO 27019:2024 (ENR) controls + 22 NIST CSF 2.0 categories + 13 SOC 2 criteria + cross-framework crosswalk + 30 ISMS clauses (4–10) + 17 mandatory documents + sample interested parties + sample objectives & KPI/KRI/KCI metrics + metric measurement history + historical posture snapshots + sample suppliers + sample incidents + sample training campaigns + sample assessments + sample workflow tasks + 6 RBAC roles
+- `seed/iso27001.py` — 93 Annex A controls + 12 ISO 27019:2024 (ENR) controls + 22 NIST CSF 2.0 categories + 13 SOC 2 criteria + 8 IEC 62443-2-1:2024 OT SPEs + cross-framework crosswalk + 30 ISMS clauses (4–10) + 17 mandatory documents + sample interested parties + sample objectives & KPI/KRI/KCI metrics + metric measurement history + historical posture snapshots + sample suppliers + sample incidents + sample training campaigns + sample assessments + sample workflow tasks + 6 RBAC roles
 
 ### Frontend (`frontend/src/`)
 - `App.tsx` — Root with AuthProvider + React Router
@@ -36,7 +36,7 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 |-------|-------|-----------|
 | User | users | email, full_name, hashed_password, is_superuser, auth_provider |
 | Role | roles | name, description, permissions (JSON) |
-| Control | controls | clause (A.5.1 / ENR.8.40 / GV.PO / CC6), title, description, theme, framework (ISO 27001:2022 / ISO 27019:2024 / NIST CSF 2.0 / SOC 2), status, owner_id |
+| Control | controls | clause (A.5.1 / ENR.8.40 / GV.PO / CC6 / NET), title, description, theme, framework (ISO 27001:2022 / ISO 27019:2024 / NIST CSF 2.0 / SOC 2 / IEC 62443-2-1:2024), status, owner_id |
 | ControlMapping | control_mappings | source_control_id, target_control_id, relationship_type (equivalent/related/broader/narrower), note — cross-framework crosswalk |
 | ClauseRequirement | clause_requirements | clause (6.1.2), title, section, clause_number, requirement, documented_info, conformity_status, owner_id |
 | DocumentedInformation | documented_information | ref_id (DOC-001), title, doc_type, clause_ref, mandatory, version, status, classification, owner/approver, review dates |
@@ -137,14 +137,29 @@ campaigns-by-status, the compliance score, and module counts.
 Auto-seeded on first startup. Controls are read-only by default (update status/owner via PUT).
 
 ## Multi-framework & crosswalk
-Controls span four frameworks via the `framework` column: ISO 27001:2022 (93),
+Controls span five frameworks via the `framework` column: ISO 27001:2022 (93),
 ISO 27019:2024 (12), NIST CSF 2.0 (22 categories, clause = code e.g. GV.PO, theme =
-Function), SOC 2 (13 criteria, clause = CC1/A1/…). `control_mappings` is a
-control↔control crosswalk; `seed_control_mappings()` seeds a starter ISO↔CSF /
-ISO↔SOC2 set (gated on empty table). `GET /analytics/framework-coverage` builds the
-cross-framework coverage matrix (per source framework, % of controls mapped to each
-target framework). Catalog seeders (`seed_nist_csf_controls`, `seed_soc2_controls`)
-are gated per-framework so they add to a DB that already holds Annex A.
+Function), SOC 2 (13 criteria, clause = CC1/A1/…), and IEC 62443-2-1:2024 (8 OT
+"Security Program Elements" / SPEs — clause = mnemonic ORG/CM/NET/COMP/DATA/USER/
+EVENT/AVAIL). `control_mappings` is a control↔control crosswalk; `seed_control_mappings()`
+seeds a starter ISO↔CSF / ISO↔SOC2 / ISO↔62443 set. **It is additive/idempotent
+keyed on the (source,target) control pair** (NOT gated on an empty table), so new
+crosswalk rows load even into a DB that already holds an earlier crosswalk.
+`GET /analytics/framework-coverage` builds the cross-framework coverage matrix (per
+source framework, % of controls mapped to each target framework). Catalog seeders
+(`seed_nist_csf_controls`, `seed_soc2_controls`, `seed_iec62443_controls`) are gated
+per-framework so they add to a DB that already holds Annex A.
+
+### IEC 62443-2-1:2024 (OT / IACS asset-owner program)
+The OT counterpart to an ISO 27001 ISMS: ISO 27001/2 governs IT/office security,
+62443-2-1 adds the OT-specific program for Industrial Automation & Control Systems
+(energy/ICS). Modeled at the **SPE level** (8 entries — mirroring how CSF is seeded
+at Category level and SOC 2 at criteria-series level); sub-SPE detail (e.g. NET 3
+secure remote access, USER 1.18 operator screen lock, COMP 2.3 malware testing)
+lives in descriptions/guidance. 66 ISO→62443 crosswalk rows (55 from Annex A, 11
+from ISO 27019 ENR — both OT-relevant). Wording paraphrased, not reproduced; refer
+to ISA/IEC 62443-2-1:2024 for the authoritative SPE structure. Sourced from the
+ISAGCA (2025) and Secura combined-approach white papers + domain knowledge.
 
 ## ISO/IEC 27019:2024 (energy-utility sector controls)
 12 sector-specific **ENR** controls — the only controls 27019 adds beyond Annex A
