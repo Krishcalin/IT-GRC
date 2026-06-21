@@ -18,6 +18,7 @@ class IncidentCreate(BaseModel):
     status: str = "New"
     reporter: str | None = None
     owner_id: UUID | None = None
+    risk_id: UUID | None = None
     affected_assets: str | None = None
     data_breach: bool = False
 
@@ -30,6 +31,7 @@ class IncidentUpdate(BaseModel):
     status: str | None = None
     reporter: str | None = None
     owner_id: UUID | None = None
+    risk_id: UUID | None = None
     affected_assets: str | None = None
     data_breach: bool | None = None
     containment_actions: str | None = None
@@ -51,6 +53,7 @@ class IncidentRead(BaseModel):
     reported_at: datetime
     owner_id: UUID | None = None
     owner: UserRead | None = None
+    risk_id: UUID | None = None
     affected_assets: str | None = None
     data_breach: bool
     containment_actions: str | None = None

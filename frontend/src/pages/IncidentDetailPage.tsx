@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getIncident, updateIncident } from '../services/api'
-import type { Incident } from '../types'
+import { getIncident, updateIncident, getRisks } from '../services/api'
+import type { Incident, Risk } from '../types'
 import StatusBadge from '../components/StatusBadge'
 
 const CATEGORIES = ['Malware', 'Phishing', 'Unauthorized Access', 'Data Breach', 'DoS', 'Misconfiguration', 'Lost/Stolen Device', 'Insider', 'Other']
@@ -15,11 +15,12 @@ const IncidentDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [inc, setInc] = useState<Incident | null>(null)
+  const [risks, setRisks] = useState<Risk[]>([])
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState({
     category: '', severity: '', status: '', reporter: '', affected_assets: '', description: '',
-    containment_actions: '', root_cause: '', lessons_learned: '', evidence_notes: '', data_breach: false,
+    containment_actions: '', root_cause: '', lessons_learned: '', evidence_notes: '', data_breach: false, risk_id: '',
   })
 
   useEffect(() => {
@@ -32,15 +33,17 @@ const IncidentDetailPage: React.FC = () => {
         affected_assets: d.affected_assets || '', description: d.description || '',
         containment_actions: d.containment_actions || '', root_cause: d.root_cause || '',
         lessons_learned: d.lessons_learned || '', evidence_notes: d.evidence_notes || '', data_breach: d.data_breach,
+        risk_id: d.risk_id || '',
       })
     }).catch(() => navigate('/incidents'))
+    getRisks().then((r) => setRisks(r.data)).catch(() => {})
   }, [id, navigate])
 
   const handleSave = async () => {
     if (!id) return
     setSaving(true)
     try {
-      const payload: Partial<Incident> = { ...form }
+      const payload: Partial<Incident> = { ...form, risk_id: form.risk_id || null }
       // Stamp resolution time when the incident is first resolved/closed.
       const closing = form.status === 'Resolved' || form.status === 'Closed'
       const wasClosing = inc?.status === 'Resolved' || inc?.status === 'Closed'
@@ -54,6 +57,7 @@ const IncidentDetailPage: React.FC = () => {
 
   if (!inc) return <div className="p-8 text-gray-400">Loading...</div>
   const fmt = (d: string | null) => (d ? new Date(d).toLocaleString() : '—')
+  const linkedRisk = risks.find((r) => r.id === inc.risk_id)
 
   return (
     <div className="p-8 space-y-6">
@@ -90,7 +94,13 @@ const IncidentDetailPage: React.FC = () => {
                 <div><label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
                   <select className="select-field w-full" value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>{STATUSES.map((c) => <option key={c}>{c}</option>)}</select></div>
                 <div><label className="block text-sm font-medium text-gray-700 mb-1">Reporter</label><input className="input-field" value={form.reporter} onChange={(e) => setForm({ ...form, reporter: e.target.value })} /></div>
-                <div className="md:col-span-2"><label className="block text-sm font-medium text-gray-700 mb-1">Affected Assets</label><input className="input-field" value={form.affected_assets} onChange={(e) => setForm({ ...form, affected_assets: e.target.value })} /></div>
+                <div><label className="block text-sm font-medium text-gray-700 mb-1">Related Risk</label>
+                  <select className="select-field w-full" value={form.risk_id} onChange={(e) => setForm({ ...form, risk_id: e.target.value })}>
+                    <option value="">— none —</option>
+                    {risks.map((r) => <option key={r.id} value={r.id}>{r.ref_id} · {r.title}</option>)}
+                  </select>
+                </div>
+                <div className="md:col-span-3"><label className="block text-sm font-medium text-gray-700 mb-1">Affected Assets</label><input className="input-field" value={form.affected_assets} onChange={(e) => setForm({ ...form, affected_assets: e.target.value })} /></div>
               </div>
               <div><label className="block text-sm font-medium text-gray-700 mb-1">Description</label><textarea className="input-field h-20" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
               <div><label className="block text-sm font-medium text-gray-700 mb-1">Containment / Response (5.26)</label><textarea className="input-field h-20" value={form.containment_actions} onChange={(e) => setForm({ ...form, containment_actions: e.target.value })} /></div>
@@ -113,6 +123,7 @@ const IncidentDetailPage: React.FC = () => {
                 <div><span className="text-sm text-gray-500">Owner</span><p className="font-medium">{inc.owner?.full_name || '—'}</p></div>
                 <div><span className="text-sm text-gray-500">Reported</span><p className="font-medium">{fmt(inc.reported_at)}</p></div>
                 <div><span className="text-sm text-gray-500">Resolved</span><p className="font-medium">{fmt(inc.resolved_at)}</p></div>
+                <div><span className="text-sm text-gray-500">Related Risk</span><p className="font-medium">{linkedRisk ? <button onClick={() => navigate(`/risks/${linkedRisk.id}`)} className="text-indigo-600 hover:underline">{linkedRisk.ref_id}</button> : '—'}</p></div>
                 <div className="col-span-2 md:col-span-4"><span className="text-sm text-gray-500">Affected Assets</span><p className="font-medium">{inc.affected_assets || '—'}</p></div>
               </div>
             </>

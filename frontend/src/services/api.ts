@@ -98,6 +98,8 @@ export const createRisk = (data: Record<string, unknown>) => api.post<Risk>('/ri
 export const getRisk = (id: string) => api.get<Risk>(`/risks/${id}`)
 export const updateRisk = (id: string, data: Record<string, unknown>) => api.put<Risk>(`/risks/${id}`, data)
 export const deleteRisk = (id: string) => api.delete(`/risks/${id}`)
+export const linkRiskControl = (riskId: string, controlId: string) => api.post(`/risks/${riskId}/controls/${controlId}`)
+export const unlinkRiskControl = (riskId: string, controlId: string) => api.delete(`/risks/${riskId}/controls/${controlId}`)
 
 // SoA
 export const getSoaEntries = (params?: Record<string, string>) => api.get<SoAEntry[]>('/soa', { params })

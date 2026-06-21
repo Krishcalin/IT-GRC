@@ -24,6 +24,7 @@ import CampaignDetailPage from './pages/CampaignDetailPage'
 import ReportsPage from './pages/ReportsPage'
 import RemindersPage from './pages/RemindersPage'
 import RisksPage from './pages/RisksPage'
+import RiskDetailPage from './pages/RiskDetailPage'
 import SoAPage from './pages/SoAPage'
 import EvidencePage from './pages/EvidencePage'
 import AuditsPage from './pages/AuditsPage'
@@ -67,6 +68,7 @@ const App: React.FC = () => {
           <Route path="reports" element={<ReportsPage />} />
           <Route path="reminders" element={<RemindersPage />} />
           <Route path="risks" element={<RisksPage />} />
+          <Route path="risks/:id" element={<RiskDetailPage />} />
           <Route path="soa" element={<SoAPage />} />
           <Route path="evidence" element={<EvidencePage />} />
           <Route path="audits" element={<AuditsPage />} />

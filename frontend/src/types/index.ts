@@ -68,6 +68,7 @@ export interface Risk {
   owner: User | null
   status: string
   review_date: string | null
+  controls: Control[]
   created_at: string
   updated_at: string
 }
@@ -302,6 +303,7 @@ export interface Incident {
   reported_at: string
   owner_id: string | null
   owner: User | null
+  risk_id: string | null
   affected_assets: string | null
   data_breach: boolean
   containment_actions: string | null

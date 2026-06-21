@@ -30,6 +30,7 @@ class Incident(Base):
     reporter: Mapped[str | None] = mapped_column(String(128))  # who reported it (may be external)
     reported_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     owner_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"))  # incident handler
+    risk_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("risks.id", ondelete="SET NULL"))  # related risk
     affected_assets: Mapped[str | None] = mapped_column(Text)  # affected information / IT systems
     data_breach: Mapped[bool] = mapped_column(Boolean, default=False)  # involves personal data / reportable breach
     containment_actions: Mapped[str | None] = mapped_column(Text)  # response / immediate measures (5.26)

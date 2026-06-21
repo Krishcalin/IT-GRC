@@ -23,6 +23,7 @@ async def list_incidents(
     category: str | None = None,
     severity: str | None = None,
     status: str | None = None,
+    risk_id: UUID | None = None,
     search: str | None = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(200, ge=1, le=500),
@@ -35,6 +36,8 @@ async def list_incidents(
         q = q.where(Incident.severity == severity)
     if status:
         q = q.where(Incident.status == status)
+    if risk_id:
+        q = q.where(Incident.risk_id == risk_id)
     if search:
         q = q.where(or_(Incident.ref_id.ilike(f"%{search}%"), Incident.title.ilike(f"%{search}%")))
     q = q.order_by(Incident.ref_id.desc()).offset(skip).limit(limit)

@@ -8,6 +8,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from .user import UserRead
+from .control import ControlRead
 
 
 class RiskCreate(BaseModel):
@@ -54,6 +55,7 @@ class RiskRead(BaseModel):
     owner: UserRead | None = None
     status: str
     review_date: date | None = None
+    controls: list[ControlRead] = []
     created_at: datetime
     updated_at: datetime
     model_config = ConfigDict(from_attributes=True)

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { getRisks, createRisk, deleteRisk } from '../services/api'
 import type { Risk } from '../types'
 import StatusBadge from '../components/StatusBadge'
@@ -7,6 +8,7 @@ const CATEGORIES = ['', 'Strategic', 'Operational', 'Financial', 'Compliance', '
 const RISK_STATUSES = ['', 'Open', 'In Treatment', 'Closed', 'Accepted']
 
 const RisksPage: React.FC = () => {
+  const navigate = useNavigate()
   const [risks, setRisks] = useState<Risk[]>([])
   const [loading, setLoading] = useState(true)
   const [category, setCategory] = useState('')
@@ -101,15 +103,15 @@ const RisksPage: React.FC = () => {
             </tr></thead>
             <tbody>
               {risks.map((r) => (
-                <tr key={r.id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="table-cell font-mono font-semibold">{r.ref_id}</td>
+                <tr key={r.id} onClick={() => navigate(`/risks/${r.id}`)} className="border-b border-gray-100 hover:bg-indigo-50/50 cursor-pointer transition-colors">
+                  <td className="table-cell font-mono font-semibold text-indigo-600">{r.ref_id}</td>
                   <td className="table-cell">{r.title}</td>
                   <td className="table-cell">{r.category}</td>
                   <td className="table-cell text-center">{r.likelihood} x {r.impact}</td>
                   <td className="table-cell"><StatusBadge value={r.inherent_risk_level} /></td>
                   <td className="table-cell"><StatusBadge value={r.treatment} /></td>
                   <td className="table-cell"><StatusBadge value={r.status} /></td>
-                  <td className="table-cell"><button onClick={() => handleDelete(r.id)} className="text-red-500 hover:text-red-700 text-xs">Delete</button></td>
+                  <td className="table-cell"><button onClick={(e) => { e.stopPropagation(); handleDelete(r.id) }} className="text-red-500 hover:text-red-700 text-xs">Delete</button></td>
                 </tr>
               ))}
               {risks.length === 0 && <tr><td colSpan={8} className="table-cell text-center text-gray-400 py-12">No risks found</td></tr>}
