@@ -86,6 +86,9 @@ export const addTrainingRecord = (campaignId: string, data: Record<string, unkno
 export const updateTrainingRecord = (recordId: string, data: Record<string, unknown>) => api.put<TrainingRecord>(`/training/records/${recordId}`, data)
 export const deleteTrainingRecord = (recordId: string) => api.delete(`/training/records/${recordId}`)
 
+// Reports & export
+export const downloadReport = (path: string) => api.get(`/reports/${path}`, { responseType: 'blob' })
+
 // Risks
 export const getRisks = (params?: Record<string, string>) => api.get<Risk[]>('/risks', { params })
 export const createRisk = (data: Record<string, unknown>) => api.post<Risk>('/risks', data)
