@@ -13,7 +13,8 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 ## Architecture
 
 ### Backend (`backend/app/`)
-- `main.py` — FastAPI app with lifespan (creates tables + seeds on startup)
+- `main.py` — FastAPI app with lifespan (runs `alembic upgrade head` + seeds on startup)
+- `alembic/` — DB migrations (async env). Baseline `0001_baseline` builds the full schema from `Base.metadata`; create new ones with `alembic revision --autogenerate -m "<change>"` then commit the generated file
 - `config.py` — Pydantic Settings from environment variables
 - `database.py` — Async SQLAlchemy engine + session factory + Base
 - `models/` — SQLAlchemy ORM models (all UUID PKs, timezone-aware timestamps)
@@ -153,9 +154,9 @@ default `"ISO 27001:2022"`); clause ids use an `ENR.` prefix (ENR.5.38, ENR.5.39
 ENR.7.15–7.18, ENR.8.35–8.40) so they never collide with the `A.` Annex A clauses.
 - `seed_iso27019_controls()` is gated on the absence of 27019 controls (not an
   empty table) so it can be added to a DB that already holds the Annex A set.
-- `main.py` `_run_light_migrations()` runs `ALTER TABLE controls ADD COLUMN IF NOT
-  EXISTS framework …` after `create_all`, so existing DBs gain the column (the app
-  has no migration tool; `create_all` does not alter existing tables).
+- Schema is provisioned by Alembic (`alembic upgrade head` at startup). The
+  `framework` column lives in the baseline migration; a guarded `ADD COLUMN IF NOT
+  EXISTS` in that baseline covers DBs created before the column existed.
 - Filter via `GET /controls?framework=ISO 27019:2024`; the Controls page has a
   Framework filter + column. Wording is paraphrased, not reproduced from the standard.
 

@@ -2,15 +2,18 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
+import sys
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from .config import settings
-from .database import engine, Base, async_session
+from .database import engine, async_session
 
 logger = logging.getLogger(__name__)
 
@@ -121,36 +124,44 @@ async def _run_seeds() -> None:
         await session.commit()
 
 
-async def _run_light_migrations() -> None:
-    """Idempotent, additive schema touch-ups for existing databases.
+_MIGRATION_LOCK_KEY = 8127342  # arbitrary constant id for the migration advisory lock
 
-    The app provisions schema with ``Base.metadata.create_all``, which creates
-    missing tables but does NOT alter existing ones. New columns added to models
-    over time are applied here with ``ADD COLUMN IF NOT EXISTS`` so databases
-    created before the column existed keep working without a full migration tool.
-    Safe to run on every startup.
+
+async def _run_migrations() -> None:
+    """Bring the database schema up to head via Alembic.
+
+    Runs ``alembic upgrade head`` as a subprocess (avoids nesting Alembic's own
+    asyncio.run inside the running event loop). Replaces the previous
+    create_all + ad-hoc ALTER approach so all schema changes are version-controlled.
+
+    A Postgres transaction-level advisory lock serializes the upgrade across uvicorn
+    workers (the lifespan runs in every worker): one worker performs the upgrade
+    while the others block, then run an idempotent no-op upgrade. The lock is
+    released automatically when the surrounding transaction ends.
     """
     from sqlalchemy import text
 
-    statements = [
-        # Added with the ISO 27019:2024 energy-sector control set.
-        "ALTER TABLE controls ADD COLUMN IF NOT EXISTS framework VARCHAR(48) NOT NULL DEFAULT 'ISO 27001:2022'",
-    ]
+    backend_dir = Path(__file__).resolve().parents[1]  # .../backend (holds alembic.ini)
     async with engine.begin() as conn:
-        for stmt in statements:
-            try:
-                await conn.execute(text(stmt))
-            except Exception as exc:  # never block startup on a best-effort migration
-                logger.warning("Light migration skipped (%s): %s", stmt.split(" ADD")[0], exc)
+        await conn.execute(text("SELECT pg_advisory_xact_lock(:k)"), {"k": _MIGRATION_LOCK_KEY})
+        proc = await asyncio.create_subprocess_exec(
+            sys.executable, "-m", "alembic", "upgrade", "head",
+            cwd=str(backend_dir),
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.STDOUT,
+        )
+        out, _ = await proc.communicate()
+        if out:
+            logger.info("alembic upgrade head:\n%s", out.decode(errors="replace").strip())
+        if proc.returncode != 0:
+            raise RuntimeError(f"alembic upgrade head failed (exit code {proc.returncode})")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    await _run_light_migrations()
-    logger.info("Database tables created")
+    await _run_migrations()
+    logger.info("Database schema is at head (Alembic)")
 
     await _run_seeds()
     logger.info("Seed data loaded")

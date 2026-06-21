@@ -25,6 +25,44 @@ jobs:
       - name: Run unit tests
         run: python -m pytest -q
 
+  migrations:
+    name: Migrations (alembic up/down)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      db:
+        image: postgres:16
+        env:
+          POSTGRES_USER: grc
+          POSTGRES_PASSWORD: changeme
+          POSTGRES_DB: itgrc
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U grc"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql+asyncpg://grc:changeme@localhost:5432/itgrc
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Alembic upgrade / downgrade / upgrade round-trip
+        run: |
+          alembic upgrade head
+          alembic downgrade base
+          alembic upgrade head
+      - name: Verify schema is in sync with models (no pending autogenerate diff)
+        run: alembic check
+
   frontend:
     name: Frontend (type-check + build)
     runs-on: ubuntu-latest
