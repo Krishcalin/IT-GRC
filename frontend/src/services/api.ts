@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { User, Control, ClauseRequirement, DocumentedInformation, InterestedParty, Objective, Metric, Supplier, Risk, SoAEntry, Evidence, Audit, AuditFinding, Policy, Asset, DashboardStats, ActivityEntry } from '../types'
+import type { User, Control, ClauseRequirement, DocumentedInformation, InterestedParty, Objective, Metric, Supplier, Incident, Risk, SoAEntry, Evidence, Audit, AuditFinding, Policy, Asset, DashboardStats, ActivityEntry } from '../types'
 
 const api = axios.create({ baseURL: '/api/v1' })
 
@@ -68,6 +68,13 @@ export const getSupplier = (id: string) => api.get<Supplier>(`/suppliers/${id}`)
 export const createSupplier = (data: Record<string, unknown>) => api.post<Supplier>('/suppliers', data)
 export const updateSupplier = (id: string, data: Partial<Supplier>) => api.put<Supplier>(`/suppliers/${id}`, data)
 export const deleteSupplier = (id: string) => api.delete(`/suppliers/${id}`)
+
+// Incidents (Clauses 5.24–5.28)
+export const getIncidents = (params?: Record<string, string>) => api.get<Incident[]>('/incidents', { params })
+export const getIncident = (id: string) => api.get<Incident>(`/incidents/${id}`)
+export const createIncident = (data: Record<string, unknown>) => api.post<Incident>('/incidents', data)
+export const updateIncident = (id: string, data: Partial<Incident>) => api.put<Incident>(`/incidents/${id}`, data)
+export const deleteIncident = (id: string) => api.delete(`/incidents/${id}`)
 
 // Risks
 export const getRisks = (params?: Record<string, string>) => api.get<Risk[]>('/risks', { params })

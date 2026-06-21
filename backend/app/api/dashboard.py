@@ -14,6 +14,7 @@ from ..models.interested_party import InterestedParty
 from ..models.objective import Objective
 from ..models.metric import Metric, compute_rag
 from ..models.supplier import Supplier
+from ..models.incident import Incident
 from ..models.risk import Risk
 from ..models.audit import Audit, AuditFinding
 from ..models.policy import Policy
@@ -117,6 +118,20 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
     )).all()
     suppliers_by_category = {row[0]: row[1] for row in sup_cat_rows}
 
+    # Incidents (Clauses 5.24–5.28)
+    total_incidents = (await db.execute(select(func.count()).select_from(Incident))).scalar() or 0
+    open_incidents = (await db.execute(
+        select(func.count()).select_from(Incident).where(Incident.status.notin_(["Resolved", "Closed"]))
+    )).scalar() or 0
+    inc_sev_rows = (await db.execute(
+        select(Incident.severity, func.count()).group_by(Incident.severity)
+    )).all()
+    incidents_by_severity = {row[0]: row[1] for row in inc_sev_rows}
+    inc_status_rows = (await db.execute(
+        select(Incident.status, func.count()).group_by(Incident.status)
+    )).all()
+    incidents_by_status = {row[0]: row[1] for row in inc_status_rows}
+
     # Risks
     total_risks = (await db.execute(select(func.count()).select_from(Risk))).scalar() or 0
     open_risks = (await db.execute(
@@ -189,6 +204,10 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
         critical_suppliers=critical_suppliers,
         suppliers_by_criticality=suppliers_by_criticality,
         suppliers_by_category=suppliers_by_category,
+        total_incidents=total_incidents,
+        open_incidents=open_incidents,
+        incidents_by_severity=incidents_by_severity,
+        incidents_by_status=incidents_by_status,
     )
 
 

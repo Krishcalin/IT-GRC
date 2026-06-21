@@ -38,6 +38,9 @@ const DashboardPage: React.FC = () => {
   const RAG_COLORS: Record<string, string> = { 'On Target': '#10b981', 'Near Target': '#f59e0b', 'Off Target': '#ef4444', 'No Data': '#9ca3af' }
   const supplierCriticalityData = Object.entries(stats.suppliers_by_criticality || {}).map(([name, value]) => ({ name, value }))
   const supplierCategoryData = Object.entries(stats.suppliers_by_category || {}).map(([name, value]) => ({ name, value }))
+  const incidentSeverityData = Object.entries(stats.incidents_by_severity || {}).map(([name, value]) => ({ name, value }))
+  const incidentStatusData = Object.entries(stats.incidents_by_status || {}).map(([name, value]) => ({ name, value }))
+  const SEV_COLORS: Record<string, string> = { Critical: '#ef4444', High: '#f97316', Medium: '#f59e0b', Low: '#14b8a6' }
 
   return (
     <div className="p-8 space-y-8">
@@ -203,6 +206,48 @@ const DashboardPage: React.FC = () => {
                 <PieChart>
                   <Pie data={supplierCategoryData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
                     {supplierCategoryData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : <p className="text-sm text-gray-400 py-12 text-center">No data</p>}
+          </div>
+        </div>
+      </div>
+
+      {/* Security incidents (5.24–5.28) */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Security Incidents</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard label="Total Incidents" value={stats.total_incidents} color="text-indigo-600" />
+          <StatCard label="Open Incidents" value={stats.open_incidents} color={stats.open_incidents > 0 ? 'text-red-600' : 'text-emerald-600'} />
+          <div className="card flex items-center lg:col-span-2">
+            <p className="text-sm text-gray-500">Incident lifecycle per Clauses 5.24–5.28: assess events, respond, learn (root cause &amp; lessons), and preserve evidence.</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          <div className="card">
+            <h3 className="text-sm font-semibold text-gray-700 mb-4">Incidents by Severity</h3>
+            {incidentSeverityData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={incidentSeverityData}>
+                  <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip />
+                  <Bar dataKey="value" radius={[6, 6, 0, 0]}>
+                    {incidentSeverityData.map((d, i) => <Cell key={i} fill={SEV_COLORS[d.name] || COLORS[i % COLORS.length]} />)}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            ) : <p className="text-sm text-gray-400 py-12 text-center">No data</p>}
+          </div>
+          <div className="card">
+            <h3 className="text-sm font-semibold text-gray-700 mb-4">Incidents by Status</h3>
+            {incidentStatusData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={260}>
+                <PieChart>
+                  <Pie data={incidentStatusData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
+                    {incidentStatusData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                   </Pie>
                   <Tooltip />
                 </PieChart>

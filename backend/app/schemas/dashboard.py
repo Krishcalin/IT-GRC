@@ -45,3 +45,8 @@ class DashboardStats(BaseModel):
     critical_suppliers: int = 0
     suppliers_by_criticality: dict = {}
     suppliers_by_category: dict = {}
+    # Incidents (Clauses 5.24–5.28)
+    total_incidents: int = 0
+    open_incidents: int = 0
+    incidents_by_severity: dict = {}
+    incidents_by_status: dict = {}

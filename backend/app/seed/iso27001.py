@@ -469,6 +469,32 @@ SAMPLE_SUPPLIERS: list[dict] = [
 ]
 
 
+# Sample information security incidents (Clauses 5.24–5.28) — generic; illustrative only.
+SAMPLE_INCIDENTS: list[dict] = [
+    {"title": "Phishing email reported by staff", "category": "Phishing", "severity": "Medium", "status": "Resolved",
+     "reporter": "Service Desk", "data_breach": False,
+     "description": "Several staff reported a credential-harvesting email impersonating the IT helpdesk.",
+     "affected_assets": "Email service; 3 user mailboxes",
+     "containment_actions": "Blocked sender domain and URL at the gateway; reset 2 affected accounts; sent awareness reminder.",
+     "lessons_learned": "Add the lookalike domain to the blocklist; reinforce reporting via the phishing button."},
+    {"title": "Malware detected on a laptop", "category": "Malware", "severity": "High", "status": "In Progress",
+     "reporter": "EDR Alert", "data_breach": False,
+     "description": "Endpoint protection flagged and quarantined a trojan dropper on a field laptop.",
+     "affected_assets": "1 corporate laptop (LAP-0345)",
+     "containment_actions": "Isolated the host from the network; quarantined the file; investigation ongoing."},
+    {"title": "Public storage bucket misconfiguration", "category": "Misconfiguration", "severity": "High", "status": "Triaged",
+     "reporter": "Cloud Security Scan", "data_breach": False,
+     "description": "A cloud storage bucket was found with overly permissive public read access.",
+     "affected_assets": "Cloud storage bucket (non-production)"},
+    {"title": "Lost company mobile phone", "category": "Lost/Stolen Device", "severity": "Low", "status": "Closed",
+     "reporter": "Employee", "data_breach": False,
+     "description": "An employee reported a lost corporate mobile phone while travelling.",
+     "affected_assets": "1 corporate mobile device",
+     "containment_actions": "Remote-wiped via MDM; revoked sessions.",
+     "lessons_learned": "Confirm MDM enrolment coverage for all mobile devices."},
+]
+
+
 DEFAULT_ROLES: list[dict] = [
     {"name": "CISO", "description": "Chief Information Security Officer — full access", "permissions": ["*"]},
     {"name": "GRC_Manager", "description": "GRC Manager — manage controls, risks, audits, policies", "permissions": ["controls:*", "risks:*", "audits:*", "policies:*", "soa:*", "assets:*", "evidence:*", "users:read"]},
@@ -590,6 +616,21 @@ async def seed_suppliers(session) -> int:
         session.add(Supplier(ref_id=f"SUP-{i:03d}", **item))
     await session.flush()
     return len(SAMPLE_SUPPLIERS)
+
+
+async def seed_incidents(session) -> int:
+    """Insert sample incidents (Clauses 5.24–5.28) if the table is empty. Returns count inserted."""
+    from ..models.incident import Incident
+    from sqlalchemy import select, func
+
+    count = (await session.execute(select(func.count()).select_from(Incident))).scalar()
+    if count > 0:
+        return 0
+
+    for i, item in enumerate(SAMPLE_INCIDENTS, start=1):
+        session.add(Incident(ref_id=f"INC-{i:03d}", **item))
+    await session.flush()
+    return len(SAMPLE_INCIDENTS)
 
 
 async def seed_roles(session) -> int:

@@ -290,6 +290,29 @@ export interface Supplier {
   updated_at: string
 }
 
+export interface Incident {
+  id: string
+  ref_id: string
+  title: string
+  description: string | null
+  category: string
+  severity: string
+  status: string
+  reporter: string | null
+  reported_at: string
+  owner_id: string | null
+  owner: User | null
+  affected_assets: string | null
+  data_breach: boolean
+  containment_actions: string | null
+  root_cause: string | null
+  lessons_learned: string | null
+  evidence_notes: string | null
+  resolved_at: string | null
+  created_at: string
+  updated_at: string
+}
+
 export interface DashboardStats {
   total_controls: number
   implemented_controls: number
@@ -326,6 +349,10 @@ export interface DashboardStats {
   critical_suppliers: number
   suppliers_by_criticality: Record<string, number>
   suppliers_by_category: Record<string, number>
+  total_incidents: number
+  open_incidents: number
+  incidents_by_severity: Record<string, number>
+  incidents_by_status: Record<string, number>
 }
 
 export interface ActivityEntry {

@@ -17,6 +17,8 @@ import MetricsPage from './pages/MetricsPage'
 import MetricDetailPage from './pages/MetricDetailPage'
 import SuppliersPage from './pages/SuppliersPage'
 import SupplierDetailPage from './pages/SupplierDetailPage'
+import IncidentsPage from './pages/IncidentsPage'
+import IncidentDetailPage from './pages/IncidentDetailPage'
 import RisksPage from './pages/RisksPage'
 import SoAPage from './pages/SoAPage'
 import EvidencePage from './pages/EvidencePage'
@@ -54,6 +56,8 @@ const App: React.FC = () => {
           <Route path="metrics/:id" element={<MetricDetailPage />} />
           <Route path="suppliers" element={<SuppliersPage />} />
           <Route path="suppliers/:id" element={<SupplierDetailPage />} />
+          <Route path="incidents" element={<IncidentsPage />} />
+          <Route path="incidents/:id" element={<IncidentDetailPage />} />
           <Route path="risks" element={<RisksPage />} />
           <Route path="soa" element={<SoAPage />} />
           <Route path="evidence" element={<EvidencePage />} />
