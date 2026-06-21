@@ -9,6 +9,8 @@ import TasksPage from './pages/TasksPage'
 import ControlsPage from './pages/ControlsPage'
 import ControlDetailPage from './pages/ControlDetailPage'
 import FrameworksPage from './pages/FrameworksPage'
+import AssessmentsPage from './pages/AssessmentsPage'
+import AssessmentDetailPage from './pages/AssessmentDetailPage'
 import ClausesPage from './pages/ClausesPage'
 import ClauseDetailPage from './pages/ClauseDetailPage'
 import DocumentsPage from './pages/DocumentsPage'
@@ -56,6 +58,8 @@ const App: React.FC = () => {
           <Route path="controls" element={<ControlsPage />} />
           <Route path="controls/:id" element={<ControlDetailPage />} />
           <Route path="frameworks" element={<FrameworksPage />} />
+          <Route path="assessments" element={<AssessmentsPage />} />
+          <Route path="assessments/:id" element={<AssessmentDetailPage />} />
           <Route path="clauses" element={<ClausesPage />} />
           <Route path="clauses/:id" element={<ClauseDetailPage />} />
           <Route path="documents" element={<DocumentsPage />} />

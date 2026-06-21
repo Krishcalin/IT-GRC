@@ -18,9 +18,9 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 - `database.py` — Async SQLAlchemy engine + session factory + Base
 - `models/` — SQLAlchemy ORM models (all UUID PKs, timezone-aware timestamps)
 - `schemas/` — Pydantic v2 request/response schemas (Create/Update/Read per model)
-- `api/` — FastAPI route handlers, one file per module: `auth`, `controls`, `clauses`, `documents`, `interested_parties`, `objectives`, `metrics`, `suppliers`, `incidents`, `training`, `tasks`, `analytics`, `risks`, `soa`, `evidence`, `audits`, `policies`, `assets`, `reports`, `reminders`, `dashboard`
+- `api/` — FastAPI route handlers, one file per module: `auth`, `controls`, `clauses`, `documents`, `interested_parties`, `objectives`, `metrics`, `suppliers`, `incidents`, `training`, `tasks`, `analytics`, `assessments`, `risks`, `soa`, `evidence`, `audits`, `policies`, `assets`, `reports`, `reminders`, `dashboard`
 - `api/deps.py` — Shared dependencies (get_db, get_current_user, require_superuser)
-- `seed/iso27001.py` — 93 Annex A controls + 12 ISO 27019:2024 (ENR) controls + 22 NIST CSF 2.0 categories + 13 SOC 2 criteria + cross-framework crosswalk + 30 ISMS clauses (4–10) + 17 mandatory documents + sample interested parties + sample objectives & KPI/KRI/KCI metrics + metric measurement history + historical posture snapshots + sample suppliers + sample incidents + sample training campaigns + sample workflow tasks + 6 RBAC roles
+- `seed/iso27001.py` — 93 Annex A controls + 12 ISO 27019:2024 (ENR) controls + 22 NIST CSF 2.0 categories + 13 SOC 2 criteria + cross-framework crosswalk + 30 ISMS clauses (4–10) + 17 mandatory documents + sample interested parties + sample objectives & KPI/KRI/KCI metrics + metric measurement history + historical posture snapshots + sample suppliers + sample incidents + sample training campaigns + sample assessments + sample workflow tasks + 6 RBAC roles
 
 ### Frontend (`frontend/src/`)
 - `App.tsx` — Root with AuthProvider + React Router
@@ -54,6 +54,8 @@ Open-source IT Governance, Risk & Compliance portal for ISO 27001:2022 certifica
 | Policy | policies | ref_id (POL-001), version, status, content (markdown) |
 | Asset | assets | ref_id (ASSET-001), asset_type, classification, criticality |
 | Task | tasks | ref_id (TASK-001), title, task_type (Action/Approval/Review/Remediation), status, priority, assignee_id, due_date, resource_type/id/label (polymorphic link), decision/decided_by (approvals), overdue (derived) |
+| Assessment | assessments | ref_id (ASMT-001), title, assessment_type (Control Self-Assessment/Maturity Assessment/Vendor Questionnaire), framework, supplier_id, status, items[], score/avg_maturity (derived) |
+| AssessmentItem | assessment_items | ref_id (ASI-001), assessment_id, control_id, question, response, maturity (0–5), result (Compliant/Partial/Non-Compliant/N-A/Yes/No), comment |
 | MetricMeasurement | metric_measurements | metric_id, value, note, captured_at — KPI/KRI/KCI trend history |
 | PostureSnapshot | posture_snapshots | snapshot_date (unique/day), compliance/conformity/readiness/training scores + key counts — posture trend time series |
 | ActivityLog | activity_log | user_id, action, resource_type, resource_id |
@@ -90,6 +92,7 @@ All API routes under `/api/v1/`. Swagger at `/docs`, ReDoc at `/redoc`, health a
 | `/tasks` | list / get / create / update / delete + `{id}/decision` (approval sign-off) |
 | `/metrics` | metric CRUD + `{id}/history` and `{id}/measurements` (trend points) |
 | `/controls` | control CRUD + `{id}/mappings` (cross-framework crosswalk, both directions) |
+| `/assessments` | assessment CRUD + nested `{id}/items` + `{id}/populate` (items from a framework) |
 | `/analytics` | `risk-heatmap`, `posture-trend`, `snapshot` (POST), `my-work`, `frameworks`, `framework-coverage` |
 | `/auth/users` | list active users (assignee/owner pickers) |
 | `/dashboard` | `stats`, `activity` |
@@ -107,6 +110,14 @@ the `posture_snapshots` time series; `my-work` is owner/assignee-scoped to the
 current user. `compute_headline()` is the single source of truth for the headline
 posture numbers, and `record_posture_snapshot()` upserts one row per day — the
 dashboard `stats` call triggers it, so the trend grows with no scheduler.
+
+`api/assessments.py` runs control self-assessments (CMMI maturity 0–5),
+maturity assessments, and vendor questionnaires as a campaign (`Assessment`) of
+`AssessmentItem`s. `POST /assessments/{id}/populate?framework=` auto-creates one
+item per control in a framework. Score is derived (`aggregate_score()` in
+`models/assessment.py`, unit-tested in `tests/test_assessments.py`): maturity-
+weighted when any maturity is set, else from Yes/Compliant/Partial results. Policy
+attestation already exists via the Policies module (`POST /policies/{id}/acknowledge`).
 
 `/dashboard/stats` returns control posture (by status/theme), risk posture, ISMS
 clause conformity (total, conformant, conformity score, by status/section),

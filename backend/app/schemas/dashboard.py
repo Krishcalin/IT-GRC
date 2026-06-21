@@ -65,3 +65,7 @@ class DashboardStats(BaseModel):
     pending_approvals: int = 0
     tasks_by_status: dict = {}
     tasks_by_priority: dict = {}
+    # Assessments
+    total_assessments: int = 0
+    open_assessments: int = 0
+    assessments_by_type: dict = {}

@@ -380,6 +380,8 @@ const DashboardPage: React.FC = () => {
         <StatCard label="Critical Risks" value={stats.critical_risks} color="text-red-600" />
         <StatCard label="Total Policies" value={stats.total_policies} color="text-blue-600" />
         <StatCard label="Total Assets" value={stats.total_assets} color="text-gray-700" />
+        <StatCard label="Assessments" value={stats.total_assessments} color="text-indigo-600" />
+        <StatCard label="Open Assessments" value={stats.open_assessments} color={stats.open_assessments > 0 ? 'text-amber-600' : 'text-emerald-600'} />
       </div>
 
       {/* Recent activity */}

@@ -19,6 +19,7 @@ from ..models.training import TrainingCampaign, TrainingRecord
 from ..models.risk import Risk
 from .reminders import gather_reminders
 from ..models.task import Task, task_is_overdue, TASK_OPEN_STATUSES
+from ..models.assessment import Assessment
 from ..models.audit import Audit, AuditFinding
 from ..models.policy import Policy
 from ..models.asset import Asset
@@ -167,6 +168,14 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
         tasks_by_status[t.status] = tasks_by_status.get(t.status, 0) + 1
         tasks_by_priority[t.priority] = tasks_by_priority.get(t.priority, 0) + 1
 
+    # Assessments
+    assessment_rows = (await db.execute(select(Assessment))).scalars().all()
+    total_assessments = len(assessment_rows)
+    open_assessments = sum(1 for a in assessment_rows if a.status in ("Draft", "In Progress", "Submitted"))
+    assessments_by_type: dict = {}
+    for a in assessment_rows:
+        assessments_by_type[a.assessment_type] = assessments_by_type.get(a.assessment_type, 0) + 1
+
     # Risks
     total_risks = (await db.execute(select(func.count()).select_from(Risk))).scalar() or 0
     open_risks = (await db.execute(
@@ -262,6 +271,9 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
         pending_approvals=pending_approvals,
         tasks_by_status=tasks_by_status,
         tasks_by_priority=tasks_by_priority,
+        total_assessments=total_assessments,
+        open_assessments=open_assessments,
+        assessments_by_type=assessments_by_type,
     )
 
 

@@ -731,6 +731,32 @@ SAMPLE_TRAINING: list[dict] = [
 ]
 
 
+# Sample assessments — a control self-assessment (maturity) and a vendor questionnaire.
+# `clause` resolves to a control id; `supplier` resolves to a supplier name at seed time.
+SAMPLE_ASSESSMENTS: list[dict] = [
+    {"title": "ISO 27001 Annex A Control Self-Assessment", "assessment_type": "Control Self-Assessment",
+     "framework": "ISO 27001:2022", "status": "In Progress",
+     "description": "CMMI-style maturity self-assessment of selected Annex A controls.",
+     "items": [
+         {"clause": "A.5.1", "maturity": 3, "result": "Compliant", "comment": "Policy approved and communicated."},
+         {"clause": "A.5.7", "maturity": 2, "result": "Partial", "comment": "Threat intelligence is currently ad hoc."},
+         {"clause": "A.8.7", "maturity": 4, "result": "Compliant", "comment": "EDR deployed fleet-wide with central management."},
+         {"clause": "A.8.16", "maturity": 2, "result": "Partial", "comment": "Monitoring coverage incomplete for SaaS."},
+         {"clause": "A.5.18", "maturity": 3, "result": "Compliant", "comment": "Quarterly access reviews in place."},
+     ]},
+    {"title": "Vendor Security Questionnaire — Payroll SaaS", "assessment_type": "Vendor Questionnaire",
+     "supplier": "Payroll SaaS Vendor", "status": "In Progress",
+     "description": "Security due-diligence questionnaire for the payroll provider.",
+     "items": [
+         {"question": "Do you hold a current ISO 27001 or SOC 2 report?", "result": "Yes", "response": "ISO 27001 + ISAE 3402."},
+         {"question": "Is customer data encrypted at rest and in transit?", "result": "Yes"},
+         {"question": "Do you support SSO / SAML federation?", "result": "No", "comment": "On roadmap for next release."},
+         {"question": "Is there a documented incident response and breach-notification process?", "result": "Yes"},
+         {"question": "Are subprocessors disclosed and contractually bound (DPAs)?", "result": "Partial", "comment": "List provided; DPAs being finalized."},
+     ]},
+]
+
+
 # Sample workflow tasks (assignment / approval / remediation) — generic demo set.
 # `due_offset_days` is resolved to an absolute date at seed time; assignee/creator
 # default to the first available user.
@@ -1052,6 +1078,47 @@ async def seed_training(session) -> int:
             session.add(TrainingRecord(ref_id=f"TRR-{rec_no:03d}", campaign_id=campaign.id, **rec))
     await session.flush()
     return len(SAMPLE_TRAINING)
+
+
+async def seed_assessments(session) -> int:
+    """Insert sample assessments + items if the table is empty. Returns campaigns inserted."""
+    from ..models.assessment import Assessment, AssessmentItem
+    from ..models.control import Control
+    from ..models.supplier import Supplier
+    from ..models.user import User
+    from sqlalchemy import select, func
+
+    count = (await session.execute(select(func.count()).select_from(Assessment))).scalar()
+    if count > 0:
+        return 0
+
+    clause_to_id = {c: cid for c, cid in (await session.execute(select(Control.clause, Control.id))).all()}
+    supplier_to_id = {n: sid for n, sid in (await session.execute(select(Supplier.name, Supplier.id))).all()}
+    user = (await session.execute(select(User).order_by(User.created_at))).scalars().first()
+    owner_id = user.id if user else None
+
+    item_no = 0
+    for i, item in enumerate(SAMPLE_ASSESSMENTS, start=1):
+        data = dict(item)
+        items = data.pop("items", [])
+        supplier_name = data.pop("supplier", None)
+        a = Assessment(
+            ref_id=f"ASMT-{i:03d}", owner_id=owner_id,
+            supplier_id=supplier_to_id.get(supplier_name) if supplier_name else None,
+            **data,
+        )
+        session.add(a)
+        await session.flush()  # assign a.id
+        for it in items:
+            item_no += 1
+            it = dict(it)
+            clause = it.pop("clause", None)
+            session.add(AssessmentItem(
+                ref_id=f"ASI-{item_no:03d}", assessment_id=a.id,
+                control_id=clause_to_id.get(clause) if clause else None, **it,
+            ))
+    await session.flush()
+    return len(SAMPLE_ASSESSMENTS)
 
 
 async def seed_tasks(session) -> int:

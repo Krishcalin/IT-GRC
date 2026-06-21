@@ -46,6 +46,13 @@ An **open-source IT Governance, Risk & Compliance (GRC) portal** purpose-built f
 - **Cross-framework coverage matrix** — see what % of each framework's controls map to each other framework, with a per-framework coverage summary
 - Pre-seeded ISO 27001 ↔ NIST CSF and ISO 27001 ↔ SOC 2 crosswalk as a starting point
 
+### Assessments & Attestations
+- **Control self-assessments** with **CMMI-style maturity scoring (0–5)** and a derived posture score
+- **One-click "populate from framework"** — generate assessment items for every control in a chosen framework
+- **Vendor security questionnaires** — Q&A items (Yes/No/Partial) with a derived compliance score, linkable to a supplier
+- Per-assessment **score, average maturity, and progress** (answered/total), with status workflow (Draft → In Progress → Submitted → Reviewed → Closed)
+- **Policy acknowledgment / attestation** — users attest to policies (existing Policies module: `POST /policies/{id}/acknowledge`)
+
 ### ISMS Clause Conformity (Clauses 4–10)
 - All **30 mandatory management-system requirements** from ISO 27001:2022 Clauses 4–10 pre-loaded
 - Organized by section: Context, Leadership, Planning, Support, Operation, Performance evaluation, Improvement
@@ -207,6 +214,7 @@ On first startup, the system automatically:
 - Seeds sample IS objectives (Clause 6.2) and KPI/KRI/KCI metrics (Clause 9.1)
 - Seeds sample suppliers / third parties (Clauses 5.19–5.23)
 - Seeds 5 sample workflow tasks (assigned to the first user)
+- Seeds sample assessments (a control self-assessment + a vendor questionnaire)
 - Backfills metric measurement history and historical posture snapshots (so trend charts render)
 - Seeds sample security incidents (Clauses 5.24–5.28)
 - Seeds sample awareness & training campaigns with participation records (Clauses 7.2/7.3)
@@ -390,6 +398,8 @@ Key API endpoints:
 | GET | `/api/v1/analytics/posture-trend` | Posture score time series |
 | GET | `/api/v1/analytics/framework-coverage` | Cross-framework crosswalk coverage matrix |
 | GET/POST | `/api/v1/controls/{id}/mappings` | List / add cross-framework control mappings |
+| GET/POST | `/api/v1/assessments` | Control self-assessments & vendor questionnaires |
+| POST | `/api/v1/assessments/{id}/populate` | Generate items from a framework's controls |
 | POST | `/api/v1/metrics/{id}/measurements` | Record a metric measurement (trend point) |
 | GET | `/api/v1/controls` | List ISO 27001 Annex A controls |
 | GET | `/api/v1/clauses` | List ISMS clause requirements (4–10) |

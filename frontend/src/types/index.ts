@@ -415,6 +415,54 @@ export interface FrameworkCoverage {
   matrix: CoverageCell[]
 }
 
+export interface AssessmentItem {
+  id: string
+  ref_id: string
+  assessment_id: string
+  control_id: string | null
+  control: ControlSummary | null
+  question: string | null
+  response: string | null
+  maturity: number | null
+  result: string | null
+  comment: string | null
+}
+
+export interface Assessment {
+  id: string
+  ref_id: string
+  title: string
+  description: string | null
+  assessment_type: string
+  framework: string | null
+  supplier_id: string | null
+  owner_id: string | null
+  owner: User | null
+  status: string
+  due_date: string | null
+  item_count: number
+  answered_count: number
+  avg_maturity: number | null
+  score: number
+  items: AssessmentItem[]
+  created_at: string
+  updated_at: string
+}
+
+export interface AssessmentSummary {
+  id: string
+  ref_id: string
+  title: string
+  assessment_type: string
+  framework: string | null
+  status: string
+  owner: User | null
+  due_date: string | null
+  item_count: number
+  answered_count: number
+  score: number
+}
+
 export interface MetricMeasurement {
   id: string
   metric_id: string

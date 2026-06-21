@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { User, Control, ControlMappingItem, FrameworkCoverage, ClauseRequirement, DocumentedInformation, InterestedParty, Objective, Metric, MetricMeasurement, Supplier, Incident, TrainingCampaign, TrainingRecord, RemindersResult, Task, RiskHeatmap, PostureSnapshot, MyWork, Risk, SoAEntry, Evidence, Audit, AuditFinding, Policy, Asset, DashboardStats, ActivityEntry } from '../types'
+import type { User, Control, ControlMappingItem, FrameworkCoverage, ClauseRequirement, DocumentedInformation, InterestedParty, Objective, Metric, MetricMeasurement, Supplier, Incident, TrainingCampaign, TrainingRecord, RemindersResult, Task, Assessment, AssessmentSummary, AssessmentItem, RiskHeatmap, PostureSnapshot, MyWork, Risk, SoAEntry, Evidence, Audit, AuditFinding, Policy, Asset, DashboardStats, ActivityEntry } from '../types'
 
 const api = axios.create({ baseURL: '/api/v1' })
 
@@ -33,6 +33,17 @@ export const createTask = (data: Record<string, unknown>) => api.post<Task>('/ta
 export const updateTask = (id: string, data: Partial<Task>) => api.put<Task>(`/tasks/${id}`, data)
 export const decideTask = (id: string, data: { decision: string; decision_comment?: string }) => api.post<Task>(`/tasks/${id}/decision`, data)
 export const deleteTask = (id: string) => api.delete(`/tasks/${id}`)
+
+// Assessments & questionnaires
+export const getAssessments = (params?: Record<string, string>) => api.get<AssessmentSummary[]>('/assessments', { params })
+export const getAssessment = (id: string) => api.get<Assessment>(`/assessments/${id}`)
+export const createAssessment = (data: Record<string, unknown>) => api.post<Assessment>('/assessments', data)
+export const updateAssessment = (id: string, data: Partial<Assessment>) => api.put<Assessment>(`/assessments/${id}`, data)
+export const deleteAssessment = (id: string) => api.delete(`/assessments/${id}`)
+export const populateAssessment = (id: string, framework?: string) => api.post<Assessment>(`/assessments/${id}/populate`, null, { params: framework ? { framework } : {} })
+export const addAssessmentItem = (id: string, data: Record<string, unknown>) => api.post<AssessmentItem>(`/assessments/${id}/items`, data)
+export const updateAssessmentItem = (id: string, itemId: string, data: Partial<AssessmentItem>) => api.put<AssessmentItem>(`/assessments/${id}/items/${itemId}`, data)
+export const deleteAssessmentItem = (id: string, itemId: string) => api.delete(`/assessments/${id}/items/${itemId}`)
 
 // Controls
 export const getControls = (params?: Record<string, string>) => api.get<Control[]>('/controls', { params })

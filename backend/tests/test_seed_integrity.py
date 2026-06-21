@@ -3,7 +3,7 @@
 from app.seed.iso27001 import (
     ANNEX_A_CONTROLS, ISO27019_CONTROLS, NIST_CSF_CONTROLS, SOC2_CONTROLS,
     CONTROL_MAPPINGS, ISMS_CLAUSES, MANDATORY_DOCUMENTS,
-    SAMPLE_METRICS, SAMPLE_TRAINING, SAMPLE_TASKS, DEFAULT_ROLES,
+    SAMPLE_METRICS, SAMPLE_TRAINING, SAMPLE_TASKS, SAMPLE_ASSESSMENTS, DEFAULT_ROLES,
 )
 
 THEMES = {"Organizational", "People", "Physical", "Technological"}
@@ -48,6 +48,22 @@ def test_additional_frameworks_well_formed():
     for c in SOC2_CONTROLS:
         assert {"clause", "title", "theme", "description", "framework"} <= c.keys()
         assert c["framework"] == "SOC 2"
+
+
+def test_sample_assessments_well_formed():
+    types = {"Control Self-Assessment", "Maturity Assessment", "Vendor Questionnaire"}
+    results = {"Compliant", "Partial", "Non-Compliant", "N/A", "Yes", "No"}
+    clause_set = {c["clause"] for c in ALL_CONTROLS}
+    for a in SAMPLE_ASSESSMENTS:
+        assert a["title"] and a["assessment_type"] in types
+        assert isinstance(a["items"], list) and a["items"]
+        for it in a["items"]:
+            if it.get("maturity") is not None:
+                assert 0 <= it["maturity"] <= 5
+            if it.get("result") is not None:
+                assert it["result"] in results
+            if it.get("clause") is not None:
+                assert it["clause"] in clause_set
 
 
 def test_control_mappings_reference_known_clauses():
